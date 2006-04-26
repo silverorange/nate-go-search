@@ -2,9 +2,14 @@
 
 require_once 'NateGo/NateGoSearchTerm.php';
 require_once 'NateGo/NateGoSearchDocument.php';
+require_once 'NateGo/NateGoSearchKeyword.php';
+
+require_once 'Swat/SwatString.php';
+
+require_once 'SwatDB/SwatDB.php';
 
 /**
- * Indexes documents using the NateGo search algorithm 
+ * Indexes documents using the NateGo search algorithm
  *
  * @package   NateGo
  * @copyright 2006 silverorange
@@ -40,6 +45,22 @@ class NateGoSearchIndexer
 	protected $max_word_length;
 
 	/**
+	 * The name of the database table the NateGoSearch index is stored in
+	 *
+	 * @todo Add setter method.
+	 *
+	 * @var string
+	 */
+	protected $index_table = 'NateGoIndex';
+
+	/**
+	 * An array of keywords collected from the current index operation
+	 *
+	 * @var array NateGoSearchKeyword
+	 */
+	protected $keywords = array();
+
+	/**
 	 * The tag to index by
 	 *
 	 * Tags are a unique identifier for search indexes. NateGo search stores
@@ -49,24 +70,47 @@ class NateGoSearchIndexer
 	 * get product results, category results and article results all in
 	 * the same list of search results.
 	 *
-	 * @var mixed 
+	 * @var mixed
 	 */
 	protected $tag;
 
 	/**
-	 * Creates a search index with the given tag
+	 * The database connection used by this indexer
+	 *
+	 * @var MDB2_Driver_Common
+	 */
+	protected $db;
+
+	/**
+	 * Whether or not the old index is cleared when changes to the index are
+	 * comitted
+	 *
+	 * @var boolean
+	 *
+	 * @see NateGoSearch::__construct()
+	 * @see NateGoSearch::commit()
+	 * @see NateGoSearch::clear()
+	 */
+	protected $new = false;
+
+	/**
+	 * Creates a search indexer with the given tag
 	 *
 	 * @param mixed $tag the tag to index by.
-	 * @param boolean $clear if true, this is a new search index and all
-	 *                        indexed words for the given tag are removed. If
-	 *                        false, we are appending to an existing index.
-	 *                        Defaults to false.
+	 * @param MDB2_Driver_Common $db the database connection used by this
+	 *                                indexer.
+	 * @param boolean $new if true, this is a new search index and all indexed
+	 *                      words for the given tag are removed. If false, we
+	 *                      are appending to an existing index. Defaults to
+	 *                      false.
 	 *
 	 * @see NateGoSearchIndexer::$tag
 	 */
-	public function __construct($tag, $clear = false)
+	public function __construct($tag, MDB2_Driver_Common $db, $new = false)
 	{
 		$this->tag = $tag;
+		$this->db = $db;
+		$this->new = $new;
 	}
 
 	/**
@@ -75,7 +119,7 @@ class NateGoSearchIndexer
 	 * @param integer $length the maximum length of words in the index.
 	 *
 	 * @see NateGoSearchIndexer::$max_word_length
-	 */ 
+	 */
 	public function setMaximumWordLength($length)
 	{
 		$this->max_word_length = ($length === null) ? null : (integer)$length;
@@ -99,7 +143,7 @@ class NateGoSearchIndexer
 	/**
 	 * Indexes a document
 	 *
-	 * The document is indexed by all the terms of this indexer.
+	 * The document is indexed for all the terms of this indexer.
 	 *
 	 * @param NateGoSearchDocument $document the document to index.
 	 *
@@ -119,14 +163,56 @@ class NateGoSearchIndexer
 			while ($tok !== false) {
 				if (!in_array($tok, $this->unindexed_words)) {
 					$location++;
-					if (strlen($tok) > $this->max_word_length)
+					if ($this->max_word_length !== null &&
+						strlen($tok) > $this->max_word_length)
 						$tok = substr($tok, 0, $this->max_word_length);
-					
-					echo $id.':'.$tok.':'.$term->getWeight().':'.
-						$location.':'.$this->tag."\n";
+
+					$this->keywords[] = new NateGoSearchKeyword($tok, $id,
+						$term->getWeight(), $location, $this->tag);
 				}
 				$tok = strtok(' ');
 			}
+		}
+	}
+
+	/**
+	 * Commits keywords indexed by this indexer to the database index table
+	 *
+	 * If this indexer was created with the 'new' parameter then the index is
+	 * cleared for this indexer's tag before new keywords are inserted.
+	 * Otherwise, the new keywords are simply appended to the index.
+	 */
+	public function commit()
+	{
+		try {
+			$this->db->beginTransaction();
+
+			if ($this->new) {
+				$this->clear();
+				$this->new = false;
+			}
+
+			$keyword = array_pop($this->keywords);
+			while ($keyword !== null) {
+				$sql = sprintf('insert into %s
+					(document_id, word, weight, location, tag) values
+					(%s, %s, %s, %s, %s)',
+					$this->index_table,
+					$this->db->quote($keyword->getDocumentId(), 'integer'),
+					$this->db->quote($keyword->getWord(), 'text'),
+					$this->db->quote($keyword->getWeight(), 'integer'),
+					$this->db->quote($keyword->getLocation(), 'integer'),
+					$this->db->quote($keyword->getTag(), 'integer'));
+
+				SwatDB::query($this->db, $sql);
+
+				$keyword = array_pop($this->keywords);
+			}
+
+			$this->db->commit();
+		} catch (SwatDBException $e) {
+			$this->db->rollback();
+			throw $e;
 		}
 	}
 
@@ -147,10 +233,13 @@ class NateGoSearchIndexer
 		// replace html/xhtml/xml tags with spaces
 		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
 
+		// remove entities
+		$text = SwatString::minimizeEntities($text);
+
 		// replace apostrophe s's
 		$text = preg_replace('/\'s\b/u', '', $text);
 
-		// remove punctuation at the beginning and end of the string 
+		// remove punctuation at the beginning and end of the string
 		$text = preg_replace('/^\W+/u', '', $text);
 		$text = preg_replace('/\W+$/u', '', $text);
 
@@ -165,6 +254,32 @@ class NateGoSearchIndexer
 		$text = preg_replace('/\s+/u', ' ', $text);
 
 		return $text;
+	}
+
+	/**
+	 * Clears this search index
+	 *
+	 * The index is cleared for this indexer's tag
+	 *
+	 * @see NateGoSearchIndexer::__construct()
+	 */
+	protected function clear()
+	{
+		$sql = sprintf('delete from %s where tag = %s',
+			$this->index_table,
+			$this->db->quote($this->tag, 'integer'));
+
+		SwatDB::query($this->db, $sql);
+	}
+
+	/**
+	 * Class finalizer calls commit() automatically
+	 *
+	 * @see NateGoSearchIndexer::commit()
+	 */
+	protected function __finalize()
+	{
+		$this->commit();
 	}
 }
 
