@@ -4,33 +4,107 @@ require_once 'NateGo/NateGoSearchTerm.php';
 require_once 'NateGo/NateGoSearchDocument.php';
 
 /**
- * 
+ * Indexes documents using the NateGo search algorithm 
  *
  * @package   NateGo
  * @copyright 2006 silverorange
  */
 class NateGoSearchIndexer
 {
+	/**
+	 * A list of search terms to index documents by
+	 *
+	 * @var array NateGoSearchTerm
+	 */
 	protected $terms = array();
+
+	/**
+	 * An array of words to not index
+	 *
+	 * These words will be skipped by the indexer. Common examples of such
+	 * words are: a, the, it
+	 *
+	 * @var array
+	 */
 	protected $unindexed_words = array();
-	protected $max_word_length = 32;
+
+	/**
+	 * The maximum length of words that are indexed
+	 *
+	 * If the word length is set as null, there is no maximum word length. This
+	 * is hte default behaviour. If a word is longer than the maximum length,
+	 * it is truncated before being indexed.
+	 *
+	 * @var integer
+	 */
+	protected $max_word_length;
+
+	/**
+	 * The tag to index by
+	 *
+	 * Tags are a unique identifier for search indexes. NateGo search stores
+	 * all indexed words in the same index with a tag to identify what index
+	 * the word belongs to. Tags allow the possiblilty of mixed search results
+	 * ordered by relavence. For example, if you seach for "roses" you could
+	 * get product results, category results and article results all in
+	 * the same list of search results.
+	 *
+	 * @var mixed 
+	 */
 	protected $tag;
 
-	public function __construct($tag)
+	/**
+	 * Creates a search index with the given tag
+	 *
+	 * @param mixed $tag the tag to index by.
+	 * @param boolean $clear if true, this is a new search index and all
+	 *                        indexed words for the given tag are removed. If
+	 *                        false, we are appending to an existing index.
+	 *                        Defaults to false.
+	 *
+	 * @see NateGoSearchIndexer::$tag
+	 */
+	public function __construct($tag, $clear = false)
 	{
 		$this->tag = $tag;
 	}
 
+	/**
+	 * Sets the maximum length of words in the index
+	 *
+	 * @param integer $length the maximum length of words in the index.
+	 *
+	 * @see NateGoSearchIndexer::$max_word_length
+	 */ 
 	public function setMaximumWordLength($length)
 	{
-		$htis->max_word_length = $length;
+		$this->max_word_length = ($length === null) ? null : (integer)$length;
 	}
 
+	/**
+	 * Adds a search term to this index
+	 *
+	 * Adding a term creates index entries for the words in the document
+	 * matching the term. Index terms may have different weights.
+	 *
+	 * @param NateGoSearchTerm $term the term to add.
+	 *
+	 * @see NateGoSearchTerm
+	 */
 	public function addTerm(NateGoSearchTerm $term)
 	{
 		$this->terms[] = $term;
 	}
 
+	/**
+	 * Indexes a document
+	 *
+	 * The document is indexed by all the terms of this indexer.
+	 *
+	 * @param NateGoSearchDocument $document the document to index.
+	 *
+	 * @see NateGoSearchDocument
+	 */
 	public function index(NateGoSearchDocument $document)
 	{
 		// word location counter
@@ -56,6 +130,16 @@ class NateGoSearchIndexer
 		}
 	}
 
+	/**
+	 * Filters a string to prepare if for indexing
+	 *
+	 * This removes excell punctuation and markup and lowercases all words.
+	 * The resulting string may then be tokenized by spaces.
+	 *
+	 * @param string $text the string to be filtered.
+	 *
+	 * @return string the filtered string.
+	 */
 	protected function filterText($text)
 	{
 		$text = strtolower($text);
