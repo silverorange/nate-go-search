@@ -157,7 +157,7 @@ class NateGoSearchIndexer
 		foreach ($this->terms as $term) {
 			$id = $document->getId();
 			$text = $document->getField($term->getDataField());
-			$text = $this->filterText($text);
+			$text = self::formatKeywords($text);
 
 			$tok = strtok($text, ' ');
 			while ($tok !== false) {
@@ -204,7 +204,7 @@ class NateGoSearchIndexer
 					$this->db->quote($keyword->getLocation(), 'integer'),
 					$this->db->quote($keyword->getTag(), 'integer'));
 
-				SwatDB::query($this->db, $sql);
+				SwatDB::exec($this->db, $sql);
 
 				$keyword = array_pop($this->keywords);
 			}
@@ -219,14 +219,14 @@ class NateGoSearchIndexer
 	/**
 	 * Filters a string to prepare if for indexing
 	 *
-	 * This removes excell punctuation and markup and lowercases all words.
+	 * This removes excess punctuation and markup, and lowercases all words.
 	 * The resulting string may then be tokenized by spaces.
 	 *
 	 * @param string $text the string to be filtered.
 	 *
 	 * @return string the filtered string.
 	 */
-	protected function filterText($text)
+	public static function formatKeywords($text)
 	{
 		$text = strtolower($text);
 
@@ -269,7 +269,7 @@ class NateGoSearchIndexer
 			$this->index_table,
 			$this->db->quote($this->tag, 'integer'));
 
-		SwatDB::query($this->db, $sql);
+		SwatDB::exec($this->db, $sql);
 	}
 
 	/**
