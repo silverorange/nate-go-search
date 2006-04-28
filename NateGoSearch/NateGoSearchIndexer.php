@@ -11,7 +11,7 @@ require_once 'SwatDB/SwatDB.php';
 /**
  * Indexes documents using the NateGo search algorithm
  *
- * @package   NateGo
+ * @package   NateGoSearch
  * @copyright 2006 silverorange
  */
 class NateGoSearchIndexer

@@ -6,7 +6,7 @@
  * The default implementation should suffice for most appications but for
  * extremely custom document objects, this class may be extended.
  *
- * @package   NateGo
+ * @package   NateGoSearch
  * @copyright 2006 silverorange
  */
 class NateGoSearchDocument

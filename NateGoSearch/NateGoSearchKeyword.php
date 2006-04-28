@@ -6,7 +6,7 @@
  * This class is not meant to be used standalone; it is used internally by
  * NateGoSearchIndexer.
  *
- * @package   NateGo
+ * @package   NateGoSearch
  * @copyright 2006 silverorange
  * @see       NateGoSearchIndexer
  */

@@ -7,7 +7,7 @@ require_once 'SwatDB/SwatDB.php';
 /**
  *
  *
- * @package   NateGo
+ * @package   NateGoSearch
  * @copyright 2006 silverorange
  */
 class NateGoSearchQuery

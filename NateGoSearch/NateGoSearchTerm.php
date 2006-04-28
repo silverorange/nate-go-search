@@ -6,7 +6,7 @@
  * Search index terms are added to the indexer which then indexes documents
  * based on all terms.
  *
- * @package   NateGo
+ * @package   NateGoSearch
  * @copyright 2006 silverorange
  * @see       NateGoSearchIndexer
  */
