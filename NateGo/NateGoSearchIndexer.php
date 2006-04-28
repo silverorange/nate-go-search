@@ -61,18 +61,28 @@ class NateGoSearchIndexer
 	protected $keywords = array();
 
 	/**
-	 * The tag to index by
+	 * A list of document ids we are indexing in the current operation
+	 *
+	 * When commit is called, indexed entries for these ids are removed from
+	 * the index. The reason is because we are reindexing these documents.
+	 *
+	 * @var array
+	 */
+	protected $document_ids = array();
+
+	/**
+	 * The document type to index by
 	 *
 	 * Tags are a unique identifier for search indexes. NateGo search stores
-	 * all indexed words in the same index with a tag to identify what index
-	 * the word belongs to. Tags allow the possiblilty of mixed search results
-	 * ordered by relavence. For example, if you seach for "roses" you could
-	 * get product results, category results and article results all in
-	 * the same list of search results.
+	 * all indexed words in the same index with a document type to identify
+	 * what index the word belongs to. Document types allow the possiblilty of
+	 * mixed search results ordered by relavence. For example, if you seach for
+	 * "roses" you could get product results, category results and article
+	 * results all in the same list of search results.
 	 *
 	 * @var mixed
 	 */
-	protected $tag;
+	protected $document_type;
 
 	/**
 	 * The database connection used by this indexer
@@ -94,21 +104,22 @@ class NateGoSearchIndexer
 	protected $new = false;
 
 	/**
-	 * Creates a search indexer with the given tag
+	 * Creates a search indexer with the given document type
 	 *
-	 * @param mixed $tag the tag to index by.
+	 * @param mixed $document_type the document tpye to index by.
 	 * @param MDB2_Driver_Common $db the database connection used by this
 	 *                                indexer.
 	 * @param boolean $new if true, this is a new search index and all indexed
-	 *                      words for the given tag are removed. If false, we
-	 *                      are appending to an existing index. Defaults to
-	 *                      false.
+	 *                      words for the given document type are removed. If
+	 *                      false, we are appending to an existing index.
+	 *                      Defaults to false.
 	 *
-	 * @see NateGoSearchIndexer::$tag
+	 * @see NateGoSearchIndexer::$document_type
 	 */
-	public function __construct($tag, MDB2_Driver_Common $db, $new = false)
+	public function __construct($document_type, MDB2_Driver_Common $db,
+		$new = false)
 	{
-		$this->tag = $tag;
+		$this->document_type = $document_type;
 		$this->db = $db;
 		$this->new = $new;
 	}
@@ -154,8 +165,10 @@ class NateGoSearchIndexer
 		// word location counter
 		$location = 0;
 
+		$id = $document->getId();
+		$this->document_ids[] = $id;
+
 		foreach ($this->terms as $term) {
-			$id = $document->getId();
 			$text = $document->getField($term->getDataField());
 			$text = self::formatKeywords($text);
 
@@ -168,7 +181,7 @@ class NateGoSearchIndexer
 						$tok = substr($tok, 0, $this->max_word_length);
 
 					$this->keywords[] = new NateGoSearchKeyword($tok, $id,
-						$term->getWeight(), $location, $this->tag);
+						$term->getWeight(), $location, $this->document_type);
 				}
 				$tok = strtok(' ');
 			}
@@ -179,8 +192,8 @@ class NateGoSearchIndexer
 	 * Commits keywords indexed by this indexer to the database index table
 	 *
 	 * If this indexer was created with the 'new' parameter then the index is
-	 * cleared for this indexer's tag before new keywords are inserted.
-	 * Otherwise, the new keywords are simply appended to the index.
+	 * cleared for this indexer's document type before new keywords are
+	 * inserted. Otherwise, the new keywords are simply appended to the index.
 	 */
 	public function commit()
 	{
@@ -192,22 +205,33 @@ class NateGoSearchIndexer
 				$this->new = false;
 			}
 
+			$indexed_ids =
+				$this->db->implodeArray($this->document_ids, 'integer');
+
+			$delete_sql = sprintf('delete from %s where document_id in (%s)',
+				$this->index_table,
+				$indexed_ids);
+
+			SwatDB::exec($this->db, $delete_sql);
+
 			$keyword = array_pop($this->keywords);
 			while ($keyword !== null) {
 				$sql = sprintf('insert into %s
-					(document_id, word, weight, location, tag) values
+					(document_id, word, weight, location, document_type) values
 					(%s, %s, %s, %s, %s)',
 					$this->index_table,
 					$this->db->quote($keyword->getDocumentId(), 'integer'),
 					$this->db->quote($keyword->getWord(), 'text'),
 					$this->db->quote($keyword->getWeight(), 'integer'),
 					$this->db->quote($keyword->getLocation(), 'integer'),
-					$this->db->quote($keyword->getTag(), 'integer'));
+					$this->db->quote($keyword->getDocumentType(), 'integer'));
 
 				SwatDB::exec($this->db, $sql);
 
 				$keyword = array_pop($this->keywords);
 			}
+
+			$this->document_ids = array();
 
 			$this->db->commit();
 		} catch (SwatDBException $e) {
@@ -259,15 +283,15 @@ class NateGoSearchIndexer
 	/**
 	 * Clears this search index
 	 *
-	 * The index is cleared for this indexer's tag
+	 * The index is cleared for this indexer's document type
 	 *
 	 * @see NateGoSearchIndexer::__construct()
 	 */
 	protected function clear()
 	{
-		$sql = sprintf('delete from %s where tag = %s',
+		$sql = sprintf('delete from %s where document_type = %s',
 			$this->index_table,
-			$this->db->quote($this->tag, 'integer'));
+			$this->db->quote($this->document_type, 'integer'));
 
 		SwatDB::exec($this->db, $sql);
 	}

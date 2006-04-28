@@ -16,7 +16,7 @@ class NateGoSearchKeyword
 	protected $document_id;
 	protected $weight;
 	protected $location;
-	protected $tag;
+	protected $document_type;
 
 	/**
 	 * Creates a new indexed keyword
@@ -27,15 +27,17 @@ class NateGoSearchKeyword
 	 * @param integer $weight a weight for this keyword.
 	 * @param integer $location the word location of the keyword in the
 	 *                           document. First word, second word, etc...
-	 * @param integer $tag the document type this keyword's document belongs to.
+	 * @param integer $document_type the document type this keyword's document
+	 *                                belongs to.
 	 */
-	public function __construct($word, $document_id, $weight, $location, $tag)
+	public function __construct($word, $document_id, $weight, $location,
+		$document_type)
 	{
 		$this->word = $word;
 		$this->document_id = $document_id;
 		$this->weight = $weight;
 		$this->location = $location;
-		$this->tag = $tag;
+		$this->document_type = $document_type;
 	}
 
 	/**
@@ -74,9 +76,9 @@ class NateGoSearchKeyword
 	/**
 	 * @return integer the document type this keyword's document belongs to.
 	 */
-	public function getTag()
+	public function getDocumentType()
 	{
-		return $this->tag;
+		return $this->document_type;
 	}
 }
 
