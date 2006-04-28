@@ -1,7 +1,7 @@
 <?php
 
-require_once 'NateGo/NateGoSearchIndexer.php';
-require_once 'NateGo/NateGoSearchResult.php';
+require_once 'NateGoSearch/NateGoSearchIndexer.php';
+require_once 'NateGoSearch/NateGoSearchResult.php';
 require_once 'SwatDB/SwatDB.php';
 
 /**

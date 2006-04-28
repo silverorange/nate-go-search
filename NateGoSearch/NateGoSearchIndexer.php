@@ -1,8 +1,8 @@
 <?php
 
-require_once 'NateGo/NateGoSearchTerm.php';
-require_once 'NateGo/NateGoSearchDocument.php';
-require_once 'NateGo/NateGoSearchKeyword.php';
+require_once 'NateGoSearch/NateGoSearchTerm.php';
+require_once 'NateGoSearch/NateGoSearchDocument.php';
+require_once 'NateGoSearch/NateGoSearchKeyword.php';
 
 require_once 'Swat/SwatString.php';
 
