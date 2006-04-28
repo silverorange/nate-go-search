@@ -5,7 +5,34 @@ require_once 'NateGo/NateGoSearchResult.php';
 require_once 'SwatDB/SwatDB.php';
 
 /**
+ * Perform queries using a NateGoSearch index
  *
+ * This is the class used to actually search indexed keywords. Instances of
+ * this class may search the index using the find() method. For example, to
+ * search a database table called 'Article' indexed with a document type of
+ * 1, use the following code:
+ *
+ * <code>
+ * $query = new NateGoSearchQuery($db);
+ * $query->addDocumentType(1);
+ * $result = $query->find('some keywords');
+ *
+ * $sql = 'select id, title from Article ' .
+ *     'inner join %s on Article.id = %s.%s and %s.unique_id = \'%s\'';
+ *
+ * $sql = sprintf($sql,
+ *     $result->getResultTable(),
+ *     $result->getResultTable(),
+ *     $result->getDocumentIdField(),
+ *     $result->getResultTable(),
+ *     $result->getUniqueId());
+ *
+ * $articles = $db->query($sql);
+ * </code>
+ *
+ * Because of the specific PL/PGSQL implementation of the search algorithm,
+ * the {@link NateGoSearchQuery::find()} method may only be called once per
+ * page request.
  *
  * @package   NateGoSearch
  * @copyright 2006 silverorange
@@ -17,6 +44,9 @@ class NateGoSearchQuery
 
 	protected $db;
 
+	/**
+	 * @param MDB2_Driver_Common $db
+	 */
 	public function __construct(MDB2_Driver_Common $db)
 	{
 		$this->db = $db;
