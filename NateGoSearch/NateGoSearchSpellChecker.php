@@ -42,12 +42,13 @@ class NateGoSearchSpellChecker
 	 *
 	 * The text file format is one misspelling per line with the incorrect
 	 * word spelling placed before the correct word spelling having both words
-	 * separated by spaces. For example:
+	 * separated by a comma. For example:
 	 *
 	 * <code>
-	 * hte the
-	 * yuo you
-	 * acheive achieve
+	 * hte,the
+	 * yuo,you
+	 * acheive,achieve
+	 * hasa,has a
 	 * </code>
 	 *
 	 * @param string $filename the name of the file to load the misspellings
@@ -59,7 +60,8 @@ class NateGoSearchSpellChecker
 
 		foreach ($misspellings_file as $line) {
 			$words = explode(',', trim($line));
-			$this->misspellings[$words[0]] = $words[1];
+			if (count($words) == 2)
+				$this->misspellings[$words[0]] = $words[1];
 		}
 	}
 
