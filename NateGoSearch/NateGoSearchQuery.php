@@ -18,14 +18,16 @@ require_once 'SwatDB/SwatDB.php';
  * $result = $query->find('some keywords');
  *
  * $sql = 'select id, title from Article ' .
- *     'inner join %s on Article.id = %s.%s and %s.unique_id = \'%s\'';
+ *     'inner join %s on Article.id = %s.%s and %s.unique_id = \'%s\' and ' .
+ *     '%s.document_type = %s';
  *
  * $sql = sprintf($sql,
  *     $result->getResultTable(),
  *     $result->getResultTable(),
  *     $result->getDocumentIdField(),
  *     $result->getResultTable(),
- *     $result->getUniqueId());
+ *     $result->getUniqueId(),
+ *     $result->getResultTable());
  *
  * $articles = $db->query($sql);
  * </code>
