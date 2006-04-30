@@ -241,6 +241,21 @@ class NateGoSearchIndexer
 	}
 
 	/**
+	 * Adds words to the list of words that are not to be indexed
+	 *
+	 * These may be words such as 'the', 'and' and 'a'.
+	 *
+	 * @param string|array $words the list of words not to be indexed.
+	 */
+	public function addUnindexedWords($words)
+	{
+		if (!is_array($words))
+			$words = array((string)$words);
+
+		$this->unindexed_words = array_merge($this->unindexed_words, $words);
+	}
+
+	/**
 	 * Filters a string to prepare if for indexing
 	 *
 	 * This removes excess punctuation and markup, and lowercases all words.
@@ -278,6 +293,20 @@ class NateGoSearchIndexer
 		$text = preg_replace('/\s+/u', ' ', $text);
 
 		return $text;
+	}
+
+	/**
+	 * Gets a defalt list of words that are not indexed by a search indexer
+	 *
+	 * These words may be passed directly to the
+	 * {@link NateGoSearchIndexer::addUnindexedWords()} method.
+	 *
+	 * @return array a default list of words not to index.
+	 */
+	public static function &getDefaultUnindexedWords()
+	{
+		$words = array();
+		return $words;
 	}
 
 	/**
