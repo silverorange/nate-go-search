@@ -42,7 +42,7 @@ class NateGoSearchResult
 		if (!is_array($words))
 			$words = array((string)$words);
 
-		$this->blocked_words += $words;
+		$this->blocked_words = array_merge($this->blocked_words, $words);
 	}
 
 	/**
@@ -59,7 +59,7 @@ class NateGoSearchResult
 		if (!is_array($words))
 			$words = array((string)$words);
 
-		$this->searched_words += $words;
+		$this->searched_words = array_merge($this->searched_words, $words);
 	}
 
 	/**
