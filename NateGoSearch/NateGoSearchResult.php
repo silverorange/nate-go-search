@@ -14,6 +14,7 @@ class NateGoSearchResult
 	protected $unique_id;
 	protected $blocked_words = array();
 	protected $searched_words = array();
+	protected $misspellings = array();
 
 	/**
 	 * Builds a new search result
@@ -60,6 +61,17 @@ class NateGoSearchResult
 			$words = array((string)$words);
 
 		$this->searched_words = array_merge($this->searched_words, $words);
+	}
+
+	/**
+	 * Adds misspellings to this result object
+	 *
+	 * @param array $misspellings a list of misspellings to add in the form
+	 *                             incorrect => correct.
+	 */
+	public function addMisspellings($misspellings)
+	{
+		$this->misspellings = array_merge($this->misspellings, $misspellings);
 	}
 
 	/**
