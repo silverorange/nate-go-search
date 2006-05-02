@@ -95,7 +95,7 @@ class NateGoSearchSpellChecker
 	 *
 	 * @return array a list of of misspelled words in the given phrase.
 	 */
-	public function getMisspellingsInPhrase($phrase)
+	public function &getMisspellingsInPhrase($phrase)
 	{
 		$misspellings = array();
 
