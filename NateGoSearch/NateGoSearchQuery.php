@@ -96,17 +96,19 @@ class NateGoSearchQuery
 
 		$tok = strtok($keywords, ' ');
 		while ($tok) {
-			if (in_array($tok, $this->blocked_words)) {
+			if (in_array($tok, $this->blocked_words))
 				$results->addBlockedWords($tok);
-			} else {
+			else
 				$results->addSearchedWords($tok);
-				// check spellings
-			}
 
 			$tok = strtok(' ');
 		}
 
 		$keywords = implode(' ', $results->getSearchedWords());
+
+		if ($this->spell_checker !== null)
+			$results->addMisspellings(
+				$this->spell_checker->getMisspellingsInPhrase($keywords));
 
 		if (count($this->document_types) > 0) {
 			SwatDB::executeStoredProc($this->db, 'nateGoSearch',
