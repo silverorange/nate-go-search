@@ -112,7 +112,7 @@ class NateGoSearchIndexer
 	 * @see NateGoSearch::__construct()
 	 * @see NateGoSearch::commit()
 	 */
-	protected $new = false;
+	protected $append = false;
 
 	/**
 	 * Creates a search indexer with the given document type
