@@ -2,6 +2,7 @@
 
 require_once 'NateGoSearch/NateGoSearchIndexer.php';
 require_once 'NateGoSearch/NateGoSearchResult.php';
+require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
 require_once 'SwatDB/SwatDB.php';
 
 /**
@@ -43,6 +44,7 @@ class NateGoSearchQuery
 {
 	protected $document_types = array();
 	protected $blocked_words = array();
+	protected $spell_checker;
 
 	protected $db;
 
@@ -94,10 +96,12 @@ class NateGoSearchQuery
 
 		$tok = strtok($keywords, ' ');
 		while ($tok) {
-			if (in_array($tok, $this->blocked_words))
+			if (in_array($tok, $this->blocked_words)) {
 				$results->addBlockedWords($tok);
-			else
+			} else {
 				$results->addSearchedWords($tok);
+				// check spellings
+			}
 
 			$tok = strtok(' ');
 		}
@@ -115,6 +119,19 @@ class NateGoSearchQuery
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Sets the spell checker used by this query
+	 *
+	 * @param NateGoSearchSpellChecker $spell_checker the spell checker to use
+	 *                                                 for this query. If set
+	 *                                                 to null, no spell
+	 *                                                 checking is done.
+	 */
+	public function setSpellChecker(NateGoSearchSpellChecker $spell_checker)
+	{
+		$htis->spell_checker = $spell_checker;
 	}
 
 	/**
