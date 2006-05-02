@@ -182,7 +182,7 @@ class NateGoSearchIndexer
 		$location = 0;
 
 		$id = $document->getId();
-		if (!$this->append)
+		if (!$this->append && !in_array($id, $this->clear_document_ids))
 			$this->clear_document_ids[] = $id;
 
 		foreach ($this->terms as $term) {
