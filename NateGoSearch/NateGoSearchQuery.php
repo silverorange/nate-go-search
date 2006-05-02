@@ -131,7 +131,7 @@ class NateGoSearchQuery
 	 */
 	public function setSpellChecker(NateGoSearchSpellChecker $spell_checker)
 	{
-		$htis->spell_checker = $spell_checker;
+		$this->spell_checker = $spell_checker;
 	}
 
 	/**
