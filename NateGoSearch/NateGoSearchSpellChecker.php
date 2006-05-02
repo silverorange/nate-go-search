@@ -59,7 +59,7 @@ class NateGoSearchSpellChecker
 		$misspellings_file = file($filename);
 
 		foreach ($misspellings_file as $line) {
-			$words = explode(',', trim($line));
+			$words = explode(',', rtrim($line));
 			if (count($words) == 2)
 				$this->misspellings[$words[0]] = $words[1];
 		}
