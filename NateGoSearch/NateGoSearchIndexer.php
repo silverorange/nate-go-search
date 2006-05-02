@@ -68,7 +68,7 @@ class NateGoSearchIndexer
 	 *
 	 * @var array
 	 */
-	protected $document_ids = array();
+	protected $clear_document_ids = array();
 
 	/**
 	 * The document type to index by
@@ -104,6 +104,17 @@ class NateGoSearchIndexer
 	protected $new = false;
 
 	/**
+	 * Whether or not keyowrds for indexed documents are appended to existing
+	 * keywords
+	 *
+	 * @var boolean
+	 *
+	 * @see NateGoSearch::__construct()
+	 * @see NateGoSearch::commit()
+	 */
+	protected $new = false;
+
+	/**
 	 * Creates a search indexer with the given document type
 	 *
 	 * @param mixed $document_type the document tpye to index by.
@@ -113,15 +124,20 @@ class NateGoSearchIndexer
 	 *                      words for the given document type are removed. If
 	 *                      false, we are appending to an existing index.
 	 *                      Defaults to false.
+	 * @param boolean $append if true, keywords keywords for documents that
+	 *                         are indexed are appended to the keywords that
+	 *                         may already exist for the document in the index.
+	 *                         Defaults to false.
 	 *
 	 * @see NateGoSearchIndexer::$document_type
 	 */
 	public function __construct($document_type, MDB2_Driver_Common $db,
-		$new = false)
+		$new = false, $append = false)
 	{
 		$this->document_type = $document_type;
 		$this->db = $db;
 		$this->new = $new;
+		$this->append = $append;
 	}
 
 	/**
@@ -166,7 +182,8 @@ class NateGoSearchIndexer
 		$location = 0;
 
 		$id = $document->getId();
-		$this->document_ids[] = $id;
+		if (!$this->append)
+			$this->clear_document_ids[] = $id;
 
 		foreach ($this->terms as $term) {
 			$text = $document->getField($term->getDataField());
@@ -206,7 +223,7 @@ class NateGoSearchIndexer
 			}
 
 			$indexed_ids =
-				$this->db->implodeArray($this->document_ids, 'integer');
+				$this->db->implodeArray($this->clear_document_ids, 'integer');
 
 			$delete_sql = sprintf('delete from %s where document_id in (%s)',
 				$this->index_table,
@@ -231,7 +248,7 @@ class NateGoSearchIndexer
 				$keyword = array_pop($this->keywords);
 			}
 
-			$this->document_ids = array();
+			$this->clear_document_ids = array();
 
 			$this->db->commit();
 		} catch (SwatDBException $e) {
