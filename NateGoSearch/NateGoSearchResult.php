@@ -101,6 +101,17 @@ class NateGoSearchResult
 	}
 
 	/**
+	 * Gets words that were misspelled in the search query
+	 *
+	 * @return array words that were misspelled in the search query. The array
+	 *                is of the form incorrect => correct.
+	 */
+	public function &getMisspellings()
+	{
+		return $this->misspellings;
+	}
+
+	/**
 	 * Gets the unique identifier of this search result in the results table
 	 *
 	 * NateGoSearch stores all search results in the same table. The results of
