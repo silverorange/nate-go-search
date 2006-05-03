@@ -11,6 +11,10 @@ require_once 'SwatDB/SwatDB.php';
 /**
  * Indexes documents using the NateGo search algorithm
  *
+ * If a Porter-Stemming class is defined, it is used on all indexed keywords.
+ * The default PHP implementation of Porter-Stemming is licenced under the GPL
+ * and is thus not distributable with NateGoSearch.
+ *
  * @package   NateGoSearch
  * @copyright 2006 silverorange
  */

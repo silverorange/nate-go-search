@@ -37,6 +37,10 @@ require_once 'SwatDB/SwatDB.php';
  * the {@link NateGoSearchQuery::find()} method may only be called once per
  * page request.
  *
+ * If a Porter-Stemming class is defined, it is used on all query keywords. The
+ * default PHP implementation of Porter-Stemming is licenced under the GPL and
+ * is thus not distributable with NateGoSearch.
+ *
  * @package   NateGoSearch
  * @copyright 2006 silverorange
  */
