@@ -191,13 +191,18 @@ class NateGoSearchIndexer
 
 			$tok = strtok($text, ' ');
 			while ($tok !== false) {
-				if (!in_array($tok, $this->unindexed_words)) {
+				if (class_exists('PorterStemmer'))
+					$keyword = PorterStemmer::Stem($tok);
+				else
+					$keyword = $tok;
+
+				if (!in_array($keyword, $this->unindexed_words)) {
 					$location++;
 					if ($this->max_word_length !== null &&
-						strlen($tok) > $this->max_word_length)
-						$tok = substr($tok, 0, $this->max_word_length);
+						strlen($keyowrd) > $this->max_word_length)
+						$keyword = substr($keyword, 0, $this->max_word_length);
 
-					$this->keywords[] = new NateGoSearchKeyword($tok, $id,
+					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
 						$term->getWeight(), $location, $this->document_type);
 				}
 				$tok = strtok(' ');

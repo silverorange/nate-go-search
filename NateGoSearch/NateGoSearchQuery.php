@@ -94,21 +94,26 @@ class NateGoSearchQuery
 
 		$results = new NateGoSearchResult($id, $keywords);
 
+		if ($this->spell_checker !== null)
+			$results->addMisspellings(
+				$this->spell_checker->getMisspellingsInPhrase($keywords));
+
 		$tok = strtok($keywords, ' ');
 		while ($tok) {
-			if (in_array($tok, $this->blocked_words))
-				$results->addBlockedWords($tok);
+			if (class_exists('PorterStemmer'))
+				$keyword = PorterStemmer::Stem($tok);
 			else
-				$results->addSearchedWords($tok);
+				$keyword = $tok;
+
+			if (in_array($keyword, $this->blocked_words))
+				$results->addBlockedWords($keyword);
+			else
+				$results->addSearchedWords($keyword);
 
 			$tok = strtok(' ');
 		}
 
 		$keywords = implode(' ', $results->getSearchedWords());
-
-		if ($this->spell_checker !== null)
-			$results->addMisspellings(
-				$this->spell_checker->getMisspellingsInPhrase($keywords));
 
 		if (count($this->document_types) > 0) {
 			SwatDB::executeStoredProc($this->db, 'nateGoSearch',
