@@ -108,7 +108,7 @@ class NateGoSearchIndexer
 	protected $new = false;
 
 	/**
-	 * Whether or not keyowrds for indexed documents are appended to existing
+	 * Whether or not keywords for indexed documents are appended to existing
 	 * keywords
 	 *
 	 * @var boolean
@@ -203,7 +203,7 @@ class NateGoSearchIndexer
 				if (!in_array($keyword, $this->unindexed_words)) {
 					$location++;
 					if ($this->max_word_length !== null &&
-						strlen($keyowrd) > $this->max_word_length)
+						strlen($keyword) > $this->max_word_length)
 						$keyword = substr($keyword, 0, $this->max_word_length);
 
 					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
