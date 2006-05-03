@@ -93,7 +93,8 @@ class NateGoSearchSpellChecker
 	 *
 	 * @param string $phrase the phrase to check.
 	 *
-	 * @return array a list of of misspelled words in the given phrase.
+	 * @return array a list of of misspelled words in the given phrase. The
+	 *                array is of the form incorrect => correct.
 	 */
 	public function &getMisspellingsInPhrase($phrase)
 	{
