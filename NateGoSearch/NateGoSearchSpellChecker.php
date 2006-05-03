@@ -56,7 +56,7 @@ class NateGoSearchSpellChecker
 	 */
 	public function loadMisspellingsFromFile($filename)
 	{
-		$misspellings_file = file($filename);
+		$misspellings_file = file($filename, true);
 
 		foreach ($misspellings_file as $line) {
 			$words = explode(',', rtrim($line));
