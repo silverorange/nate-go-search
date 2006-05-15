@@ -12,6 +12,7 @@
 class NateGoSearchResult
 {
 	protected $unique_id;
+	protected $query_string;
 	protected $blocked_words = array();
 	protected $searched_words = array();
 	protected $misspellings = array();
@@ -21,12 +22,15 @@ class NateGoSearchResult
 	 *
 	 * @param string $unique_id the unique identifier of the search results in
 	 *                           the results table.
+	 * @param string $query_string the query that was entered by the user after
+	 *                              normalizing and formatting.
 	 *
 	 * @see NateGoSearchResult::getUniqueId()
 	 */
-	public function __construct($unique_id)
+	public function __construct($unique_id, $query_string)
 	{
 		$this->unique_id = $unique_id;
+		$this->query_string = $query_string;
 	}
 
 	/**
@@ -126,6 +130,20 @@ class NateGoSearchResult
 	public function getUniqueId()
 	{
 		return $this->unique_id;
+	}
+
+	/**
+	 * Gets the query string entered by the user
+	 *
+	 * The query string is a normalized version of the keywords entered by the
+	 * user. The query string keywords are not stemmed even if a porter stemmer
+	 * exists. This string is useful to collect normalized search statistics.
+	 *
+	 * @return string
+	 */
+	public function getQueryString()
+	{
+		return $this->query_string;
 	}
 
 	/**
