@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SRC="/so/packages/nategosearch/work-dave/sql"
+SRC="/so/packages/nate-go-search/work-dave/sql"
 
 if [ -z $1 ]; then
     echo "need destination db name"

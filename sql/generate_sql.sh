@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SRC="/so/packages/nategosearch/work-dave/sql"
+SRC="/so/packages/nate-go-search/work-dave/sql"
 DST="${SRC}/statements.sql"
 
 #
