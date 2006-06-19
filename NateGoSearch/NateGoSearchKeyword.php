@@ -12,11 +12,16 @@
  */
 class NateGoSearchKeyword
 {
+	// {{{ protected properties
+
 	protected $word;
 	protected $document_id;
 	protected $weight;
 	protected $location;
 	protected $document_type;
+
+	// }}}
+	// {{{ public function __construct()
 
 	/**
 	 * Creates a new indexed keyword
@@ -40,6 +45,9 @@ class NateGoSearchKeyword
 		$this->document_type = $document_type;
 	}
 
+	// }}}
+	// {{{ public function getWord()
+
 	/**
 	 * @return string the word this keyword represents.
 	 */
@@ -47,6 +55,9 @@ class NateGoSearchKeyword
 	{
 		return $this->word;
 	}
+
+	// }}}
+	// {{{ public function getDocumentId()
 
 	/**
 	 * @return mixed an identifier for the document containing this keyword.
@@ -56,6 +67,9 @@ class NateGoSearchKeyword
 		return $this->document_id;
 	}
 
+	// }}}
+	// {{{ public function getWeight()
+
 	/**
 	 * @return integer a weight for this keyword.
 	 */
@@ -63,6 +77,9 @@ class NateGoSearchKeyword
 	{
 		return $this->weight;
 	}
+
+	// }}}
+	// {{{ public function getLocation()
 
 	/**
 	 * @return integer the word location of the keyword in the document. First
@@ -73,6 +90,9 @@ class NateGoSearchKeyword
 		return $this->location;
 	}
 
+	// }}}
+	// {{{ public function getDocumentType()
+
 	/**
 	 * @return integer the document type this keyword's document belongs to.
 	 */
@@ -80,6 +100,8 @@ class NateGoSearchKeyword
 	{
 		return $this->document_type;
 	}
+
+	// }}}
 }
 
 ?>

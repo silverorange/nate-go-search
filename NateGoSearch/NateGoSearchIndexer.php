@@ -20,6 +20,8 @@ require_once 'SwatDB/SwatDB.php';
  */
 class NateGoSearchIndexer
 {
+	// {{{ protected properties
+
 	/**
 	 * A list of search terms to index documents by
 	 *
@@ -118,6 +120,9 @@ class NateGoSearchIndexer
 	 */
 	protected $append = false;
 
+	// }}}
+	// {{{ public function __construct()
+
 	/**
 	 * Creates a search indexer with the given document type
 	 *
@@ -144,6 +149,9 @@ class NateGoSearchIndexer
 		$this->append = $append;
 	}
 
+	// }}}
+	// {{{ public function getmaximumWordLength()
+
 	/**
 	 * Sets the maximum length of words in the index
 	 *
@@ -155,6 +163,9 @@ class NateGoSearchIndexer
 	{
 		$this->max_word_length = ($length === null) ? null : (integer)$length;
 	}
+
+	// }}}
+	// {{{ public function addTerm()
 
 	/**
 	 * Adds a search term to this index
@@ -170,6 +181,9 @@ class NateGoSearchIndexer
 	{
 		$this->terms[] = $term;
 	}
+
+	// }}}
+	// {{{ public function index()
 
 	/**
 	 * Indexes a document
@@ -213,6 +227,9 @@ class NateGoSearchIndexer
 			}
 		}
 	}
+
+	// }}}
+	// {{{ public function commit()
 
 	/**
 	 * Commits keywords indexed by this indexer to the database index table
@@ -266,6 +283,9 @@ class NateGoSearchIndexer
 		}
 	}
 
+	// }}}
+	// {{{ public function addUnindexedWords()
+
 	/**
 	 * Adds words to the list of words that are not to be indexed
 	 *
@@ -281,6 +301,8 @@ class NateGoSearchIndexer
 		$this->unindexed_words = array_merge($this->unindexed_words, $words);
 	}
 
+	// }}}
+	// {{{ public static function formatKeywords()
 	/**
 	 * Filters a string to prepare if for indexing
 	 *
@@ -321,6 +343,9 @@ class NateGoSearchIndexer
 		return $text;
 	}
 
+	// }}}
+	// {{{ public static function &getDefaultUnindexedWords()
+
 	/**
 	 * Gets a defalt list of words that are not indexed by a search indexer
 	 *
@@ -342,6 +367,9 @@ class NateGoSearchIndexer
 		return $words;
 	}
 
+	// }}}
+	// {{{ protected function clear()
+
 	/**
 	 * Clears this search index
 	 *
@@ -358,6 +386,9 @@ class NateGoSearchIndexer
 		SwatDB::exec($this->db, $sql);
 	}
 
+	// }}}
+	// {{{ protected function __finalize()
+
 	/**
 	 * Class finalizer calls commit() automatically
 	 *
@@ -367,6 +398,8 @@ class NateGoSearchIndexer
 	{
 		$this->commit();
 	}
+
+	// }}}
 }
 
 ?>

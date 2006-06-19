@@ -12,6 +12,8 @@
  */
 class NateGoSearchTerm
 {
+	// {{{ protected properties
+
 	/**
 	 * The name of the document field to index
 	 *
@@ -30,6 +32,9 @@ class NateGoSearchTerm
 	 */
 	protected $weight;
 
+	// }}}
+	// {{{ public function __construct()
+
 	/**
 	 * Creates a new search term
 	 *
@@ -41,6 +46,9 @@ class NateGoSearchTerm
 		$this->data_field = $data_field;
 		$this->weight = $weight;
 	}
+
+	// }}}
+	// {{{ public function segtWeight()
 
 	/**
 	 * Sets the weight of this term
@@ -54,6 +62,9 @@ class NateGoSearchTerm
 		$this->weight = $weight;
 	}
 
+	// }}}
+	// {{{ public function getDataField()
+
 	/**
 	 * Gets the name of the document field this term represents
 	 *
@@ -63,6 +74,9 @@ class NateGoSearchTerm
 	{
 		return $this->data_field;
 	}
+
+	// }}}
+	// {{{ public function getWeight()
 
 	/**
 	 * Gets the weight of this term
@@ -75,6 +89,8 @@ class NateGoSearchTerm
 	{
 		return $this->weight;
 	}
+
+	// }}}
 }
 
 ?>

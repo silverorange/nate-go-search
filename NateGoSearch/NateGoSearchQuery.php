@@ -46,11 +46,15 @@ require_once 'SwatDB/SwatDB.php';
  */
 class NateGoSearchQuery
 {
+	// {{{ protected properties
+
 	protected $document_types = array();
 	protected $blocked_words = array();
 	protected $spell_checker;
-
 	protected $db;
+
+	// }}}
+	// {{{ public function __construct()
 
 	/**
 	 * @param MDB2_Driver_Common $db
@@ -59,6 +63,9 @@ class NateGoSearchQuery
 	{
 		$this->db = $db;
 	}
+
+	// }}}
+	// {{{ public function addDocumentType()
 
 	/**
 	 * Adds a document type to be searched by this query
@@ -72,11 +79,17 @@ class NateGoSearchQuery
 			$this->document_types[] = $type;
 	}
 
+	// }}}
+	// {{{ public function &getBlockedWords()
+
 	protected function &getBlockedWords()
 	{
 		$blocked_words = array();
 		return $blocked_words;
 	}
+
+	// }}}
+	// {{{ public function query()
 
 	/**
 	 * Queries the NateGo index with a set of keywords
@@ -132,6 +145,9 @@ class NateGoSearchQuery
 		return $results;
 	}
 
+	// }}}
+	// {{{ public function setSpellChecker()
+
 	/**
 	 * Sets the spell checker used by this query
 	 *
@@ -144,6 +160,9 @@ class NateGoSearchQuery
 	{
 		$this->spell_checker = $spell_checker;
 	}
+
+	// }}}
+	// {{{ public function quoteArray()
 
 	/**
 	 * Quotes a PHP array into a PostgreSQL array
@@ -165,6 +184,8 @@ class NateGoSearchQuery
 
 		return $return;
 	}
+
+	// }}}
 }
 
 ?>

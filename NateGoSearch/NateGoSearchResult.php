@@ -11,11 +11,16 @@
  */
 class NateGoSearchResult
 {
+	// {{{ protected properties
+
 	protected $unique_id;
 	protected $query_string;
 	protected $blocked_words = array();
 	protected $searched_words = array();
 	protected $misspellings = array();
+
+	// }}}
+	// {{{ public function __construct()
 
 	/**
 	 * Builds a new search result
@@ -32,6 +37,9 @@ class NateGoSearchResult
 		$this->unique_id = $unique_id;
 		$this->query_string = $query_string;
 	}
+
+	// }}}
+	// {{{ public function addBlockedWords()
 
 	/**
 	 * Adds a word to the list of blocked words
@@ -50,6 +58,9 @@ class NateGoSearchResult
 		$this->blocked_words = array_merge($this->blocked_words, $words);
 	}
 
+	// }}}
+	// {{{ public function addSearchWords()
+
 	/**
 	 * Adds a word to the list of searched words
 	 *
@@ -67,6 +78,9 @@ class NateGoSearchResult
 		$this->searched_words = array_merge($this->searched_words, $words);
 	}
 
+	// }}}
+	// {{{ public function addMisspellings()
+
 	/**
 	 * Adds misspellings to this result object
 	 *
@@ -77,6 +91,9 @@ class NateGoSearchResult
 	{
 		$this->misspellings = array_merge($this->misspellings, $misspellings);
 	}
+
+	// }}}
+	// {{{ public function &getBlockedWords()
 
 	/**
 	 * Gets words that were entered but were not searched for
@@ -89,6 +106,9 @@ class NateGoSearchResult
 	{
 		return $this->blocked_words;
 	}
+
+	// }}}
+	// {{{ public function &getSearchedWords()
 
 	/**
 	 * Gets words that were entered and were searched for
@@ -104,6 +124,9 @@ class NateGoSearchResult
 		return $this->searched_words;
 	}
 
+	// }}}
+	// {{{ public function &getMisspellings()
+
 	/**
 	 * Gets words that were misspelled in the search query
 	 *
@@ -114,6 +137,9 @@ class NateGoSearchResult
 	{
 		return $this->misspellings;
 	}
+
+	// }}}
+	// {{{ public function getUniqueId()
 
 	/**
 	 * Gets the unique identifier of this search result in the results table
@@ -132,6 +158,9 @@ class NateGoSearchResult
 		return $this->unique_id;
 	}
 
+	// }}}
+	// {{{ public function getQueryString()
+
 	/**
 	 * Gets the query string entered by the user
 	 *
@@ -146,6 +175,9 @@ class NateGoSearchResult
 		return $this->query_string;
 	}
 
+	// }}}
+	// {{{ public function getResultTable()
+
 	/**
 	 * Gets the name of the table that NateGoSearch results are stored in
 	 *
@@ -158,6 +190,9 @@ class NateGoSearchResult
 	{
 		return 'NateGoSearchResult';
 	}
+
+	// }}}
+	// {{{ public function getDocumentIdField()
 
 	/**
 	 * Gets the name of the document identifier field within the results table
@@ -174,6 +209,9 @@ class NateGoSearchResult
 		return 'document_id';
 	}
 
+	// }}}
+	// {{{ public static function formatMisspellings()
+
 	/**
 	 * Formats a list of misspelled keywords into an XHTML string
 	 *
@@ -186,6 +224,8 @@ class NateGoSearchResult
 		if (!is_array($misspellings))
 			$misspellings = array($misspellings);
 	}
+
+	// }}}
 }
 
 ?>

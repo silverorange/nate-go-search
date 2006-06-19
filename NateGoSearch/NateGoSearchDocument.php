@@ -11,6 +11,8 @@
  */
 class NateGoSearchDocument
 {
+	// {{{ protected properties
+
 	/**
 	 * The name of the data field that contains the document identifier
 	 *
@@ -29,6 +31,9 @@ class NateGoSearchDocument
 	 */
 	protected $data;
 
+	// }}}
+	// {{{ public function __construct()
+
 	/**
 	 * Creates a new search document
 	 *
@@ -45,6 +50,9 @@ class NateGoSearchDocument
 		$this->id_field = $id_field;
 	}
 
+	// }}}
+	// {{{ public function getId()
+
 	/**
 	 * Gets the identifier of this document
 	 *
@@ -56,6 +64,9 @@ class NateGoSearchDocument
 	{
 		return $this->data->{$this->id_field};
 	}
+
+	// }}}
+	// {{{ public function getField()
 
 	/**
 	 * Gets a field of this document by name
@@ -70,6 +81,8 @@ class NateGoSearchDocument
 		// TODO: throw exception for undefined field
 		return $this->data->$field_name;
 	}
+
+	// }}}
 }
 
 ?>

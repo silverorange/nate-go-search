@@ -14,6 +14,8 @@
  */
 class NateGoSearchSpellChecker
 {
+	// {{{ protected properties
+
 	/**
 	 * A list of misspelled words and their replacement spelling
 	 *
@@ -22,6 +24,9 @@ class NateGoSearchSpellChecker
 	 * @var array
 	 */
 	protected $misspellings = array();
+
+	// }}}
+	// {{{ public function __construct()
 
 	/**
 	 * Creates a new light-weight spell checker
@@ -36,6 +41,9 @@ class NateGoSearchSpellChecker
 		if (is_array($misspellings))
 			$this->misspellings = $misspellings;
 	}
+
+	// }}}
+	// {{{ public function loadMisspellingsFromFile()
 
 	/**
 	 * Loads a list of misspellings from a text file
@@ -65,6 +73,9 @@ class NateGoSearchSpellChecker
 		}
 	}
 
+	// }}}
+	// {{{ public function addMispellings()
+
 	/**
 	 * Adds a list of misspellings to the list of misspellings in this spell
 	 * checker
@@ -78,6 +89,9 @@ class NateGoSearchSpellChecker
 				array_merge($this->misspellings, $misspellings);
 	}
 
+	// }}}
+	// {{{ public function &getMisspellings()
+
 	/**
 	 * Gets the dictionary of misspelled words of this spell checker
 	 *
@@ -87,6 +101,9 @@ class NateGoSearchSpellChecker
 	{
 		return $this->misspellings;
 	}
+
+	// }}}
+	// {{{ public function &getMisspellingsInPhrase()
 
 	/**
 	 * Checks each word of a phrase for misspellings
@@ -109,6 +126,9 @@ class NateGoSearchSpellChecker
 		return $misspellings;
 	}
 
+	// }}}
+	// {{{ public function getProperSpelling()
+
 	/**
 	 * Gets a phrase with all its misspelled words corrected
 	 *
@@ -130,6 +150,8 @@ class NateGoSearchSpellChecker
 
 		return $phrase;
 	}
+
+	// }}}
 }
 
 ?>
