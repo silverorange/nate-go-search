@@ -103,9 +103,9 @@ class NateGoSearchIndexer
 	 *
 	 * @var boolean
 	 *
-	 * @see NateGoSearch::__construct()
-	 * @see NateGoSearch::commit()
-	 * @see NateGoSearch::clear()
+	 * @see NateGoSearchIndexer::__construct()
+	 * @see NateGoSearchIndexer::commit()
+	 * @see NateGoSearchIndexer::clear()
 	 */
 	protected $new = false;
 
@@ -115,8 +115,8 @@ class NateGoSearchIndexer
 	 *
 	 * @var boolean
 	 *
-	 * @see NateGoSearch::__construct()
-	 * @see NateGoSearch::commit()
+	 * @see NateGoSearchIndexer::__construct()
+	 * @see NateGoSearchIndexer::commit()
 	 */
 	protected $append = false;
 
