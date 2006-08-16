@@ -1,3 +1,0 @@
-NateGoSearchIndex.sql
-NateGoSearchQueue.sql
-NateGoSearchResult.sql
