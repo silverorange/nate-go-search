@@ -35,7 +35,7 @@
  *
  * Returns NULL.
  */
-create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) RETURNS INT AS '
+create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) RETURNS INT AS $$
 	DECLARE
 		param_keywords ALIAS FOR $1;
 		param_document_types ALIAS FOR $2;
@@ -52,7 +52,7 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 		local_wordcount := 0;
 
 		--clear out old search results
-		delete from NateGoSearchResult where createdate < (CURRENT_TIMESTAMP - interval ''5 minutes'');
+		delete from NateGoSearchResult where createdate < (CURRENT_TIMESTAMP - interval '5 minutes');
 
 		create temporary table TemporaryKeyword (
 			document_id integer,
@@ -64,7 +64,7 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 
 		WHILE local_pos != 0 LOOP
 			BEGIN
-				local_pos := position('' '' in local_keywords);
+				local_pos := position(' ' in local_keywords);
 				if local_pos = 0 then local_word := local_keywords;
 				else local_word = substring(local_keywords from 0 for local_pos);
 				end if;
@@ -121,4 +121,4 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 
 		return NULL;
 	END;
-' LANGUAGE 'plpgsql';
+$$ LANGUAGE 'plpgsql';
