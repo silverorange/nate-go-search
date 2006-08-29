@@ -251,9 +251,11 @@ class NateGoSearchIndexer
 			$indexed_ids =
 				$this->db->implodeArray($this->clear_document_ids, 'integer');
 
-			$delete_sql = sprintf('delete from %s where document_id in (%s)',
+			$delete_sql = sprintf('delete from %s
+				where document_id in (%s) and document_type = %s',
 				$this->index_table,
-				$indexed_ids);
+				$indexed_ids,
+				$this->document_type);
 
 			SwatDB::exec($this->db, $delete_sql);
 
