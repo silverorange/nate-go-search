@@ -43,7 +43,7 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 
 		local_pos int;
 		local_keywords varchar(255);
-		local_word varchar(32);
+		local_word varchar(255);
 		local_wordcount smallint;
 	BEGIN
 
@@ -57,7 +57,7 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 		create temporary table TemporaryKeyword (
 			document_id integer,
 			document_type integer,
-			word varchar(32),
+			word varchar(255),
 			location integer,
 			weight smallint
 		);
@@ -93,8 +93,8 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 
 		create temporary table TemporaryKeywordPair (
 			document_id int,
-			word1 varchar(32),
-			word2 varchar(32),
+			word1 varchar(255),
+			word2 varchar(255),
 			distance int
 		);
 
