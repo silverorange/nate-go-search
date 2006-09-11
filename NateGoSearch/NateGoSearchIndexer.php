@@ -150,7 +150,7 @@ class NateGoSearchIndexer
 	}
 
 	// }}}
-	// {{{ public function getmaximumWordLength()
+	// {{{ public function setMaximumWordLength()
 
 	/**
 	 * Sets the maximum length of words in the index
