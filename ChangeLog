@@ -1,0 +1,235 @@
+2006-09-11  nick
+
+	* [r10768]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Fix doc typo
+
+2006-08-29  gauthierm
+
+	* [r10394] nategosearch/trunk/sql/functions/nateGoSearch.sql:
+	  allow longer keywords
+	* [r10390]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  don't mangle other indexed documents with the same id but a
+	  different tag.
+
+2006-08-23  dave
+
+	* [r10131] nategosearch/trunk/package.php:
+	  PEAR package build file
+
+2006-08-22  gauthierm
+
+	* [r10061] nategosearch/trunk/sql/functions/nateGoSearch.sql:
+	  PostgreSQL 8.x support
+
+2006-08-16  dave
+
+	* [r9728] nategosearch/trunk/sql/create_sql.sh,
+	  nategosearch/trunk/sql/functions/functions.txt,
+	  nategosearch/trunk/sql/tables/tables.txt:
+	  creation makes this obsolete
+
+2006-08-15  dave
+
+	* [r9627] nategosearch/trunk/sql/create_sql.sh,
+	  nategosearch/trunk/sql/functions/functions.txt,
+	  nategosearch/trunk/sql/generate_sql.sh,
+	  nategosearch/trunk/sql/tables/tables.txt:
+	  simplify create scripts
+
+2006-07-23  gauthierm
+
+	* [r8344] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Fix @see tags.
+
+2006-06-19  dave
+
+	* [r7203]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchDocument.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchKeyword.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchResult.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchTerm.php:
+	  folding added
+
+2006-05-22  dave
+
+	* [r5904] nategosearch/trunk/sql/create_sql.sh,
+	  nategosearch/trunk/sql/generate_sql.sh:
+	  change path to match new package name
+
+2006-05-15  gauthierm
+
+	* [r5637] nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Added method to get normalized query string without being
+	  stemmed.
+
+2006-05-03  gauthierm
+
+	* [r5249] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Fix typos.
+	* [r5242] nategosearch/trunk/system,
+	  nategosearch/trunk/system/blocked-words.txt,
+	  nategosearch/trunk/system/misspellings.txt:
+	  Add misspellings and blocked words.
+	* [r5241]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Use include path for loading misspellings.
+	* [r5235] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Added license information about porter stemming.
+	* [r5234] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Support porter stemming if it exists.
+	* [r5233]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Documentation update.
+	* [r5232] nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Added method to get misspellings from search result.
+
+2006-05-02  gauthierm
+
+	* [r5224] nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Added method to add misspellings to result.
+	* [r5223] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  If a spell checker is used, check search words for spelling.
+	* [r5222]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Return misspellings by reference.
+	* [r5220] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Don't add clear ids twice.
+
+2006-05-02  dave
+
+	* [r5217] nategosearch/trunk/sql/create_sql.sh,
+	  nategosearch/trunk/sql/generate_sql.sh:
+	  clean up the sql create process
+
+2006-05-02  gauthierm
+
+	* [r5215] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Fix typo.
+	* [r5213] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Start of ability to check spellings on search queries.
+	* [r5212] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Updated documentation.
+	* [r5205]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  This only needs rtrim.
+	* [r5203] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Fix misnamed property.
+	* [r5202] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  Added a parameter to append document keywords to existing
+	  keywords.
+	* [r5190] nategosearch/trunk/sql/tables/NateGoSearchIndex.sql:
+	  Change tag to document_type and added an index on document id.
+	* [r5182] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  - Only read blocked words file once.
+	  - Remove newline chars from words read from blocked words file.
+
+2006-05-01  gauthierm
+
+	* [r5149] nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Use array_merge() instead of array addition as array_merge works
+	  and array
+	  addition doesn't. (I don't understand why).
+
+2006-04-30  gauthierm
+
+	* [r5107] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php:
+	  - Added a method to add words to the list of unindexed words.
+	  - Added a static method to get a default list of words to not
+	  index (not
+	  implemented yet).
+
+2006-04-29  gauthierm
+
+	* [r5102] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Documentation fix.
+
+2006-04-28  gauthierm
+
+	* [r5101]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Documentation fix and small code fix.
+	* [r5100]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  - Copied spell checker class from /so/phpinclude.
+	  - Updated and added docs, used PEAR docblocks.
+	  - PHP5-ified
+	* [r5098] nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Fix include paths.
+	* [r5097] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Documentation.
+
+2006-04-28  nrf
+
+	* [r5094] natego, nategosearch:
+	  rename package
+	* [r5093] natego/trunk/NateGo, natego/trunk/NateGoSearch,
+	  natego/trunk/NateGoSearch/NateGoSearchDocument.php,
+	  natego/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  natego/trunk/NateGoSearch/NateGoSearchKeyword.php,
+	  natego/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  natego/trunk/NateGoSearch/NateGoSearchTerm.php:
+	  Rename package
+
+2006-04-28  gauthierm
+
+	* [r5089] natego/trunk/NateGo/NateGoSearchQuery.php,
+	  natego/trunk/NateGo/NateGoSearchResult.php:
+	  Two new classes to enable searching the index. These are very
+	  rough and
+	  relatively undocumented.
+	* [r5078] natego/trunk/sql, natego/trunk/sql/functions,
+	  natego/trunk/sql/functions/nateGoSearch.sql,
+	  natego/trunk/sql/tables,
+	  natego/trunk/sql/tables/NateGoSearchIndex.sql,
+	  natego/trunk/sql/tables/NateGoSearchQueue.sql,
+	  natego/trunk/sql/tables/NateGoSearchResult.sql:
+	  Added SQL scripts for implementing NateGoSearch.
+	* [r5077] natego/trunk/NateGo/NateGoSearchIndexer.php,
+	  natego/trunk/NateGo/NateGoSearchKeyword.php:
+	  Rename tag as document type.
+
+2006-04-27  gauthierm
+
+	* [r5046] natego/trunk/NateGo/NateGoSearchIndexer.php:
+	  - Make filter text a public static method.
+	  - Use exec instead of query.
+	* [r5031] natego/trunk/NateGo/NateGoSearchKeyword.php:
+	  Added documentation.
+
+2006-04-26  gauthierm
+
+	* [r4997] natego/trunk/NateGo/NateGoSearchIndexer.php:
+	  Rename default table.
+	* [r4994] natego/trunk/NateGo/NateGoSearchIndexer.php,
+	  natego/trunk/NateGo/NateGoSearchKeyword.php:
+	  - Made indexer store index results in a database table.
+	  - Added commit() method to indexer.
+	  - Added protected clear() method to indexer.
+	  - Renamed $clear parameter to $new and made it work as
+	  advertised.
+	  - Added keyword class (needs documentation).
+	  - Added database parameter to constructor.
+	  - in filter method use SwatString::minimizeEntities().
+	* [r4977] natego/trunk/NateGo/NateGoSearchIndexer.php:
+	  Added documentation.
+	* [r4970] natego/trunk/NateGo,
+	  natego/trunk/NateGo/NateGoSearchDocument.php,
+	  natego/trunk/NateGo/NateGoSearchIndexer.php,
+	  natego/trunk/NateGo/NateGoSearchTerm.php:
+	  - Firet checkin of refactored NateGo search.
+	  - NateGoSearchIndexer needs documentation.
+
+2006-04-26  nrf
+
+	* [r4962] natego/trunk:
+	  new dir
+
