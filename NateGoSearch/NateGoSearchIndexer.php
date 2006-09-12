@@ -361,7 +361,7 @@ class NateGoSearchIndexer
 		static $words = array();
 
 		if (count($words) == 0) {
-			$words = file('system/blocked-words.txt', true);
+			$words = file('@DATA-DIR@/NateGoSearch/system/blocked-words.txt', true);
 			// remove line breaks
 			$words = array_map('rtrim', $words);
 		}

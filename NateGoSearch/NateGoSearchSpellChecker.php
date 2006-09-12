@@ -74,6 +74,17 @@ class NateGoSearchSpellChecker
 	}
 
 	// }}}
+	// {{{ public function getDefaultMisspellingsFilename()
+
+	/**
+	 * Gets a default misspellings filename
+	 */
+	public function getDefaultMisspellingsFilename()
+	{
+		return '@DATA-DIR@/NateGoSearch/system/misspellings.txt';
+	}
+
+	// }}}
 	// {{{ public function addMispellings()
 
 	/**

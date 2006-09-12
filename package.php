@@ -46,12 +46,12 @@ $package->addIgnore('package.php');
 $package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson', 'nathan@silverorange.com');
 $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier', 'mike@silverorange.com');
 
+$package->addReplacement('NateGoSearch/NateGoSearchIndexer.php', 'pear-config', '@DATA-DIR@', 'data_dir');
+$package->addReplacement('NateGoSearch/NateGoSearchSpellChecker.php', 'pear-config', '@DATA-DIR@', 'data_dir');
+
 $package->setPhpDep('5.0.5');
 $package->setPearinstallerDep('1.4.0');
-//$package->addPackageDepWithChannel('required', 'Swat', 'pear.silverorange.com', '0.0.4');
 $package->generateContents();
-
-//$package->addReplacement('package-info', 'pear-config', '@package_version@', 'version');
 
 if (isset($_GET['make']) || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')) {
 	$package->writePackageFile();
