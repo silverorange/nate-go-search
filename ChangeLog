@@ -1,3 +1,14 @@
+2006-09-12  nrf
+
+	* [r10892] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release
+	* [r10891]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php,
+	  nategosearch/trunk/package.php:
+	  Package data files better.
+
 2006-09-11  nick
 
 	* [r10768]
