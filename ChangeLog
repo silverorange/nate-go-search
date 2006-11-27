@@ -1,3 +1,13 @@
+2006-11-27  nrf
+
+	* [r13373] nategosearch/trunk/package.php:
+	  prepare for release of 1.0.1
+	* [r13372] nategosearch/trunk/package.php:
+	  prepare for release of 1.0.1
+	* [r13371] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.1
+
 2006-11-27  gauthierm
 
 	* [r13370] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
