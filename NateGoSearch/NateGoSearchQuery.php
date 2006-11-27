@@ -80,12 +80,21 @@ class NateGoSearchQuery
 	}
 
 	// }}}
-	// {{{ public function &getBlockedWords()
+	// {{{ public function addBlockedWords()
 
-	protected function &getBlockedWords()
+	/**
+	 * Adds words to the list of words that are not to be searched
+	 *
+	 * These may be words such as 'the', 'and' and 'a'.
+	 *
+	 * @param string|array $words the list of words not to be searched.
+	 */
+	public function addBlockedWords($words)
 	{
-		$blocked_words = array();
-		return $blocked_words;
+		if (!is_array($words))
+			$words = array((string)$words);
+
+		$this->blocked_words = array_merge($this->blocked_words, $words);
 	}
 
 	// }}}
@@ -183,6 +192,30 @@ class NateGoSearchQuery
 		$return.= ']';
 
 		return $return;
+	}
+
+	// }}}
+	// {{{ public static function &getDefaultBlockedWords()
+
+	/**
+	 * Gets a defalt list of words that are not searched by a search query 
+	 *
+	 * These words may be passed directly to the
+	 * {@link NateGoSearchQuery::addBlockedWords()} method.
+	 *
+	 * @return array a default list of words not to index.
+	 */
+	public static function &getDefaultBlockedWords()
+	{
+		static $words = array();
+
+		if (count($words) == 0) {
+			$words = file('@DATA-DIR@/NateGoSearch/system/blocked-words.txt', true);
+			// remove line breaks
+			$words = array_map('rtrim', $words);
+		}
+
+		return $words;
 	}
 
 	// }}}
