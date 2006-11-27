@@ -43,7 +43,7 @@ $package->setNotes($notes);
 
 $package->addIgnore('package.php');
 
-$package->addMaintainer('lead', 'nrf', 'Nathan Fredrickson', 'nathan@silverorange.com');
+$package->addMaintainer('developer', 'nrf', 'Nathan Fredrickson', 'nathan@silverorange.com');
 $package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier', 'mike@silverorange.com');
 
 $package->addReplacement('NateGoSearch/NateGoSearchIndexer.php', 'pear-config', '@DATA-DIR@', 'data_dir');
