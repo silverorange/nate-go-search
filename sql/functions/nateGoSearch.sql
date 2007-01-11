@@ -1,8 +1,8 @@
 /**
  * Performs a fulltext search.
  * 
- * No results are returned by this procedure. The results are stored in a
- * separate table accessed by a unique id. The table is called
+ * No search results are returned by this procedure. The results are stored
+ * in a separate table accessed by a unique id. The table is called
  * 'NateGoSearchResult' by default. This table does not get dropped after the
  * results are used. Subsequent searches will clear old search results from
  * the result table.
@@ -21,8 +21,10 @@
  * NateGoSearchResult table based on document type and unique id for each
  * specific document-type search.
  *
- * @param_words varchar(255): A list of words to search for. Words are
- *                            delimited by space characters.
+ * @param_keywords varchar(255): A list of words to search for. Words are
+ *                               delimited by space characters.
+ * @param_keywords_hash varchar(255): A hashed version of the keywords used
+ *                                    for cache table lookup.
  * @param_document_types integer[]: This is an array of document types to be
  *                                  searched. Document types are decided when
  *                                  the search index is created. If the list of
@@ -33,26 +35,43 @@
  *                               session id or some combination of time and a
  *                               hashing function.
  *
- * Returns NULL.
+ * Returns varchar(50). The unique id of the search result set is returned.
  */
-create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) RETURNS INT AS $$
+create or replace function nateGoSearch (varchar(255), varchar(50), integer[], varchar(50)) RETURNS varchar(50) AS $$
 	DECLARE
 		param_keywords ALIAS FOR $1;
-		param_document_types ALIAS FOR $2;
-		param_unique_id ALIAS FOR $3;
+		param_keywords_hash ALIAS FOR $2;
+		param_document_types ALIAS FOR $3;
+		param_unique_id ALIAS FOR $4;
 
 		local_pos int;
 		local_keywords varchar(255);
 		local_word varchar(255);
 		local_wordcount smallint;
+		local_unique_id varchar(50);
 	BEGIN
 
 		local_keywords := param_keywords;
 		local_pos := 1;
 		local_wordcount := 0;
 
-		--clear out old search results
-		delete from NateGoSearchResult where createdate < (CURRENT_TIMESTAMP - interval '5 minutes');
+		-- clear out old search results
+		delete from NateGoSearchCache where createdate < (CURRENT_TIMESTAMP - interval '5 minutes');
+		delete from NateGoSearchResult
+			where unique_id not in (select unique_id from NateGoSearchCache);
+
+		-- find results in cache table
+		select into local_unique_id unique_id from NateGoSearchCache where keywords_hash = param_keywords_hash;
+		if FOUND then
+			update NateGoSearchCache set createdate = CURRENT_TIMESTAMP
+				where keywords_hash = param_keywords_hash;
+
+			return local_unique_id;
+		else
+			-- no results found in cache table, add these results
+			insert into NateGoSearchCache (unique_id, keywords_hash, createdate)
+				values (param_unique_id, param_keywords_hash, CURRENT_TIMESTAMP);
+		end if;
 
 		create temporary table TemporaryKeyword (
 			document_id integer,
@@ -119,6 +138,6 @@ create or replace function nateGoSearch (varchar(255), integer[], varchar(50)) R
 		drop table TemporaryKeywordPair;
 		drop table TemporaryKeyword;
 
-		return NULL;
+		return param_unique_id;
 	END;
 $$ LANGUAGE 'plpgsql';
