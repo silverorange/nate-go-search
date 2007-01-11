@@ -1,3 +1,21 @@
+2007-01-11  gauthierm
+
+	* [r14299] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchResult.php:
+	  Small changes to NateGoSearch PHP code to allow keyword caching.
+	* [r14297] nategosearch/trunk/sql/functions/nateGoSearch.sql:
+	  Change nateGoSearch() function to work with caching.
+	* [r14295] nategosearch/trunk/sql/tables/NateGoSearchCache.sql:
+	  A cache table for keyword searches.
+
+2006-11-27  gauthierm
+
+	* [r13375] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.2
+	* [r13374] nategosearch/trunk/package.php:
+	  add data_dir replacement for query object
+
 2006-11-27  nrf
 
 	* [r13373] nategosearch/trunk/package.php:
