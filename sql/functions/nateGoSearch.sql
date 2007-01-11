@@ -56,7 +56,7 @@ create or replace function nateGoSearch (varchar(255), varchar(50), integer[], v
 		local_wordcount := 0;
 
 		-- clear out old search results
-		delete from NateGoSearchCache where createdate < (CURRENT_TIMESTAMP - interval '5 minutes');
+		delete from NateGoSearchCache where createdate < (CURRENT_TIMESTAMP - interval '30 minutes');
 		delete from NateGoSearchResult
 			where unique_id not in (select unique_id from NateGoSearchCache);
 
