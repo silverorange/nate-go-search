@@ -210,6 +210,26 @@ class NateGoSearchResult
 	}
 
 	// }}}
+	// {{{ public function setUniqueId()
+
+	/**
+	 * Sets the unique identifier of this search result in the results table
+	 *
+	 * NateGoSearch stores all search results in the same table. The results of
+	 * a specific query may be gathered by selecting results from the database
+	 * with the appropriate unique id.
+	 *
+	 * @paramt string $id the unique identifier of this search result in the
+	 *                     results table.
+	 *
+	 * @see NateGoSearchResult::getUniqueId()
+	 */
+	public function setUniqueId($id)
+	{
+		$this->unique_id = (string)$id;
+	}
+
+	// }}}
 	// {{{ public static function formatMisspellings()
 
 	/**

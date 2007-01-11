@@ -115,8 +115,9 @@ class NateGoSearchQuery
 	{
 		static $unique_counter = 0;
 
-		$id = md5(uniqid($unique_counter, true));
+		$id = sha1(uniqid($unique_counter, true));
 		$keywords = NateGoSearchIndexer::formatKeywords($keywords);
+		$keywords_hash = sha1($keywords);
 
 		$results = new NateGoSearchResult($id, $keywords);
 
@@ -142,13 +143,17 @@ class NateGoSearchQuery
 		$keywords = implode(' ', $results->getSearchedWords());
 
 		if (count($this->document_types) > 0) {
-			SwatDB::executeStoredProc($this->db, 'nateGoSearch',
+			$unique_id = SwatDB::executeStoredProcOne(
+				$this->db, 'nateGoSearch',
 				array(
 					$this->db->quote($keywords, 'text'),
+					$this->db->quote($keywords_hash, 'text'),
 					$this->quoteArray($this->document_types),
 					$this->db->quote($id, 'text')));
 
 			$unique_counter++;
+
+			$results->setUniqueId($unique_id);
 		}
 
 		return $results;
