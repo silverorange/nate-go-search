@@ -11,12 +11,18 @@ require_once 'SwatDB/SwatDB.php';
 /**
  * Indexes documents using the NateGo search algorithm
  *
- * If a Porter-Stemming class is defined, it is used on all indexed keywords.
- * The default PHP implementation of Porter-Stemming is licenced under the GPL
- * and is thus not distributable with NateGoSearch.
+ * If the PECL <i>stem</i> package is loaded, English stemming is applied to all
+ * indexed keywords. See {@link http://pecl.php.net/package/stem/} for details
+ * about the PECL stem package. Support for stemming in other languages may
+ * be added in later releases of NateGoSearch.
+ *
+ * Otherwise, if a PorterStemmer class is defined, it is applied to all indexed 
+ * keywords. The most commonly available PHP implementation of the
+ * Porter-stemmer algorithm is licenced under the GPL, and is thus not
+ * distributable with the LGPL licensed NateGoSearch.
  *
  * @package   NateGoSearch
- * @copyright 2006 silverorange
+ * @copyright 2006-2007 silverorange
  */
 class NateGoSearchIndexer
 {
@@ -209,10 +215,7 @@ class NateGoSearchIndexer
 
 			$tok = strtok($text, ' ');
 			while ($tok !== false) {
-				if (class_exists('PorterStemmer'))
-					$keyword = PorterStemmer::Stem($tok);
-				else
-					$keyword = $tok;
+				$keyword = $this->stemKeyword($tok);
 
 				if (!in_array($keyword, $this->unindexed_words)) {
 					$location++;
@@ -399,6 +402,41 @@ class NateGoSearchIndexer
 	protected function __finalize()
 	{
 		$this->commit();
+	}
+
+	// }}}
+	// {{{ protected function stemKeyword()
+
+	/**
+	 * Stems a keyword
+	 *
+	 * The basic idea behind stemmming is described on the Wikipedia article on
+	 * {@link http://en.wikipedia.org/wiki/Stemming Stemming}.
+	 *
+	 * If the PECL <i>stem</i> package is loaded, English stemming is performed
+	 * on the <i>$keyword</i>. See {@link http://pecl.php.net/package/stem/}
+	 * for details about the PECL stem package.
+	 *
+	 * Otherwise, if a PorterStemmer class is defined, it is applied to the
+	 * <i>$keyword</i>. The most commonly available PHP implementation of the
+	 * Porter-stemmer algorithm is licenced under the GPL, and is thus not
+	 * distributable with the LGPL licensed NateGoSearch.
+	 *
+	 * If no stemming is available, stemming is not performed and the original
+	 * keyword is returned.
+	 *
+	 * @param string $keyword the keyword to stem.
+	 *
+	 * @return string the stemmed keyword.
+	 */
+	protected function stemKeword($keyword)
+	{
+		if (extension_loaded('stem'))
+			$keyword = stem($keyword, STEM_ENGLISH);
+		elseif (is_callable(array('PorterStemmer', 'Stem')))
+			$keyword = PorterStemmer::Stem($keyword);
+
+		return $keword;
 	}
 
 	// }}}
