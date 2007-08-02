@@ -437,7 +437,7 @@ class NateGoSearchIndexer
 		elseif (is_callable(array('PorterStemmer', 'Stem')))
 			$keyword = PorterStemmer::Stem($keyword);
 
-		return $keword;
+		return $keyword;
 	}
 
 	// }}}
