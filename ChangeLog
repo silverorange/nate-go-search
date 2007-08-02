@@ -1,5 +1,18 @@
 2007-08-02  gauthierm
 
+	* [r19086]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Fix the same careless typo in a different place. I'm so ashamed.
+
+2007-08-02  nrf
+
+	* [r19085] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.5
+
+2007-08-02  gauthierm
+
 	* [r19084]
 	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
 	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
