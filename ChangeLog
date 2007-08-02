@@ -1,3 +1,32 @@
+2007-08-01  gauthierm
+
+	* [r19019]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchDocument.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchKeyword.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchResult.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchTerm.php:
+	  Add license tag to all NateGoSearch source files.
+	* [r19018]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php:
+	  Use the PECL stem package if available to stem keywords in
+	  NateGoSearch.
+
+2007-01-11  gauthierm
+
+	* [r14302] nategosearch/trunk/sql/functions/nateGoSearch.sql:
+	  Make cache timeout longer.
+	  A
+
+2007-01-11  nrf
+
+	* [r14300] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.3
+
 2007-01-11  gauthierm
 
 	* [r14299] nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
