@@ -252,7 +252,7 @@ class NateGoSearchQuery
 	 *
 	 * @return string the stemmed keyword.
 	 */
-	protected function stemKeword($keyword)
+	protected function stemKeyword($keyword)
 	{
 		if (extension_loaded('stem'))
 			$keyword = stem($keyword, STEM_ENGLISH);
