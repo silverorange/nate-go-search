@@ -5,7 +5,7 @@ create table NateGoSearchIndex (
 
 	word varchar(32) not null,
 	weight integer not null,
-	location integer not null,
+	location integer not null
 );
 
 create index NateGoSearchIndex_document_id_index on NateGoSearchIndex(document_id);
