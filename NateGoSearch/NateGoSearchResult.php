@@ -1,5 +1,7 @@
 <?php
 
+require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
+
 /**
  * Represents the result of a search using NateGoSearch
  *
@@ -19,6 +21,7 @@ class NateGoSearchResult
 	protected $blocked_words = array();
 	protected $searched_words = array();
 	protected $misspellings = array();
+	protected $document_types = array();
 
 	// }}}
 	// {{{ public function __construct()
@@ -30,13 +33,18 @@ class NateGoSearchResult
 	 *                           the results table.
 	 * @param string $query_string the query that was entered by the user after
 	 *                              normalizing and formatting.
+	 * @param array $document_types an array of document types in this search
+	 *                               result. The array is indexed by type
+	 *                               shortname with type ids as values.
 	 *
 	 * @see NateGoSearchResult::getUniqueId()
 	 */
-	public function __construct($unique_id, $query_string)
+	public function __construct($unique_id, $query_string,
+		array $document_types)
 	{
 		$this->unique_id = $unique_id;
 		$this->query_string = $query_string;
+		$this->document_types = $document_types;
 	}
 
 	// }}}
@@ -208,6 +216,33 @@ class NateGoSearchResult
 	public function getDocumentIdField()
 	{
 		return 'document_id';
+	}
+
+	// }}}
+	// {{{ public function getDocumentType()
+
+	/**
+	 * Gets a document type identifier of this search result by shortname
+	 *
+	 * @param string $type_shortname the shortname of the document type to get.
+	 *
+	 * @return integer the identifier of the document type.
+	 *
+	 * @throws NateGoSearchDocumentTypeException if the provided shortname does
+	 *                                           not represent a document type
+	 *                                           of this search result.
+	 */
+	public function getDocumentType($type_shortname)
+	{
+		if (!array_key_exists($type_shortname, $this->document_types)) {
+			throw new NateGoSearchDocumentTypeException(
+				"Document type {$type_shortname} does not exist in this ".
+				"search result. Add the document type to the query object ".
+				"before calling the query() method to include this document ".
+				"in search results.", 0, $type_shortname);
+		}
+
+		return $this->document_types[$type_shortname];
 	}
 
 	// }}}

@@ -1,8 +1,10 @@
 <?php
 
+require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchIndexer.php';
 require_once 'NateGoSearch/NateGoSearchResult.php';
 require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
 require_once 'SwatDB/SwatDB.php';
 
 /**
@@ -11,24 +13,24 @@ require_once 'SwatDB/SwatDB.php';
  * This is the class used to actually search indexed keywords. Instances of
  * this class may search the index using the find() method. For example, to
  * search a database table called 'Article' indexed with a document type of
- * 1, use the following code:
+ * 'article', use the following code:
  *
  * <code>
  * $query = new NateGoSearchQuery($db);
- * $query->addDocumentType(1);
+ * $query->addDocumentType('article');
  * $result = $query->find('some keywords');
  *
  * $sql = 'select id, title from Article ' .
  *     'inner join %s on Article.id = %s.document_id and '.
- *     '%s.unique_id = \'%s\' and ' .
- *     '%s.document_type = %s';
+ *     '%s.unique_id = \'%s\' and %s.document_type = %s';
  *
  * $sql = sprintf($sql,
  *     $result->getResultTable(),
  *     $result->getResultTable(),
  *     $result->getResultTable(),
  *     $result->getUniqueId(),
- *     $result->getResultTable());
+ *     $result->getResultTable(),
+ *     $result->getDocumentType('article'));
  *
  * $articles = $db->query($sql);
  * </code>
@@ -77,13 +79,29 @@ class NateGoSearchQuery
 	/**
 	 * Adds a document type to be searched by this query
 	 *
-	 * @param integer $type the document type to add.
+	 * @param string $type_shortname the shortname of the document type to add.
+	 *
+	 * @see NateGoSearch::createDocumentType()
+	 *
+	 * @throws NateGoSearchDocumentTypeException if the document type shortname
+	 *                                           does not exist.
 	 */
-	public function addDocumentType($type)
+	public function addDocumentType($type_shortname)
 	{
-		$type = (integer)$type;
-		if (!in_array($type, $this->document_types))
-			$this->document_types[] = $type;
+		$type_shortname = (string)$type_shortname;
+
+		if (!array_key_exists($type_shortname, $this->document_types)) {
+			$type = NateGoSearch::getDocumentType($this->db, $type_shortname);
+
+			if ($type === null) {
+				throw new NateGoSearchDocumentTypeException(
+					"Document type {$type_shortname} does not exist and ".
+					"cannot be added to a query. Document types must be ".
+					"created before being used.", 0, $type_shortname);
+			}
+
+			$this->document_types[$type_shortname] = $type;
+		}
 	}
 
 	// }}}
@@ -126,7 +144,8 @@ class NateGoSearchQuery
 		$keywords = NateGoSearchIndexer::formatKeywords($keywords);
 		$keywords_hash = sha1($keywords);
 
-		$results = new NateGoSearchResult($id, $keywords);
+		$results = new NateGoSearchResult($id, $keywords,
+			$this->document_types);
 
 		if ($this->spell_checker !== null)
 			$results->addMisspellings(
@@ -193,10 +212,12 @@ class NateGoSearchQuery
 	 */
 	private function quoteArray($array, $type = 'integer')
 	{
+		$this->db->loadModule('Datatype');
+
 		$return = 'ARRAY[';
 
 		if (is_array($array))
-			$return.= $this->db->implodeArray($array, $type);
+			$return.= $this->db->datatype->implodeArray($array, $type);
 
 		$return.= ']';
 

@@ -1,8 +1,10 @@
 <?php
 
+require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchTerm.php';
 require_once 'NateGoSearch/NateGoSearchDocument.php';
 require_once 'NateGoSearch/NateGoSearchKeyword.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
 
 require_once 'Swat/SwatString.php';
 
@@ -133,7 +135,8 @@ class NateGoSearchIndexer
 	/**
 	 * Creates a search indexer with the given document type
 	 *
-	 * @param mixed $document_type the document tpye to index by.
+	 * @param string $document_type the shortname of the document type to
+	 *                               index by.
 	 * @param MDB2_Driver_Common $db the database connection used by this
 	 *                                indexer.
 	 * @param boolean $new if true, this is a new search index and all indexed
@@ -145,12 +148,24 @@ class NateGoSearchIndexer
 	 *                         may already exist for the document in the index.
 	 *                         Defaults to false.
 	 *
-	 * @see NateGoSearchIndexer::$document_type
+	 * @see NateGoSearch::createDocumentType()
+	 *
+	 * @throws NateGoSearchDocumentTypeException if the document type shortname
+	 *                                           does not exist.
 	 */
 	public function __construct($document_type, MDB2_Driver_Common $db,
 		$new = false, $append = false)
 	{
-		$this->document_type = $document_type;
+		$type = NateGoSearch::getDocumentType($db, $document_type);
+
+		if ($type === null) {
+			throw new NateGoSearchDocumentTypeException(
+				"Document type {$document_type} does not exist and cannot be ".
+				"indexed. Document types must be created before being used.",
+				0, $document_type);
+		}
+
+		$this->document_type = $type;
 		$this->db = $db;
 		$this->new = $new;
 		$this->append = $append;
