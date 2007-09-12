@@ -1,7 +1,7 @@
 create table NateGoSearchIndex (
 	document_id integer not null,
 	document_type integer not null constraint NateGoSearchResult_document_type
-		references NateGoSearchType(id),
+		references NateGoSearchType(id) on delete cascade,
 
 	word varchar(32) not null,
 	weight integer not null,
