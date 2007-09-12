@@ -4,4 +4,4 @@ create table NateGoSearchType (
 	primary key(id)
 );
 
-create index NateGoSearchType_shortname_index on NateGoSearchType(name);
+create index NateGoSearchType_shortname_index on NateGoSearchType(shortname);
