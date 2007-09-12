@@ -74,7 +74,7 @@ class NateGoSearch
 	public static function getDocumentType(MDB2_Driver_Common $db,
 		$type_shortname)
 	{
-		$type_shortname = (integer)$type_shortname;
+		$type_shortname = (string)$type_shortname;
 
 		$sql = sprintf('select id from NateGoSearchType
 			where shortname = %s',
@@ -100,7 +100,7 @@ class NateGoSearch
 	public static function removeDocumentType(MDB2_Driver_Common $db,
 		$type_shortname)
 	{
-		$type_shortname = (integer)$type_shortname;
+		$type_shortname = (string)$type_shortname;
 
 		$sql = sprintf('delete from NateGoSearchType where shortname = %s',
 			$db->quote($type_shortname, 'text'));
