@@ -1,3 +1,37 @@
+2007-09-12  gauthierm
+
+	* [r20172] nategosearch/trunk/NateGoSearch/NateGoSearch.php:
+	  Fix type casting.
+	* [r20171] nategosearch/trunk/sql/tables/NateGoSearchIndex.sql,
+	  nategosearch/trunk/sql/tables/NateGoSearchQueue.sql:
+	  Fix SQL create syntax.
+	* [r20170] nategosearch/trunk/sql/tables/NateGoSearchType.sql:
+	  Fix index name.
+	* [r20169] nategosearch/trunk/NateGoSearch/NateGoSearch.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchIndexer.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchQuery.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchResult.php,
+	  nategosearch/trunk/NateGoSearch/exceptions,
+	  nategosearch/trunk/NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php,
+	  nategosearch/trunk/sql/tables/NateGoSearchType.sql:
+	  Change NateGoSearch to use symbolic shortnames for document
+	  types. This will break existing users of NateGoSearch.
+	* [r20167] nategosearch/trunk/sql/tables/NateGoSearchIndex.sql,
+	  nategosearch/trunk/sql/tables/NateGoSearchQueue.sql,
+	  nategosearch/trunk/sql/tables/NateGoSearchResult.sql:
+	  Add cascade deletes.
+	* [r20157] nategosearch/trunk/sql/tables/NateGoSearchIndex.sql,
+	  nategosearch/trunk/sql/tables/NateGoSearchQueue.sql,
+	  nategosearch/trunk/sql/tables/NateGoSearchResult.sql:
+	  Add a table for symbolic shortnames for document types in
+	  nate-go-search. PHP needs to be updated to use these.
+
+2007-08-02  nrf
+
+	* [r19087] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.6
+
 2007-08-02  gauthierm
 
 	* [r19086]
