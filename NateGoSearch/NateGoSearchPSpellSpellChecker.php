@@ -1,6 +1,7 @@
 <?php
 
 require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
+require_once 'Swat/exceptions/SwatException.php';
 
 /**
  * A spell checker to correct commonly misspelled words and phrases using 
@@ -42,7 +43,8 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	{
 		if (!extension_loaded('pspell'))
 		{
-			throw Exception();
+			throw SwatException("You need to install the PSpell extension".
+								" in order to use NateGoSearchPSpellChecker");
 		}
 
 		// TODO: work in the other arguments for the pspell_new() function
