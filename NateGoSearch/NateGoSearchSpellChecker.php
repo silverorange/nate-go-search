@@ -24,9 +24,7 @@ abstract class NateGoSearchSpellChecker
 	 * @return array a list of of misspelled words in the given phrase. The
 	 *                array is of the form incorrect => correct.
 	 */
-	abstract public function &getMisspellingsInPhrase($phrase)
-	{
-	}
+	abstract public function &getMisspellingsInPhrase($phrase);
 
 	// }}}
 	// {{{ abstract public function getProperSpelling()
@@ -38,9 +36,7 @@ abstract class NateGoSearchSpellChecker
 	 *
 	 * @return string corrected phrase.
 	 */
-	abstract public function getProperSpelling($phrase)
-	{
-	}
+	abstract public function getProperSpelling($phrase);
 
 	// }}}
 }

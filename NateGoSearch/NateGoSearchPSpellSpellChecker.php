@@ -1,6 +1,6 @@
 <?php
 
-require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
+require_once 'NateGoSearchSpellChecker.php';
 require_once 'Swat/exceptions/SwatException.php';
 
 /**
@@ -28,7 +28,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * @var integer
 	 */
-	$dictionary;
+	private $dictionary;
 
 	// }}}
 	// {{{ public function __construct()
@@ -62,15 +62,15 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @return array a list of mispelled words in the given phrase. The array is
 	 *                in the form of incorrect => array(possible corrections)
 	 */
-	public function &getMispellingsInPhrase($phrase)
+	public function &getMisspellingsInPhrase($phrase)
 	{
 		$misspellings = array();
 
 		$exp_phrase = explode(' ', $phrase);
 
 		foreach ($exp_phrase as $word) {
-			if (!pspell_check($word))
-				$misspellings[$word] = pspell_suggest($word);
+			if (!pspell_check($this->dictionary, $word))
+				$misspellings[$word] = pspell_suggest($this->dictionary, $word);
 		}
 
 		return $misspellings;
