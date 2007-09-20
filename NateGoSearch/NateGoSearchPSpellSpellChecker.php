@@ -45,10 +45,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	public function __construct($language)
 	{
-		if (!extension_loaded('pspell'))
-		{
-			throw SwatException('You need to install the PSpell extension '.
-				'in order to use NateGoSearchPSpellChecker');
+		if (!extension_loaded('pspell')) {
+			throw SwatException('You need to install the Pspell extension '.
+				'in order to use NateGoSearchPSpellSpellChecker.');
 		}
 
 		// TODO: work in the other arguments for the pspell_new() function
