@@ -111,7 +111,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		// uses the first suggestion given by aspell as the replacement word
 		foreach ($misspellings as $incorrect => $correct)
 			$phrase =
-				str_replace(' '.$incorrect.' ', ' '.$correct[0].' ', $phrase);
+				str_replace(' '.$incorrect.' ', ' '.$correct.' ', $phrase);
 
 		$phrase = trim($phrase);
 
