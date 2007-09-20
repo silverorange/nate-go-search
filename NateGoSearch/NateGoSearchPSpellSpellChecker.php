@@ -22,7 +22,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ private properties
 
 	/**
-	 * The dictionary against which words are compared to for this spell checker
+	 * The dictionary against which words are compared for this spell checker
 	 *
 	 * This is the dictionary link identifier returned by pspell_new().
 	 *
