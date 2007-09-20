@@ -3,10 +3,9 @@
 /**
  * A light-weight spell checker to correct commonly misspelled words
  *
- * @todo This class probably does not belong in NateGoSearch but lives here for
- *       now.
- *
- * This class is an abstact base for any spell checkers built for NateGoSearch.
+ * This class was added to abstract spell checking from the NateGoSearchQuery
+ * class. It serves as an abstract base class for any spell checkers built for
+ * NateGoSearch.
  *
  * @package   NateGoSearch
  * @copyright 2004-2007 silverorange

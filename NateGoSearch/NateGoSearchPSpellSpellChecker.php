@@ -7,9 +7,6 @@ require_once 'Swat/exceptions/SwatException.php';
  * A spell checker to correct commonly misspelled words and phrases using 
  * the pspell extension for PHP. 
  *
- * @todo This class probably does not belong in NateGoSearch but lives here for
- *       now.
- *
  * This class adds the power of the Aspell libraries to spell checking, can be
  * used as an alternative to the light-weight NateGoSearchFileSpellChecker.
  *

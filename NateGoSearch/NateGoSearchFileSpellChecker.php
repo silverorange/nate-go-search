@@ -3,13 +3,8 @@
 require_once 'NateGoSearchSpellChecker.php';
 
 /**
- * A light-weight spell checker to correct commonly misspelled words
- *
- * @todo This class probably does not belong in NateGoSearch but lives here for
- *       now.
- *
- * This class was added to abstract spell checking from the NateGoSearchQuery
- * class.
+ * A light-weight, file-based spell checker to correct commonly misspelled
+ * words
  *
  * @package   NateGoSearch
  * @copyright 2007 silverorange
