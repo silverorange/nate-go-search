@@ -50,8 +50,12 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 				'in order to use NateGoSearchPSpellSpellChecker.');
 		}
 
-		// TODO: work in the other arguments for the pspell_new() function
-		$this->dictionary = pspell_new($language);
+		$this->dictionary = pspell_new($language, '', '', 'utf-8', PSPELL_FAST);
+
+		if ($this->dictionary === false) {
+			throw new SwatException("Could not create Pspell dictionary with ".
+				"language '{$language}'.");
+		}
 	}
 
 	// }}}
