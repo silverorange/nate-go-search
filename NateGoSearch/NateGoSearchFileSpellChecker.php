@@ -1,6 +1,6 @@
 <?php
 
-require_once 'NateGoSearchSpellChecker.php';
+require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
 
 /**
  * A light-weight, file-based spell checker to correct commonly misspelled
