@@ -80,8 +80,13 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$exp_phrase = explode(' ', $phrase);
 
 		foreach ($exp_phrase as $word) {
-			if (!pspell_check($this->dictionary, $word))
-				$misspellings[$word] = pspell_suggest($this->dictionary, $word);
+			if (!pspell_check($this->dictionary, $word)) {
+				$suggestions = pspell_suggest($this->dictionary, $word);
+				$suggestion = $this->getBestSuggestion($word, $suggestions);
+				if ($suggestion !== null) {
+					$misspellings[$word] = $suggestion;
+				}
+			}
 		}
 
 		return $misspellings;
@@ -111,6 +116,30 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$phrase = trim($phrase);
 
 		return $phrase;
+	}
+
+	// }}}
+	// {{{ private function getBestSuggestion()
+
+	/**
+	 * Gets the best suggestion of a misspelling from a list of suggestions
+	 *
+	 * @param string $misspelling the misspelled word.
+	 *
+	 * @param array $suggestions an array of suggestions.
+	 *
+	 * @return string the best suggestion in the set of suggestions. If no
+	 *                 suitable suggestion is found, null is returned.
+	 */
+	private function getBestSuggestion($misspelling, array $suggestions)
+	{
+		$suggestion = null;
+
+		if (count($suggestions) > 0) {
+			$suggestion = $suggestions[0];
+		}
+
+		return $suggestion;
 	}
 
 	// }}}
