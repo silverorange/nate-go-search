@@ -22,9 +22,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ private properties
 
 	/**
-	 * The dictionay for this spell checker
+	 * The dictionary words are checked against for this spell checker
 	 *
-	 * The dictionary used to check words against for this spell checker
+	 * This is the dictionary link identifier returned by pspell_new().
 	 *
 	 * @var integer
 	 */
@@ -34,10 +34,14 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ public function __construct()
 
 	/**
-	 * Creates a new PSpell spell checker
+	 * Creates a new Pspell spell checker
 	 *
-	 * @param string $language the language that this spell checker will be
-	 *                          used the correct.
+	 * @param string $language the language used by this spell checker. This
+	 *                          should be a two-letter ISO 639 language code
+	 *                          followed by an optional two digit ISO 3166
+	 *                          country code separated by a desh or underscore.
+	 *                          For example, 'en', 'en-CA' and 'en_CA' are
+	 *                          valid languages.
 	 */
 	public function __construct($language)
 	{
@@ -57,10 +61,10 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	/**
 	 * Checks each word of a phrase for mispellings
 	 *
-	 * @param string $phrase the phrase to check
+	 * @param string $phrase the phrase to check.
 	 *
 	 * @return array a list of mispelled words in the given phrase. The array is
-	 *                in the form of incorrect => array(possible corrections)
+	 *                in the form of incorrect => correct.
 	 */
 	public function &getMisspellingsInPhrase($phrase)
 	{
