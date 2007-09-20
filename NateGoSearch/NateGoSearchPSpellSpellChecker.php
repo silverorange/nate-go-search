@@ -1,6 +1,6 @@
 <?php
 
-require_once 'NateGoSearchSpellChecker.php';
+require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
 require_once 'Swat/exceptions/SwatException.php';
 
 /**
