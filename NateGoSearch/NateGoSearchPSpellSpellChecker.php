@@ -42,6 +42,10 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *                          country code separated by a desh or underscore.
 	 *                          For example, 'en', 'en-CA' and 'en_CA' are
 	 *                          valid languages.
+	 *
+	 * @throws SwatException if the Pspell extension is not available.
+	 * @throws SwatException if a dictionary in the specified language could
+	 *                       not be loaded.
 	 */
 	public function __construct($language)
 	{
