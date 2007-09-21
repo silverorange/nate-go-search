@@ -130,13 +130,27 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	private function getBestSuggestion($misspelling, array $suggestions)
 	{
-		$suggestion = null;
+		$best_suggestion = null;
 
 		if (count($suggestions) > 0) {
-			$suggestion = $suggestions[0];
+			$real_key = metaphone($misspelling);
+
+			// cycles throw each suggestion and compares the metaphone key
+			// to the metaphone key of the real word
+			foreach ($suggestions as $suggestion) {
+				$key = metaphone($suggestion);
+				if ($key === $real_key) {
+					$best_suggestion = $suggestion;
+					break;
+				}
+			}
+
+			// if there are no matching keys, use the first suggestion
+			if ($best_suggestion === null)
+				$best_suggestion = $suggestion[0];
 		}
 
-		return $suggestion;
+		return $best_suggestion;
 	}
 
 	// }}}
