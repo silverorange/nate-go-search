@@ -1,3 +1,115 @@
+2007-09-21  charles
+
+	* [r20483]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  getBestSuggestion() now uses the metaphone() function to decide
+	  which correction to use, if there are no matches it will use the
+	  first spelling listed.
+
+2007-09-20  gauthierm
+
+	* [r20445]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Whitespace
+	* [r20444]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchFileSpellChecker.php:
+	  
+	  Fix require path.
+	* [r20443]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchFileSpellChecker.php,
+	  
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  I think this todo can be safely removed.
+	* [r20442]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Misspellings are no longer returned as an array.
+	* [r20441]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Looks good to me except 'to for' is too many prepositions next
+	  to each other.
+	* [r20440]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Make getMisspellingsInPhrase() return the type of value
+	  documented in the parent class.
+
+2007-09-20  nick
+
+	* [r20439]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  I found this wording confusing. Mike - let me know if my
+	  re-write isn't
+	  appropriate.
+
+2007-09-20  gauthierm
+
+	* [r20438]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Added @throws tags.
+	* [r20437]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Do a TODO and throw an exception if the dictionary could not be
+	  loaded.
+	* [r20436]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Coding conventions and fix name of class referred to in
+	  exception text.
+	* [r20435]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Fix require path.
+	* [r20434]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Documentation cleanups.
+
+2007-09-19  nrf
+
+	* [r20422]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Follow conventions.
+	  - single quotes
+	  - whitespace
+	  - break line after space, before next word
+
+2007-09-19  charles
+
+	* [r20420]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchFileSpellChecker.php,
+	  
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Various syntax fixes needed after testing.
+	* [r20416]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  Throws an exception if the pspell extension isn't installed and
+	  informs the user.
+	* [r20412]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchFileSpellChecker.php,
+	  
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php,
+	  nategosearch/trunk/NateGoSearch/NateGoSearchSpellChecker.php:
+	  Ticket #1326, NateGoSearch now contains a PSpell powered spell
+	  checker along with the old file based spell checker. They now
+	  both extend a new abstact class for spell checkers.
+
+2007-09-13  nrf
+
+	* [r20173] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.7
+
 2007-09-12  gauthierm
 
 	* [r20172] nategosearch/trunk/NateGoSearch/NateGoSearch.php:
