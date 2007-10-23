@@ -153,7 +153,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 			// if there are no matching keys, use the first suggestion
 			if ($best_suggestion === null)
-				$best_suggestion = $suggestion[0];
+				$best_suggestion = $suggestions[0];
 		}
 
 		return $best_suggestion;
