@@ -83,7 +83,6 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 			// only check spelling of words
 			if (preg_match($word_regexp, $word) == 1) {
 				if (!pspell_check($this->dictionary, $word)) {
-					echo 'misspelled ', $word, '<br />';
 					$suggestions = pspell_suggest($this->dictionary, $word);
 					$suggestion = $this->getBestSuggestion($word, $suggestions);
 					if ($suggestion !== null) {
