@@ -77,7 +77,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$exp_phrase = explode(' ', $phrase);
 
 		// make sure spell-checked word contains a letter
-		$word_regexp = '/\pL+/u';
+		$word_regexp = '/\pL/u';
 
 		foreach ($exp_phrase as $word) {
 			// only check spelling of words
