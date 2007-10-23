@@ -76,12 +76,19 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		$exp_phrase = explode(' ', $phrase);
 
+		// make sure spell-checked word contains a letter
+		$word_regexp = '/\pL+/u';
+
 		foreach ($exp_phrase as $word) {
-			if (!pspell_check($this->dictionary, $word)) {
-				$suggestions = pspell_suggest($this->dictionary, $word);
-				$suggestion = $this->getBestSuggestion($word, $suggestions);
-				if ($suggestion !== null) {
-					$misspellings[$word] = $suggestion;
+			// only check spelling of words
+			if (preg_match($word_regexp, $word) == 1) {
+				if (!pspell_check($this->dictionary, $word)) {
+					echo 'misspelled ', $word, '<br />';
+					$suggestions = pspell_suggest($this->dictionary, $word);
+					$suggestion = $this->getBestSuggestion($word, $suggestions);
+					if ($suggestion !== null) {
+						$misspellings[$word] = $suggestion;
+					}
 				}
 			}
 		}
