@@ -82,12 +82,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		foreach ($exp_phrase as $word) {
 			// only check spelling of words
 			if (preg_match($word_regexp, $word) == 1) {
-				if (!pspell_check($this->dictionary, $word)) {
-					$suggestions = pspell_suggest($this->dictionary, $word);
-					$suggestion = $this->getBestSuggestion($word, $suggestions);
-					if ($suggestion !== null) {
-						$misspellings[$word] = $suggestion;
-					}
+				$suggestion = $this->checkIgnoreCase($word);
+				if ($suggestion !== null) {
+					$misspellings[$word] = $suggestion;
 				}
 			}
 		}
@@ -111,7 +108,6 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		$misspellings = $this->getMisspellingsInPhrase($phrase);
 
-		// uses the first suggestion given by aspell as the replacement word
 		foreach ($misspellings as $incorrect => $correct)
 			$phrase =
 				str_replace(' '.$incorrect.' ', ' '.$correct.' ', $phrase);
@@ -132,7 +128,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @param array $suggestions an array of suggestions.
 	 *
 	 * @return string the best suggestion in the set of suggestions. If no
-	 *                 suitable suggestion is found, null is returned.
+	 *                suitable suggestion is found, a default word is returned.
 	 */
 	private function getBestSuggestion($misspelling, array $suggestions)
 	{
@@ -141,12 +137,15 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		if (count($suggestions) > 0) {
 			$real_key = metaphone($misspelling);
 
-			// cycles throw each suggestion and compares the metaphone key
+			// cycles through each suggestion and compares the metaphone key
 			// to the metaphone key of the real word
 			foreach ($suggestions as $suggestion) {
 				$key = metaphone($suggestion);
 				if ($key === $real_key) {
-					$best_suggestion = $suggestion;
+					if (in_array(strtolower($suggestion), $suggestions))
+						$best_suggestion = strtolower($suggestion);
+					else
+						$best_suggestion = $suggestion;
 					break;
 				}
 			}
@@ -157,6 +156,33 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		}
 
 		return $best_suggestion;
+	}
+
+	// }}}
+	// {{{ private function checkIgnoreCase()
+
+	/**
+	 * Checks to see if a word is spelled correctly while ignoring the case
+	 *
+	 * @param string $word the word to be checked
+	 *
+	 * @return string the best suggestion for the correct spelling of the word
+	 *                 or null if the word is correct.
+	 */
+
+	private function checkIgnoreCase($word)
+	{
+		if (!pspell_check($this->dictionary, $word)) {
+			$suggestions = pspell_suggest($this->dictionary, $word);
+			if (strtolower($suggestions[0]) === $word)
+				$suggestion = null;
+			else
+				$suggestion = $this->getBestSuggestion($word, $suggestions);
+		} else {
+			$suggestion = null;
+		}
+
+		return $suggestion;
 	}
 
 	// }}}
