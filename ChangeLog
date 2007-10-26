@@ -1,3 +1,17 @@
+2007-10-26  charles
+
+	* [r22165]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  The pspell checker for nategosearch now checks words regarless
+	  of case.
+
+2007-10-23  nrf
+
+	* [r21861] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.11
+
 2007-10-23  charles
 
 	* [r21860]
