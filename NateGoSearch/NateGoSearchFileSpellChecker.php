@@ -83,7 +83,7 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ public function addMispellings()
+	// {{{ public function addMisspellings()
 
 	/**
 	 * Adds a list of misspellings to the list of misspellings in this spell
