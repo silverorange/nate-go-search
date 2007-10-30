@@ -27,6 +27,13 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	private $dictionary;
 
+	/**
+	 * The language of the current dictionary
+	 *
+	 * @var string
+	 */
+	private $language;
+
 	// }}}
 	// {{{ public function __construct()
 
@@ -51,6 +58,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 				'in order to use NateGoSearchPSpellSpellChecker.');
 		}
 
+		$this->language = $language;
 		$this->dictionary = pspell_new($language, '', '', 'utf-8', PSPELL_FAST);
 
 		if ($this->dictionary === false) {
@@ -80,7 +88,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$word_regexp = '/\pL/u';
 
 		foreach ($exp_phrase as $word) {
-			// only check spelling of words
+			// only check spelling of words, ignore the case
 			if (preg_match($word_regexp, $word) == 1) {
 				$suggestion = $this->checkIgnoreCase($word);
 				if ($suggestion !== null) {
@@ -118,6 +126,23 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
+	// {{{ public function loadMisspellingsFromFile()
+
+	public function loadMisspellingsFromFile($filename)
+	{
+		$config = pspell_config_create($this->language);
+
+		// TODO: needs a better way to check if the loading of the file fails
+		if (file_exists($filename)) {
+			pspell_config_repl($config, $filename);
+			$this->dictionary = pspell_new_config($config);
+		} else {
+			throw new SwatException("Could not load misspellings with ".
+				"filename '{$filename}'.");
+		}
+	}
+
+	// }}}
 	// {{{ private function getBestSuggestion()
 
 	/**
@@ -135,22 +160,14 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$best_suggestion = null;
 
 		if (count($suggestions) > 0) {
-			$real_key = metaphone($misspelling);
+			// checks to see if the user entered a lower case word
+			if (ctype_lower(substr($misspelling, 0, 1)))
+				$best_suggestion = $this->getLowerCaseSuggestion($suggestions);
+			else
+				$best_suggestion = $suggestions[0];
 
-			// cycles through each suggestion and compares the metaphone key
-			// to the metaphone key of the real word
-			foreach ($suggestions as $suggestion) {
-				$key = metaphone($suggestion);
-				if ($key === $real_key) {
-					if (in_array(strtolower($suggestion), $suggestions))
-						$best_suggestion = strtolower($suggestion);
-					else
-						$best_suggestion = $suggestion;
-					break;
-				}
-			}
-
-			// if there are no matching keys, use the first suggestion
+			// if there was no lowercase suggestion then use the first
+			// suggestion
 			if ($best_suggestion === null)
 				$best_suggestion = $suggestions[0];
 		}
@@ -172,17 +189,42 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 	private function checkIgnoreCase($word)
 	{
+		$suggestion = null;
+
 		if (!pspell_check($this->dictionary, $word)) {
 			$suggestions = pspell_suggest($this->dictionary, $word);
 			if (strtolower($suggestions[0]) === $word)
 				$suggestion = null;
 			else
 				$suggestion = $this->getBestSuggestion($word, $suggestions);
-		} else {
-			$suggestion = null;
 		}
 
 		return $suggestion;
+	}
+
+	// }}}
+	// {{{ private function getLowerCaseSuggestion()
+
+	/**
+	 * Gets the best lower case suggestion for a word
+	 *
+	 * @param array $suggestions an array of suggestions
+	 *
+	 * @return string the best lowercase suggestion for a word or null if no
+	 *                 lower case suggestion exists.
+	 */
+	private function getLowerCaseSuggestion(array $suggestions)
+	{
+		$match = null;
+
+		foreach ($suggestions as $suggestion) {
+			if (ctype_lower(substr($suggestion, 0, 1))) {
+				$match = $suggestion;
+				break;
+			}
+		}
+
+		return $match;
 	}
 
 	// }}}
