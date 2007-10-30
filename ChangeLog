@@ -1,3 +1,22 @@
+2007-10-30  charles
+
+	* [r22300]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchPSpellSpellChecker.php:
+	  
+	  The pspell checker can now load misspellings from a file, and
+	  returns only lowercase words for words that begin with lowercase
+	  letters.
+	* [r22293]
+	  nategosearch/trunk/NateGoSearch/NateGoSearchFileSpellChecker.php:
+	  
+	  Typo
+
+2007-10-26  nrf
+
+	* [r22166] nategosearch/trunk/ChangeLog,
+	  nategosearch/trunk/package.php:
+	  prepare for release of 1.0.12
+
 2007-10-26  charles
 
 	* [r22165]
