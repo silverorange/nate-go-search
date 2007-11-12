@@ -193,7 +193,10 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		if (!pspell_check($this->dictionary, $word)) {
 			$suggestions = pspell_suggest($this->dictionary, $word);
-			if (strtolower($suggestions[0]) === $word)
+			// if pspell has no suggestions then we should stop checking
+			if (count($suggestions) === 0)
+				$suggestion = null;
+			elseif (strtolower($suggestions[0]) === $word)
 				$suggestion = null;
 			else
 				$suggestion = $this->getBestSuggestion($word, $suggestions);
