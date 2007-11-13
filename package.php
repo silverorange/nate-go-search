@@ -48,7 +48,7 @@ $package->addMaintainer('developer', 'gauthierm', 'Mike Gauthier', 'mike@silvero
 
 $package->addReplacement('NateGoSearch/NateGoSearchIndexer.php', 'pear-config', '@DATA-DIR@', 'data_dir');
 $package->addReplacement('NateGoSearch/NateGoSearchQuery.php', 'pear-config', '@DATA-DIR@', 'data_dir');
-$package->addReplacement('NateGoSearch/NateGoSearchSpellChecker.php', 'pear-config', '@DATA-DIR@', 'data_dir');
+$package->addReplacement('NateGoSearch/NateGoSearchFileSpellChecker.php', 'pear-config', '@DATA-DIR@', 'data_dir');
 
 $package->setPhpDep('5.0.5');
 $package->setPearinstallerDep('1.4.0');
