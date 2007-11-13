@@ -79,7 +79,12 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	 */
 	public function getDefaultMisspellingsFilename()
 	{
-		return '@DATA-DIR@/NateGoSearch/system/misspellings.txt';
+		if (substr('@DATA-DIR@', 0, 1) === '@')
+			$filename = dirname(__FILE__).'/../system/misspellings.txt';
+		else
+			$filename = '@DATA-DIR@/NateGoSearch/system/misspellings.txt';
+
+		return $filename;
 	}
 
 	// }}}

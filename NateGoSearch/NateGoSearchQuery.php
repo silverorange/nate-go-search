@@ -240,7 +240,12 @@ class NateGoSearchQuery
 		static $words = array();
 
 		if (count($words) == 0) {
-			$words = file('@DATA-DIR@/NateGoSearch/system/blocked-words.txt', true);
+			if (substr('@DATA-DIR@', 0, 1) === '@')
+				$filename = dirname(__FILE__).'/../system/blocked-words.txt';
+			else
+				$filename = '@DATA-DIR@/NateGoSearch/system/blocked-words.txt';
+
+			$words = file($filename, true);
 			// remove line breaks
 			$words = array_map('rtrim', $words);
 		}
