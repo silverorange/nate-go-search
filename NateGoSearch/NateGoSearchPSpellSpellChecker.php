@@ -1,13 +1,13 @@
 <?php
 
 require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
-require_once 'Swat/exceptions/SwatException.php';
+require_once 'Swat/exceptions/SwatFileNotFoundException.php';
 
 /**
  * A spell checker to correct commonly misspelled words and phrases using
  * the pspell extension for PHP.
  *
- * This class adds the power of the Aspell libraries to spell checking, can be
+ * This class adds the power of the Aspell libraries for spell checking, can be
  * used as an alternative to the light-weight NateGoSearchFileSpellChecker.
  *
  * @package   NateGoSearch
@@ -16,6 +16,23 @@ require_once 'Swat/exceptions/SwatException.php';
  */
 class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 {
+	// {{{ public properties
+
+	/**
+	 * A path to an aspell replacement pair list.
+	 *
+	 * @var string
+	 */
+	public $path_to_replacement_pairs;
+
+	/**
+	 * A path to an aspell personal wordlist.
+	 *
+	 * @var string
+	 */
+	public $path_to_personal_wordlist;
+
+	// }}}
 	// {{{ private properties
 
 	/**
@@ -126,19 +143,40 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ public function loadMisspellingsFromFile()
+	// {{{ public function loadCustomContent()
 
-	public function loadMisspellingsFromFile($filename)
+	/**
+	 * Load the personal wordlist and replacement pairs into the spell checker
+	 */
+	public function loadCustomContent()
 	{
 		$config = pspell_config_create($this->language);
 
-		// TODO: needs a better way to check if the loading of the file fails
-		if (file_exists($filename)) {
-			pspell_config_repl($config, $filename);
-			$this->dictionary = pspell_new_config($config);
+		if ($this->path_to_replacement_pairs)
+			pspell_config_repl($config, $this->path_to_replacement_pairs);
+
+		if ($this->path_to_personal_wordlist)
+			pspell_config_personal($config, $this->path_to_personal_wordlist);
+
+		$this->dictionary = pspell_new_config($config);
+	}
+
+	// }}}
+	// {{{ public function addWordToPersonalWordlist()
+
+	/**
+	 * Add a word to the personal wordlist
+	 *
+	 * @param string $word the word to add to the list
+	 */
+	public function addWordToPersonalWordList($word)
+	{
+		if ($this->path_to_personal_wordlist) {
+			pspell_add_to_personal($this->dictionary, $word);
+			pspell_save_wordlist($this->dictionary);
 		} else {
-			throw new SwatException("Could not load misspellings with ".
-				"filename '{$filename}'.");
+			throw new SwatFileNotFoundException('No personal wordlist set.'.
+				' Unable to add "'.$word.'" to personal wordlist.');
 		}
 	}
 
