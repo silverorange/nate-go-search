@@ -16,23 +16,6 @@ require_once 'Swat/exceptions/SwatFileNotFoundException.php';
  */
 class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 {
-	// {{{ public properties
-
-	/**
-	 * A path to an aspell replacement pair list.
-	 *
-	 * @var string
-	 */
-	public $path_to_replacement_pairs;
-
-	/**
-	 * A path to an aspell personal wordlist.
-	 *
-	 * @var string
-	 */
-	public $path_to_personal_wordlist;
-
-	// }}}
 	// {{{ private properties
 
 	/**
@@ -50,6 +33,20 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @var string
 	 */
 	private $language;
+
+	/**
+	 * A path to an aspell replacement pair list
+	 *
+	 * @var string
+	 */
+	private $path_to_replacement_pairs;
+
+	/**
+	 * A path to an aspell personal wordlist
+	 *
+	 * @var string
+	 */
+	private $path_to_personal_wordlist;
 
 	// }}}
 	// {{{ public function __construct()
@@ -162,22 +159,60 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ public function addWordToPersonalWordlist()
+	// {{{ public function addToPersonalWordlist()
 
 	/**
 	 * Add a word to the personal wordlist
 	 *
 	 * @param string $word the word to add to the list
 	 */
-	public function addWordToPersonalWordList($word)
+	public function addToPersonalWordList($word)
 	{
 		if ($this->path_to_personal_wordlist) {
-			pspell_add_to_personal($this->dictionary, $word);
-			pspell_save_wordlist($this->dictionary);
+			if (ctype_alpha($word)) {
+				pspell_add_to_personal($this->dictionary, $word);
+				pspell_save_wordlist($this->dictionary);
+			} else {
+				throw new SwatException('"'.$word.'" can not be added to'.
+					' the custom wordlist. The word may contain non-alphabetic'.
+					' characters.');
+			}
 		} else {
 			throw new SwatFileNotFoundException('No personal wordlist set.'.
 				' Unable to add "'.$word.'" to personal wordlist.');
 		}
+	}
+
+	// }}}
+	// {{{ public function setCustomWordList()
+
+	/**
+	 * Set the custom wordlist
+	 *
+	 * Set the custom word list by passing the path to the custom word list.
+	 *
+	 * @param string the path to the custom word list
+	 */
+	public function setCustomWordList($filename)
+	{
+		// TODO: add error checking
+		$this->path_to_personal_wordlist = $filename;
+	}
+
+	// }}}
+	// {{{ public function setCustomReplacementPairs()
+
+	/**
+	 * Set the replacement pairs
+	 *
+	 * Set the replacement pairs by passing the path to the custom word list.
+	 *
+	 * @param string the path to the custom replacement pairs
+	 */
+	public function setCustomReplacementPairs($filename)
+	{
+		// TODO: add error checking
+		$this->path_to_replacement_pairs = $filename;
 	}
 
 	// }}}

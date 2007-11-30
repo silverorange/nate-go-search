@@ -4,6 +4,7 @@ require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchTerm.php';
 require_once 'NateGoSearch/NateGoSearchDocument.php';
 require_once 'NateGoSearch/NateGoSearchKeyword.php';
+require_once 'NateGoSearch/NateGoSearchPSpellSpellChecker.php';
 require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
 
 require_once 'Swat/SwatString.php';
@@ -18,7 +19,7 @@ require_once 'SwatDB/SwatDB.php';
  * about the PECL stem package. Support for stemming in other languages may
  * be added in later releases of NateGoSearch.
  *
- * Otherwise, if a PorterStemmer class is defined, it is applied to all indexed 
+ * Otherwise, if a PorterStemmer class is defined, it is applied to all indexed
  * keywords. The most commonly available PHP implementation of the
  * Porter-stemmer algorithm is licenced under the GPL, and is thus not
  * distributable with the LGPL licensed NateGoSearch.
@@ -128,6 +129,29 @@ class NateGoSearchIndexer
 	 * @see NateGoSearchIndexer::commit()
 	 */
 	protected $append = false;
+
+	/**
+	 * The spell checker for this indexer
+	 *
+	 * @var NateGoSearchPSpellSpellChecker
+	 */
+	protected $spell_checker;
+
+	/**
+	 * The words in the personal wordlist
+	 *
+	 * An array to hold everyword that is added to the personal wordlist
+	 *
+	 * @var array()
+	 */
+	protected $personal_wordlist = array();
+
+	/**
+	 * Whether or not a custom wordlist should be created
+	 *
+	 * @var boolean
+	 */
+	protected $create_wordlist = false;
 
 	// }}}
 	// {{{ public function __construct()
@@ -242,6 +266,20 @@ class NateGoSearchIndexer
 					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
 						$term->getWeight(), $location, $this->document_type);
 				}
+
+				// add any words that the spell checker would flag to a
+				// personal wordlist
+				if ($this->create_wordlist) {
+					$new_tok = $this->spell_checker->getProperSpelling($tok);
+
+					if (($new_tok != $tok) &&
+						!in_array($tok, $this->personal_wordlist) &&
+						ctype_alpha($tok)) {
+							$this->personal_wordlist[] = $tok;
+							$this->spell_checker->addToPersonalWordlist($tok);
+					}
+				}
+
 				$tok = strtok(' ');
 			}
 		}
@@ -320,6 +358,20 @@ class NateGoSearchIndexer
 			$words = array((string)$words);
 
 		$this->unindexed_words = array_merge($this->unindexed_words, $words);
+	}
+
+	// }}}
+	// {{{ public function setSpellChecker()
+
+	/**
+	 * Set the spell checker to be used by the indexer
+	 *
+	 * @param NateGoSearchPSpellChecker
+	 */
+	public function setSpellChecker(NateGoSearchPSpellSpellChecker $checker)
+	{
+		$this->create_wordlist = true;
+		$this->spell_checker = $checker;
 	}
 
 	// }}}
