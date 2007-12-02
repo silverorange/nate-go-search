@@ -104,13 +104,13 @@ class NateGoSearch
 
 		$sql = sprintf('delete from NateGoSearchType where shortname = %s',
 			$db->quote($type_shortname, 'text'));
-		
+
 		SwatDB::exec($db, $sql);
 	}
 
 	// }}}
 	// {{{ public static function getDocumentTypes()
-	
+
 	/**
 	 * Gets the available document type shortnames
 	 *
