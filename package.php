@@ -52,6 +52,7 @@ $package->addReplacement('NateGoSearch/NateGoSearchFileSpellChecker.php', 'pear-
 
 $package->setPhpDep('5.0.5');
 $package->setPearinstallerDep('1.4.0');
+$package->addPackageDepWithChannel('required', 'MDB2', 'pear.php.net', '2.2.2');
 $package->generateContents();
 
 if (isset($_GET['make']) || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')) {
