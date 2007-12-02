@@ -1,5 +1,7 @@
 <?php
 
+/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+
 /**
  * An indexed keyword for a NateGoSearchIndexer
  *

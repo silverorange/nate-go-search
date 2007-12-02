@@ -1,5 +1,7 @@
 <?php
 
+/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+
 /**
  * A light-weight spell checker to correct commonly misspelled words
  *

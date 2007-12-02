@@ -1,5 +1,7 @@
 <?php
 
+/* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
+
 require_once 'MDB2.php';
 require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchTerm.php';
