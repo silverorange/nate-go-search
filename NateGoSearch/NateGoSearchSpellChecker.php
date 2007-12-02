@@ -3,11 +3,8 @@
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
 /**
- * A light-weight spell checker to correct commonly misspelled words
- *
- * This class was added to abstract spell checking from the NateGoSearchQuery
- * class. It serves as an abstract base class for any spell checkers built for
- * NateGoSearch.
+ * Abstract base class for spell-checking of keywords in search queries and
+ * indexers
  *
  * @package   NateGoSearch
  * @copyright 2004-2007 silverorange
