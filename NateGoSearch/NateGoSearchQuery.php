@@ -4,8 +4,8 @@ require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchIndexer.php';
 require_once 'NateGoSearch/NateGoSearchResult.php';
 require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
 require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
-require_once 'SwatDB/SwatDB.php';
 
 /**
  * Perform queries using a NateGoSearch index
@@ -166,13 +166,26 @@ class NateGoSearchQuery
 		$keywords = implode(' ', $results->getSearchedWords());
 
 		if (count($this->document_types) > 0) {
-			$unique_id = SwatDB::executeStoredProcOne(
-				$this->db, 'nateGoSearch',
-				array(
-					$this->db->quote($keywords, 'text'),
-					$this->db->quote($keywords_hash, 'text'),
-					$this->quoteArray($this->document_types),
-					$this->db->quote($id, 'text')));
+			$this->db->loadModule('Function');
+
+			$params = array(
+				$this->db->quote($keywords, 'text'),
+				$this->db->quote($keywords_hash, 'text'),
+				$this->quoteArray($this->document_types),
+				$this->db->quote($id, 'text'),
+			);
+
+			$types = array('text');
+
+			$rs = $this->db->function->executeStoredProc(
+				'nateGoSearch', $params, $types);
+
+			if (MDB2::isError($rs))
+				throw new NateGoSearchDBException($rs);
+
+			$unique_id = $rs->fetchOne();
+			if (MDB2::isError($unique_id))
+				throw new NateGoSearchDBException($unique_id);
 
 			$unique_counter++;
 

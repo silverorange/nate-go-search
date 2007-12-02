@@ -2,7 +2,7 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
-require_once 'Swat/exceptions/SwatException.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
 
 /**
  * Thrown when a document type is invalid
@@ -11,7 +11,7 @@ require_once 'Swat/exceptions/SwatException.php';
  * @copyright 2007 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
-class NateGoSearchDocumentTypeException extends SwatException
+class NateGoSearchDocumentTypeException extends NateGoSearchException
 {
 	// {{{ protected properties
 

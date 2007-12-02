@@ -1,7 +1,7 @@
 <?php
 
 require_once 'MDB2.php';
-require_once 'SwatDB/SwatDB.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
 
 /**
  * Static methods for managing document types using NateGoSearch
@@ -42,6 +42,8 @@ class NateGoSearch
 	 *                                'categories'.
 	 *
 	 * @return integer the document type identifier of the new type.
+	 *
+	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
 	public static function createDocumentType(MDB2_Driver_Common $db,
 		$type_shortname)
@@ -50,9 +52,17 @@ class NateGoSearch
 
 		if ($type === null) {
 			$type_shortname = (string)$type_shortname;
-			$type = SwatDB::insertRow($db, 'NateGoSearchType',
-				array('text:shortname'), array('shortname' => $type_shortname),
-				'integer:id');
+			$sql = sprintf(
+				'insert into NateGoSearchType (shortname) values (%s)',
+				$db->quote($type_shortname, 'text'));
+
+			$result = $db->exec($sql);
+			if (MDB2::isError($result))
+				throw new NateGoSearchDBException($result);
+
+			$type = $db->lastInsertID('NateGoSearchType');
+			if (MDB2::isError($type))
+				throw new NateGoSearchDBException($result);
 		}
 
 		return $type;
@@ -70,6 +80,8 @@ class NateGoSearch
 	 *
 	 * @return integer the document type identifier of the type or null if no
 	 *                  such type exists.
+	 *
+	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
 	public static function getDocumentType(MDB2_Driver_Common $db,
 		$type_shortname)
@@ -80,7 +92,12 @@ class NateGoSearch
 			where shortname = %s',
 			$db->quote($type_shortname, 'text'));
 
-		return SwatDB::queryOne($db, $sql);
+		$type = $db->queryOne($sql);
+
+		if (MDB2::isError($type))
+			throw new NateGoSearchDBException($value);
+
+		return $type;
 	}
 
 	// }}}
@@ -96,6 +113,8 @@ class NateGoSearch
 	 *                            document type identifier.
 	 * @param string $type_shortname the shortname of the document type to
 	 *                                remove.
+	 *
+	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
 	public static function removeDocumentType(MDB2_Driver_Common $db,
 		$type_shortname)
@@ -105,7 +124,9 @@ class NateGoSearch
 		$sql = sprintf('delete from NateGoSearchType where shortname = %s',
 			$db->quote($type_shortname, 'text'));
 
-		SwatDB::exec($db, $sql);
+		$result = $db->exec($sql);
+		if (MDB2::isError($result))
+			throw new NateGoSearchDBException($result);
 	}
 
 	// }}}
@@ -118,10 +139,17 @@ class NateGoSearch
 	 *                                available document type shortnames.
 	 *
 	 * @return array an array containing the available document type shortnames.
+	 *
+	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
 	public static function getDocumentTypes(MDB2_Driver_Common $db)
 	{
-		return SwatDB::queryColumn($db, 'NateGoSearchType', 'text:shortname');
+		$sql = 'select shortname from NateGoSearchType';
+		$values = $db->queryCol($sql, 'text');
+		if (MDB2::isError($values))
+			throw new NateGoSearchDBException($values);
+
+		return $values;
 	}
 
 	// }}}

@@ -1,15 +1,13 @@
 <?php
 
+require_once 'MDB2.php';
 require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchTerm.php';
 require_once 'NateGoSearch/NateGoSearchDocument.php';
 require_once 'NateGoSearch/NateGoSearchKeyword.php';
 require_once 'NateGoSearch/NateGoSearchPSpellSpellChecker.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
 require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
-
-require_once 'Swat/SwatString.php';
-
-require_once 'SwatDB/SwatDB.php';
 
 /**
  * Indexes documents using the NateGo search algorithm
@@ -89,12 +87,12 @@ class NateGoSearchIndexer
 	/**
 	 * The document type to index by
 	 *
-	 * Tags are a unique identifier for search indexes. NateGo search stores
-	 * all indexed words in the same index with a document type to identify
-	 * what index the word belongs to. Document types allow the possiblilty of
-	 * mixed search results ordered by relavence. For example, if you seach for
-	 * "roses" you could get product results, category results and article
-	 * results all in the same list of search results.
+	 * Document types are a unique identifier for search indexes. NateGoSearch
+	 * stores all indexed words in the same index with a document type to
+	 * identify what index the word belongs to. Document types allow the
+	 * possiblilty of mixed search results ordered by relavence. For example,
+	 * if you seach for "roses" you could get product results, category results
+	 * and article results all in the same list of search results.
 	 *
 	 * @var mixed
 	 */
@@ -310,25 +308,29 @@ class NateGoSearchIndexer
 
 			$delete_sql = sprintf('delete from %s
 				where document_id in (%s) and document_type = %s',
-				$this->index_table,
+				$this->db->quoteIdentifier($this->index_table),
 				$indexed_ids,
-				$this->document_type);
+				$this->db->quote($this->document_type, 'integer'));
 
-			SwatDB::exec($this->db, $delete_sql);
+			$result = $this->db->exec($delete_sql);
+			if (MDB2::isError($result))
+				throw new NateGoSearchDBException($result);
 
 			$keyword = array_pop($this->keywords);
 			while ($keyword !== null) {
 				$sql = sprintf('insert into %s
 					(document_id, word, weight, location, document_type) values
 					(%s, %s, %s, %s, %s)',
-					$this->index_table,
+					$this->db->quoteIdentifier($this->index_table),
 					$this->db->quote($keyword->getDocumentId(), 'integer'),
 					$this->db->quote($keyword->getWord(), 'text'),
 					$this->db->quote($keyword->getWeight(), 'integer'),
 					$this->db->quote($keyword->getLocation(), 'integer'),
 					$this->db->quote($keyword->getDocumentType(), 'integer'));
 
-				SwatDB::exec($this->db, $sql);
+				$result = $this->db->exec($sql);
+				if (MDB2::isError($result))
+					throw new NateGoSearchDBException($result);
 
 				$keyword = array_pop($this->keywords);
 			}
@@ -336,7 +338,7 @@ class NateGoSearchIndexer
 			$this->clear_document_ids = array();
 
 			$this->db->commit();
-		} catch (SwatDBException $e) {
+		} catch (NateGoSearchDBException $e) {
 			$this->db->rollback();
 			throw $e;
 		}
@@ -394,7 +396,8 @@ class NateGoSearchIndexer
 		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
 
 		// remove entities
-		$text = SwatString::minimizeEntities($text);
+		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
+		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
 
 		// replace apostrophe s's
 		$text = preg_replace('/\'s\b/u', '', $text);
@@ -454,14 +457,18 @@ class NateGoSearchIndexer
 	 * The index is cleared for this indexer's document type
 	 *
 	 * @see NateGoSearchIndexer::__construct()
+	 *
+	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
 	protected function clear()
 	{
 		$sql = sprintf('delete from %s where document_type = %s',
-			$this->index_table,
+			$this->db->quoteIdentifier($this->index_table),
 			$this->db->quote($this->document_type, 'integer'));
 
-		SwatDB::exec($this->db, $sql);
+		$result = $this->db->exec($sql);
+		if (MDB2::isError($result))
+			throw new NateGoSearchDBException($result);
 	}
 
 	// }}}

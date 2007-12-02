@@ -1,7 +1,7 @@
 <?php
 
 require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
-require_once 'Swat/exceptions/SwatFileNotFoundException.php';
+require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
 
 /**
  * A spell checker to correct commonly misspelled words and phrases using
@@ -57,27 +57,27 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @param string $language the language used by this spell checker. This
 	 *                          should be a two-letter ISO 639 language code
 	 *                          followed by an optional two digit ISO 3166
-	 *                          country code separated by a desh or underscore.
+	 *                          country code separated by a dash or underscore.
 	 *                          For example, 'en', 'en-CA' and 'en_CA' are
 	 *                          valid languages.
 	 *
-	 * @throws SwatException if the Pspell extension is not available.
-	 * @throws SwatException if a dictionary in the specified language could
-	 *                       not be loaded.
+	 * @throws NateGoSearchException if the Pspell extension is not available.
+	 * @throws NateGoSearchtException if a dictionary in the specified language
+	 *                                could not be loaded.
 	 */
 	public function __construct($language)
 	{
 		if (!extension_loaded('pspell')) {
-			throw SwatException('You need to install the Pspell extension '.
-				'in order to use NateGoSearchPSpellSpellChecker.');
+			throw NateGoSearchException('The Pspell PHP extension is '.
+				'required for NateGoSearchPSpellSpellChecker.');
 		}
 
 		$this->language = $language;
 		$this->dictionary = pspell_new($language, '', '', 'utf-8', PSPELL_FAST);
 
 		if ($this->dictionary === false) {
-			throw new SwatException("Could not create Pspell dictionary with ".
-				"language '{$language}'.");
+			throw new NateGoSearchException(sprintf("Could not create Pspell ".
+				"dictionary with language '%s'.", $language));
 		}
 	}
 
@@ -173,13 +173,14 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 				pspell_add_to_personal($this->dictionary, $word);
 				pspell_save_wordlist($this->dictionary);
 			} else {
-				throw new SwatException('"'.$word.'" can not be added to'.
-					' the custom wordlist. The word may contain non-alphabetic'.
-					' characters.');
+				throw new NateGoSearchException(sprintf("The word '%s' cannot ".
+					"be added to the custom wordlist. The word may contain ".
+					"non-alphabetic characters.", $word));
 			}
 		} else {
-			throw new SwatFileNotFoundException('No personal wordlist set.'.
-				' Unable to add "'.$word.'" to personal wordlist.');
+			throw new NateGoSearchException(sprintf("The word '%s' cannot ".
+				"be added to the personal wordlist because no personal ".
+				"wordlist is set.", $word));
 		}
 	}
 

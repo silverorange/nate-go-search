@@ -24,9 +24,8 @@ class NateGoSearchDocument
 	/**
 	 * The data object this doucment represents
 	 *
-	 * The data object may be a SwatDBDataObject or simply a row result of a
-	 * relational database query or may even be constructed by hand as a
-	 * standard object.
+	 * The data object may be the row result of a database query or may be
+	 * constructed by hand as a standard object.
 	 *
 	 * @var mixed
 	 */
