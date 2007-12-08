@@ -78,8 +78,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$this->dictionary = pspell_new($language, '', '', 'utf-8', PSPELL_FAST);
 
 		if ($this->dictionary === false) {
-			throw new NateGoSearchException(sprintf("Could not create Pspell ".
-				"dictionary with language '%s'.", $language));
+			throw new NateGoSearchException(sprintf(
+				"Could not create Pspell dictionary with language '%s'.",
+				$language));
 		}
 	}
 
@@ -134,7 +135,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		foreach ($misspellings as $incorrect => $correct)
 			$phrase =
-				str_replace(' '.$incorrect.' ', ' '.$correct.' ', $phrase);
+				str_ireplace(' '.$incorrect.' ', ' '.$correct.' ', $phrase);
 
 		$phrase = trim($phrase);
 
@@ -237,7 +238,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		if (count($suggestions) > 0) {
 			// checks to see if the user entered a lower case word
-			if (ctype_lower(substr($misspelling, 0, 1)))
+			if (ctype_lower($misspelling[0]))
 				$best_suggestion = $this->getLowerCaseSuggestion($suggestions);
 			else
 				$best_suggestion = $suggestions[0];
@@ -262,13 +263,13 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @return string the best suggestion for the correct spelling of the word
 	 *                 or null if the word is correct.
 	 */
-
 	private function checkIgnoreCase($word)
 	{
 		$suggestion = null;
 
 		if (!pspell_check($this->dictionary, $word)) {
 			$suggestions = pspell_suggest($this->dictionary, $word);
+
 			// if pspell has no suggestions then we should stop checking
 			if (count($suggestions) === 0)
 				$suggestion = null;
@@ -285,9 +286,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ private function getLowerCaseSuggestion()
 
 	/**
-	 * Gets the best lower case suggestion for a word
+	 * Gets the best lower-case suggestion for a word
 	 *
-	 * @param array $suggestions an array of suggestions
+	 * @param array $suggestions an array of suggestions.
 	 *
 	 * @return string the best lowercase suggestion for a word or null if no
 	 *                 lower case suggestion exists.
@@ -297,7 +298,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$match = null;
 
 		foreach ($suggestions as $suggestion) {
-			if (ctype_lower(substr($suggestion, 0, 1))) {
+			if (ctype_lower($suggestion[0])) {
 				$match = $suggestion;
 				break;
 			}
