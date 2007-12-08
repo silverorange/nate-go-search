@@ -18,6 +18,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * 'article', use the following code:
  *
  * <code>
+ * <?php
  * $query = new NateGoSearchQuery($db);
  * $query->addDocumentType('article');
  * $result = $query->find('some keywords');
@@ -35,6 +36,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  *     $result->getDocumentType('article'));
  *
  * $articles = $db->query($sql);
+ * ?>
  * </code>
  *
  * Because of the specific PL/pgSQL implementation of the search algorithm,
@@ -59,16 +61,58 @@ class NateGoSearchQuery
 {
 	// {{{ protected properties
 
+	/**
+	 * The document types searched by this query
+	 *
+	 * @var array
+	 *
+	 * @see NateGoSearch::getDocumentType()
+	 * @see NateGoSearchQuery::addDocumentType()
+	 */
 	protected $document_types = array();
+
+	/**
+	 * Keywords that should not be included in the search performed by this
+	 * query
+	 *
+	 * This is an array of blocked keywords.
+	 *
+	 * @var array
+	 *
+	 * @see NateGoSearchQuery::addBlockedWords()
+	 */
 	protected $blocked_words = array();
+
+	/**
+	 * Spell checked used to check the spelling of keywords used in this
+	 * query
+	 *
+	 * Null by default meaning no spell-checking is done.
+	 *
+	 * @var NateGoSearchSpellChecker
+	 *
+	 * @see NateGoSearchQuery::setSpellChecker()
+	 */
 	protected $spell_checker;
+
+	/**
+	 * The MDB2 database driver to use
+	 *
+	 * Currently, NateGoSearch only supports PostgreSQL.
+	 *
+	 * @var MDB2_Driver_Common
+	 *
+	 * @see NateGoSearchQuery::__construct()
+	 */
 	protected $db;
 
 	// }}}
 	// {{{ public function __construct()
 
 	/**
-	 * @param MDB2_Driver_Common $db
+	 * Creates a new NateGoSearch fulltext query
+	 *
+	 * @param MDB2_Driver_Common $db the database driver to use.
 	 */
 	public function __construct(MDB2_Driver_Common $db)
 	{
@@ -128,7 +172,7 @@ class NateGoSearchQuery
 	// {{{ public function query()
 
 	/**
-	 * Queries the NateGo index with a set of keywords
+	 * Queries the NateGoSearch index with a set of keywords
 	 *
 	 * Querying does not directly return a set of results. This is due to the
 	 * way NateGoSearch is designed. The document ids from this search are
@@ -206,12 +250,12 @@ class NateGoSearchQuery
 	/**
 	 * Sets the spell checker used by this query
 	 *
-	 * @param NateGoSearchSpellChecker $spell_checker the spell checker to use
-	 *                                                 for this query. If set
-	 *                                                 to null, no spell
-	 *                                                 checking is done.
+	 * @param NateGoSearchSpellChecker $spell_checker optional. The spell
+	 *        checker to use for this query. If not specified or specified as
+	 *        null, no spell checking is performed.
 	 */
-	public function setSpellChecker(NateGoSearchSpellChecker $spell_checker)
+	public function setSpellChecker(
+		NateGoSearchSpellChecker $spell_checker = null)
 	{
 		$this->spell_checker = $spell_checker;
 	}
@@ -221,6 +265,9 @@ class NateGoSearchQuery
 
 	/**
 	 * Quotes a PHP array into a PostgreSQL array
+	 *
+	 * This is used to quote the list of document types used in the internal
+	 * SQL query.
 	 *
 	 * @param array $array the array to quote.
 	 * @param string $type the SQL data type to use. The type is 'integer' by
