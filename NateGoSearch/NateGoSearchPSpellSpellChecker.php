@@ -232,8 +232,8 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @param string $word the word to check.
 	 *
 	 * @return string the best suggestion for the correct spelling of the word
-	 *                 or null if the word is correct or no suggested spelling
-	 *                 exists.
+	 *                 or null if the word is correct or if no suggested
+	 *                 spelling exists.
 	 */
 	private function getSuggestedSpelling($word)
 	{
