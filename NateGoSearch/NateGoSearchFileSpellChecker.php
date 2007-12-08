@@ -19,7 +19,7 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	/**
 	 * A list of misspelled words and their replacement spelling
 	 *
-	 * The array is of the form incorrect => correct.
+	 * The associative array is of the form incorrect => correct.
 	 *
 	 * @var array
 	 */
@@ -77,6 +77,9 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 
 	/**
 	 * Gets a default misspellings filename
+	 *
+	 * @return string the default filename for file-based search spelling
+	 *                 corrections.
 	 */
 	public function getDefaultMisspellingsFilename()
 	{
@@ -97,11 +100,9 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * @param array $misspellings the list of misspellings to add.
 	 */
-	public function addMisspellings($misspellings)
+	public function addMisspellings(array $misspellings)
 	{
-		if (is_array($misspellings))
-			$this->misspellings =
-				array_merge($this->misspellings, $misspellings);
+		$this->misspellings = array_merge($this->misspellings, $misspellings);
 	}
 
 	// }}}
