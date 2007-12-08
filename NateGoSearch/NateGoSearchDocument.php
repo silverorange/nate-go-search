@@ -47,8 +47,6 @@ class NateGoSearchDocument
 	public function __construct($data, $id_field)
 	{
 		$this->data = $data;
-
-		// TODO: maybe parse a MDB2 field here
 		$this->id_field = $id_field;
 	}
 
