@@ -107,7 +107,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		foreach ($exp_phrase as $word) {
 			// only check spelling of words, ignore the case
 			if (preg_match($word_regexp, $word) == 1) {
-				$suggestion = $this->checkIgnoreCase($word);
+				$suggestion = $this->getSuggestedSpelling($word);
 				if ($suggestion !== null) {
 					$misspellings[$word] = $suggestion;
 				}
@@ -253,17 +253,22 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ private function checkIgnoreCase()
+	// {{{ private function getSuggestedSpelling()
 
 	/**
-	 * Checks to see if a word is spelled correctly while ignoring the case
+	 * Checks to see if a word is spelled correctly and if it spelled
+	 * incorrectly, suggests an alternative spelling
 	 *
-	 * @param string $word the word to be checked
+	 * Spell checking ignores case. The best suggestion is considered to be the
+	 * first suggestion.
+	 *
+	 * @param string $word the word to check.
 	 *
 	 * @return string the best suggestion for the correct spelling of the word
-	 *                 or null if the word is correct.
+	 *                 or null if the word is correct or no suggested spelling
+	 *                 exists.
 	 */
-	private function checkIgnoreCase($word)
+	private function getSuggestedSpelling($word)
 	{
 		$suggestion = null;
 
@@ -273,7 +278,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 			// if pspell has no suggestions then we should stop checking
 			if (count($suggestions) === 0)
 				$suggestion = null;
-			elseif (strtolower($suggestions[0]) === $word)
+			elseif (strtolower($suggestions[0]) === strtolower($word))
 				$suggestion = null;
 			else
 				$suggestion = $this->getBestSuggestion($word, $suggestions);
