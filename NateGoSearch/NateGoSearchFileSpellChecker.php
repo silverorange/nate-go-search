@@ -36,10 +36,9 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	 *                             {@link SpellChecker::addMisspellings()}
 	 *                             method.
 	 */
-	public function __construct($misspellings = null)
+	public function __construct(array $misspellings = array())
 	{
-		if (is_array($misspellings))
-			$this->misspellings = $misspellings;
+		$this->misspellings = $misspellings;
 	}
 
 	// }}}
