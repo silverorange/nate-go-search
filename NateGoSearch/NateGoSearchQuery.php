@@ -153,19 +153,20 @@ class NateGoSearchQuery
 			$results->addMisspellings(
 				$this->spell_checker->getMisspellingsInPhrase($keywords));
 
-		$tok = strtok($keywords, ' ');
-		while ($tok) {
-			$keyword = $this->stemKeyword($tok);
-
-			if (in_array($keyword, $this->blocked_words))
+		$searched_keywords = array();
+		$keyword = strtok($keywords, ' ');
+		while ($keyword) {
+			if (in_array($keyword, $this->blocked_words)) {
 				$results->addBlockedWords($keyword);
-			else
+			} else {
+				$searched_keywords[] = $this->stemKeyword($keyword);
 				$results->addSearchedWords($keyword);
+			}
 
-			$tok = strtok(' ');
+			$keyword = strtok(' ');
 		}
 
-		$keywords = implode(' ', $results->getSearchedWords());
+		$keywords = implode(' ', $searched_keywords);
 
 		if (count($this->document_types) > 0) {
 			$this->db->loadModule('Function');
