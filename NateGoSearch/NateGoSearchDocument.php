@@ -62,7 +62,7 @@ class NateGoSearchDocument
 	 */
 	public function getId()
 	{
-		return $this->data->{$this->id_field};
+		return $this->getField($this->id_field);
 	}
 
 	// }}}
