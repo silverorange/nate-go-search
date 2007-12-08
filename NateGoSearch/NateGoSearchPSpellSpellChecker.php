@@ -7,10 +7,10 @@ require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
 
 /**
  * A spell checker to correct commonly misspelled words and phrases using
- * the pspell extension for PHP.
+ * the 'pspell' extension for PHP.
  *
- * This class adds the power of the Aspell libraries for spell checking, can be
- * used as an alternative to the light-weight NateGoSearchFileSpellChecker.
+ * This class uses the PHP interface to the GNU Aspell library for
+ * spell-checking.
  *
  * @package   NateGoSearch
  * @copyright 2007 silverorange
