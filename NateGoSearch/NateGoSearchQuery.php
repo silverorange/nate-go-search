@@ -246,7 +246,7 @@ class NateGoSearchQuery
 	// {{{ public static function &getDefaultBlockedWords()
 
 	/**
-	 * Gets a defalt list of words that are not searched by a search query 
+	 * Gets a defalt list of words that are not searched by a search query
 	 *
 	 * These words may be passed directly to the
 	 * {@link NateGoSearchQuery::addBlockedWords()} method.
