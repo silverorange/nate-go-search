@@ -220,39 +220,6 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ private function getBestSuggestion()
-
-	/**
-	 * Gets the best suggestion of a misspelling from a list of suggestions
-	 *
-	 * @param string $misspelling the misspelled word.
-	 *
-	 * @param array $suggestions an array of suggestions.
-	 *
-	 * @return string the best suggestion in the set of suggestions. If no
-	 *                suitable suggestion is found, a default word is returned.
-	 */
-	private function getBestSuggestion($misspelling, array $suggestions)
-	{
-		$best_suggestion = null;
-
-		if (count($suggestions) > 0) {
-			// checks to see if the user entered a lower case word
-			if (ctype_lower($misspelling[0]))
-				$best_suggestion = $this->getLowerCaseSuggestion($suggestions);
-			else
-				$best_suggestion = $suggestions[0];
-
-			// if there was no lowercase suggestion then use the first
-			// suggestion
-			if ($best_suggestion === null)
-				$best_suggestion = $suggestions[0];
-		}
-
-		return $best_suggestion;
-	}
-
-	// }}}
 	// {{{ private function getSuggestedSpelling()
 
 	/**
@@ -285,6 +252,39 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		}
 
 		return $suggestion;
+	}
+
+	// }}}
+	// {{{ private function getBestSuggestion()
+
+	/**
+	 * Gets the best suggestion of a misspelling from a list of suggestions
+	 *
+	 * @param string $misspelling the misspelled word.
+	 *
+	 * @param array $suggestions an array of suggestions.
+	 *
+	 * @return string the best suggestion in the set of suggestions. If no
+	 *                suitable suggestion is found, a default word is returned.
+	 */
+	private function getBestSuggestion($misspelling, array $suggestions)
+	{
+		$best_suggestion = null;
+
+		if (count($suggestions) > 0) {
+			// checks to see if the user entered a lower case word
+			if (ctype_lower($misspelling[0]))
+				$best_suggestion = $this->getLowerCaseSuggestion($suggestions);
+			else
+				$best_suggestion = $suggestions[0];
+
+			// if there was no lowercase suggestion then use the first
+			// suggestion
+			if ($best_suggestion === null)
+				$best_suggestion = $suggestions[0];
+		}
+
+		return $best_suggestion;
 	}
 
 	// }}}
