@@ -379,6 +379,19 @@ class NateGoSearchIndexer
 	}
 
 	// }}}
+	// {{{ public function __destruct()
+
+	/**
+	 * Object destructor calls commit() automatically
+	 *
+	 * @see NateGoSearchIndexer::commit()
+	 */
+	public function __destruct()
+	{
+		$this->commit();
+	}
+
+	// }}}
 	// {{{ public static function stemKeyword()
 
 	/**
@@ -507,19 +520,6 @@ class NateGoSearchIndexer
 		$text = preg_replace('/\s+/u', ' ', $text);
 
 		return $text;
-	}
-
-	// }}}
-	// {{{ protected function __finalize()
-
-	/**
-	 * Class finalizer calls commit() automatically
-	 *
-	 * @see NateGoSearchIndexer::commit()
-	 */
-	protected function __finalize()
-	{
-		$this->commit();
 	}
 
 	// }}}
