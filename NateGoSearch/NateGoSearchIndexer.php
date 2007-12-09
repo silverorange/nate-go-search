@@ -380,6 +380,7 @@ class NateGoSearchIndexer
 
 	// }}}
 	// {{{ public static function formatKeywords()
+
 	/**
 	 * Filters a string to prepare if for indexing
 	 *
