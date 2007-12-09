@@ -251,7 +251,7 @@ class NateGoSearchIndexer
 
 		foreach ($this->terms as $term) {
 			$text = $document->getField($term->getDataField());
-			$text = self::formatKeywords($text);
+			$text = $this->normalizeKeywords($text);
 
 			$tok = strtok($text, ' ');
 			while ($tok !== false) {
@@ -379,50 +379,6 @@ class NateGoSearchIndexer
 	}
 
 	// }}}
-	// {{{ public static function formatKeywords()
-
-	/**
-	 * Filters a string to prepare if for indexing
-	 *
-	 * This removes excess punctuation and markup, and lowercases all words.
-	 * The resulting string may then be tokenized by spaces.
-	 *
-	 * @param string $text the string to be filtered.
-	 *
-	 * @return string the filtered string.
-	 */
-	public static function formatKeywords($text)
-	{
-		$text = strtolower($text);
-
-		// replace html/xhtml/xml tags with spaces
-		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
-
-		// remove entities
-		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
-		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
-
-		// replace apostrophe s's
-		$text = preg_replace('/\'s\b/u', '', $text);
-
-		// remove punctuation at the beginning and end of the string
-		$text = preg_replace('/^\W+/u', '', $text);
-		$text = preg_replace('/\W+$/u', '', $text);
-
-		// remove punctuation at the beginning and end of words
-		$text = preg_replace('/\s+\W+/u', ' ', $text);
-		$text = preg_replace('/\W+\s+/u', ' ', $text);
-
-		// replace multiple dashes with a single dash
-		$text = preg_replace('/-+/u', '-', $text);
-
-		// replace whitespace with single spaces
-		$text = preg_replace('/\s+/u', ' ', $text);
-
-		return $text;
-	}
-
-	// }}}
 	// {{{ public static function stemKeyword()
 
 	/**
@@ -507,6 +463,50 @@ class NateGoSearchIndexer
 		$result = $this->db->exec($sql);
 		if (MDB2::isError($result))
 			throw new NateGoSearchDBException($result);
+	}
+
+	// }}}
+	// {{{ protected function normalizeKeywords()
+
+	/**
+	 * Normalizes a string to prepare if for indexing
+	 *
+	 * This removes excess punctuation and markup, and lowercases all words.
+	 * The resulting string may then be tokenized by spaces.
+	 *
+	 * @param string $text the string to be normalized.
+	 *
+	 * @return string the normalized string.
+	 */
+	protected function normalizeKeywords($text)
+	{
+		$text = strtolower($text);
+
+		// replace html/xhtml/xml tags with spaces
+		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
+
+		// remove entities
+		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
+		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
+
+		// replace apostrophe s's
+		$text = preg_replace('/\'s\b/u', '', $text);
+
+		// remove punctuation at the beginning and end of the string
+		$text = preg_replace('/^\W+/u', '', $text);
+		$text = preg_replace('/\W+$/u', '', $text);
+
+		// remove punctuation at the beginning and end of words
+		$text = preg_replace('/\s+\W+/u', ' ', $text);
+		$text = preg_replace('/\W+\s+/u', ' ', $text);
+
+		// replace multiple dashes with a single dash
+		$text = preg_replace('/-+/u', '-', $text);
+
+		// replace whitespace with single spaces
+		$text = preg_replace('/\s+/u', ' ', $text);
+
+		return $text;
 	}
 
 	// }}}
