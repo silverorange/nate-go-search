@@ -187,15 +187,23 @@ class NateGoSearchQuery
 		static $unique_counter = 0;
 
 		$id = sha1(uniqid($unique_counter, true));
-		$keywords = NateGoSearchIndexer::formatKeywords($keywords);
+
+		$keywords = $this->normalizeKeywordsForSpelling($keywords);
+
+		if ($this->spell_checker === null) {
+			$misspellings = array();
+		} else {
+			$misspellings =
+				$this->spell_checker->getMisspellingsInPhrase($keywords);
+		}
+
+		$keywords = $this->normalizeKeywordsForSearching($keywords);
 		$keywords_hash = sha1($keywords);
 
 		$results = new NateGoSearchResult($id, $keywords,
 			$this->document_types);
 
-		if ($this->spell_checker !== null)
-			$results->addMisspellings(
-				$this->spell_checker->getMisspellingsInPhrase($keywords));
+		$results->addMisspellings($misspellings);
 
 		$searched_keywords = array();
 		$keyword = strtok($keywords, ' ');
@@ -316,6 +324,77 @@ class NateGoSearchQuery
 		}
 
 		return $words;
+	}
+
+	// }}}
+	// {{{ protected function normalizeKeywordsForSpelling()
+
+	/**
+	 * Performs initial normalization of a query string suitable for
+	 * spell-checking
+	 *
+	 * This removes excess punctuation and markup. The resulting string may be
+	 * tokenized by spaces. Before searching, query strings should be further
+	 * normalized using {@link NateGoSearchQuery::normalizeKeywordsForSearch()}.
+	 *
+	 * @param string $text the string to be normalized.
+	 *
+	 * @return string the normalized string.
+	 *
+	 * @see NateGoSearchQuery::normalizeKeywordsForSearch()
+	 */
+	protected function normalizeKeywordsForSpelling($text)
+	{
+		// replace html/xhtml/xml tags with spaces
+		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
+
+		// remove entities
+		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
+		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
+
+		// remove punctuation at the beginning and end of the string
+		$text = preg_replace('/^\W+/u', '', $text);
+		$text = preg_replace('/\W+$/u', '', $text);
+
+		// remove punctuation at the beginning and end of words
+		$text = preg_replace('/\s+\W+/u', ' ', $text);
+		$text = preg_replace('/\W+\s+/u', ' ', $text);
+
+		// replace multiple dashes with a single dash
+		$text = preg_replace('/-+/u', '-', $text);
+
+		// replace whitespace with single spaces
+		$text = preg_replace('/\s+/u', ' ', $text);
+
+		return $text;
+	}
+
+	// }}}
+	// {{{ protected function normalizeKeywordsForSearching()
+
+	/**
+	 * Performs additional normalization of a query string suitable for
+	 * searching
+	 *
+	 * This converts all words to lower-case and removes apostrophe s's from
+	 * all words. Keywords should have already been particlaly normalized
+	 * using {@link NateGoSearchQuery::normalizeKeywordsForSpelling()}.
+	 *
+	 * @param string $text the string to be normalized.
+	 *
+	 * @return string the normalized string.
+	 *
+	 * @see NateGoSearchQuery::normalizeKeywordsForSpelling()
+	 */
+	protected function normalizeKeywordsForSearching($text)
+	{
+		// lowercase
+		$text = strtolower($text);
+
+		// replace apostrophe s's
+		$text = preg_replace('/\'s\b/u', '', $text);
+
+		return $text;
 	}
 
 	// }}}
