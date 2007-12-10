@@ -67,7 +67,7 @@ class NateGoSearchIndexer
 	 *
 	 * @var string
 	 */
-	protected $index_table = 'NateGoSearchIndex';
+	protected $index_table = 'nategosearchindex';
 
 	/**
 	 * An array of keywords collected from the current index operation
