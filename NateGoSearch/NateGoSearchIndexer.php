@@ -482,7 +482,7 @@ class NateGoSearchIndexer
 	// {{{ protected function normalizeKeywords()
 
 	/**
-	 * Normalizes a string to prepare if for indexing
+	 * Normalizes a string to prepare it for indexing
 	 *
 	 * This removes excess punctuation and markup, and lowercases all words.
 	 * The resulting string may then be tokenized by spaces.
