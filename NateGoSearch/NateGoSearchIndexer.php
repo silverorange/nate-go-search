@@ -251,14 +251,13 @@ class NateGoSearchIndexer
 
 		foreach ($this->terms as $term) {
 			$text = $document->getField($term->getDataField());
-			$text = $this->normalizeKeywords($text);
+			$word_list = $this->normalizeKeywords($text);
 
-			$tok = strtok($text, ' ');
-			while ($tok !== false) {
-				$keyword = self::stemKeyword($tok);
+			foreach ($word_list as $word) {
+				$keyword = self::stemKeyword($word['word']);
 
 				if (!in_array($keyword, $this->unindexed_words)) {
-					$location++;
+					$location += $word['proximity'];
 					if ($this->max_word_length !== null &&
 						strlen($keyword) > $this->max_word_length)
 						$keyword = substr($keyword, 0, $this->max_word_length);
@@ -266,21 +265,20 @@ class NateGoSearchIndexer
 					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
 						$term->getWeight(), $location, $this->document_type);
 				}
-
 				// add any words that the spell checker would flag to a
 				// personal wordlist
 				if ($this->create_wordlist) {
-					$new_tok = $this->spell_checker->getProperSpelling($tok);
+					$new_tok =
+						$this->spell_checker->getProperSpelling($word['word']);
 
-					if (($new_tok != $tok) &&
-						!in_array($tok, $this->personal_wordlist) &&
-						ctype_alpha($tok)) {
-							$this->personal_wordlist[] = $tok;
-							$this->spell_checker->addToPersonalWordlist($tok);
+					if (($new_tok != $word['word']) &&
+						!in_array($word['word'], $this->personal_wordlist) &&
+						ctype_alpha($word['word'])) {
+							$this->personal_wordlist[] = $word['word'];
+							$this->spell_checker->addToPersonalWordlist(
+								$word['word']);
 					}
 				}
-
-				$tok = strtok(' ');
 			}
 		}
 	}
@@ -488,38 +486,101 @@ class NateGoSearchIndexer
 	 * The resulting string may then be tokenized by spaces.
 	 *
 	 * @param string $text the string to be normalized.
+	 * @param integer $end_value the number of spaces used to replace end of
+	                              sentence punctuation
+	 * @param integer $tab_value the number of sapces used to replace tabs
+	 * @param integer $newline_value the number of spaces used to replace tabs
+	 * @param integer $mid_value the number of spaces used to replace middle of
+	 *                            sentence punctuation
 	 *
-	 * @return string the normalized string.
+	 * @return array an array in the form ('word'      => $word,
+	 *                                     'proximity' => $proximity)
 	 */
-	protected function normalizeKeywords($text)
+	protected function normalizeKeywords($text,
+										 $end_value = 5,
+										 $tab_value = 5,
+										 $newline_value = 5,
+										 $mid_value = 2)
 	{
 		$text = strtolower($text);
+
+		// TODO: add some error checking and how to handle zero
+		$end_weight = str_repeat(' ', $end_value);
+		$tab_weight = str_repeat(' ', $tab_value);
+		$newline_weight = str_repeat(' ', $newline_value);
+		$mid_weight = str_repeat(' ', $mid_value);
 
 		// replace html/xhtml/xml tags with spaces
 		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
 
 		// remove entities
 		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
-		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
 
 		// replace apostrophe s's
 		$text = preg_replace('/\'s\b/u', '', $text);
 
 		// remove punctuation at the beginning and end of the string
-		$text = preg_replace('/^\W+/u', '', $text);
+	 	$text = preg_replace('/^\W+/u', '', $text);
 		$text = preg_replace('/\W+$/u', '', $text);
 
-		// remove punctuation at the beginning and end of words
-		$text = preg_replace('/\s+\W+/u', ' ', $text);
-		$text = preg_replace('/\W+\s+/u', ' ', $text);
+		// remove any odd characters from the string
+		$text = preg_replace('/[^\s\w?.!;:,\/d-]/u', '', $text);
+
+		// replace whitespace and end of sentence punctuation with spaces
+		$text = preg_replace('/[!\.\?]+\s+/u', $end_weight, $text);
+		$text = preg_replace('/\t+/u', $tab_weight, $text);
+		$text = preg_replace('/\n+/u', $newline_weight, $text);
+
+		// mid sentence punctuation this probably won't need as much weight
+		$text = preg_replace('/(\s+[;:,-]+\s+|[;:,-]+\s+|\s+[;:,-]+)/u',
+			                 $mid_weight,
+						     $text);
 
 		// replace multiple dashes with a single dash
 		$text = preg_replace('/-+/u', '-', $text);
 
-		// replace whitespace with single spaces
-		$text = preg_replace('/\s+/u', ' ', $text);
+		// create an array with the words and their offset in the orginal string
+		$text = preg_split('/ +/u', $text, -1, PREG_SPLIT_OFFSET_CAPTURE);
 
-		return $text;
+		// now create the array( 'word' => $word, 'proximity' => $proximity)
+		$word_list = $this->createWordProximityList($text);
+
+		return $word_list;
+	}
+
+	// }}}
+	// {{{ protected function createWordProximityList()
+
+	/**
+	 * Creates the word/proximity wordlist
+	 *
+	 * Creates a list containing an array for each word in the $text
+	 *  the array is in the form ('word' => $word, 'proximity' => $proximity)
+	 *
+	 * @param string $text the text to be converted into the list
+	 *
+	 * @return array an array in the form ('word'      => $word,
+	 *                                     'proximity' => $proximity)
+	 */
+	protected function createWordProximityList($text)
+	{
+		$word_list = array();
+
+		// default some values so the first word has a proximity of 0
+		$old_proximity = 0;
+		$old_word = '';
+
+		foreach ($text as $word) {
+			$new_word = $word[0];
+			$proximity = $word[1] - ($old_proximity + strlen($old_word));
+			$word_list[] =
+				array('word' => $new_word, 'proximity' => $proximity);
+
+			$old_proximity = $word[1];
+			$old_word = $new_word;
+		}
+
+		return $word_list;
 	}
 
 	// }}}
