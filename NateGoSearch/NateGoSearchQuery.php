@@ -350,7 +350,6 @@ class NateGoSearchQuery
 
 		// remove entities
 		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
-		$text = htmlspecialchars($text, ENT_COMPAT, 'UTF-8');
 
 		// remove punctuation at the beginning and end of the string
 		$text = preg_replace('/^\W+/u', '', $text);
