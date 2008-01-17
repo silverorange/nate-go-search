@@ -97,7 +97,7 @@ class NateGoSearch
 		$type = $db->queryOne($sql);
 
 		if (MDB2::isError($type))
-			throw new NateGoSearchDBException($value);
+			throw new NateGoSearchDBException($type);
 
 		return $type;
 	}
