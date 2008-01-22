@@ -200,7 +200,7 @@ class NateGoSearchQuery
 		$keywords = $this->normalizeKeywordsForSearching($keywords);
 		$keywords_hash = sha1($keywords);
 
-		$results = new NateGoSearchResult($id, $keywords,
+		$results = new NateGoSearchResult($this->db, $id, $keywords,
 			$this->document_types);
 
 		$results->addMisspellings($misspellings);
@@ -247,6 +247,17 @@ class NateGoSearchQuery
 			$unique_counter++;
 
 			$results->setUniqueId($unique_id);
+
+			$sql = sprintf('select count(document_id) from %s
+				where unique_id = %s',
+				$this->db->quoteIdentifier($results->getResultTable()),
+				$this->db->quote($unique_id, 'text'));
+
+			$document_count = $this->db->queryOne($sql);
+			if (MDB2::isError($document_count))
+				throw new NateGoSearchDBException($document_count);
+
+			$results->setDocumentCount($document_count);
 		}
 
 		return $results;

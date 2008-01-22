@@ -24,6 +24,7 @@ class NateGoSearchResult
 	protected $searched_words = array();
 	protected $misspellings = array();
 	protected $document_types = array();
+	protected $db;
 
 	// }}}
 	// {{{ public function __construct()
@@ -31,6 +32,7 @@ class NateGoSearchResult
 	/**
 	 * Builds a new search result
 	 *
+	 * @param MDB2_Driver_Common $db the database driver for this result.
 	 * @param string $unique_id the unique identifier of the search results in
 	 *                           the results table.
 	 * @param string $query_string the query that was entered by the user after
@@ -41,12 +43,13 @@ class NateGoSearchResult
 	 *
 	 * @see NateGoSearchResult::getUniqueId()
 	 */
-	public function __construct($unique_id, $query_string,
-		array $document_types)
+	public function __construct(MDB2_Driver_Common $db, $unique_id,
+		$query_string, array $document_types)
 	{
 		$this->unique_id = $unique_id;
 		$this->query_string = $query_string;
 		$this->document_types = $document_types;
+		$this->db = $db;
 	}
 
 	// }}}
@@ -192,14 +195,14 @@ class NateGoSearchResult
 	/**
 	 * Gets the name of the table that NateGoSearch results are stored in
 	 *
-	 * By default this is 'NateGoSearchResult'.
+	 * By default this is 'nategosearchresult'.
 	 *
 	 * @return string the name of the table that NateGoSearch results are
 	 *                 stored in.
 	 */
 	public function getResultTable()
 	{
-		return 'NateGoSearchResult';
+		return 'nategosearchresult';
 	}
 
 	// }}}
@@ -248,6 +251,23 @@ class NateGoSearchResult
 	}
 
 	// }}}
+	// {{{ public function getDocumentCount()
+
+	/**
+	 * Gets the number of unique documents returned by this search result
+	 *
+	 * A unique document is a unique combination of document_id and
+	 * document_type.
+	 *
+	 * @return integer the number of unique documents returned by this search
+	 *                 result.
+	 */
+	public function getDocumentCount()
+	{
+		return $this->document_count;
+	}
+
+	// }}}
 	// {{{ public function setUniqueId()
 
 	/**
@@ -257,14 +277,49 @@ class NateGoSearchResult
 	 * a specific query may be gathered by selecting results from the database
 	 * with the appropriate unique id.
 	 *
-	 * @paramt string $id the unique identifier of this search result in the
-	 *                     results table.
+	 * @param string $id the unique identifier of this search result in the
+	 *                    results table.
 	 *
 	 * @see NateGoSearchResult::getUniqueId()
 	 */
 	public function setUniqueId($id)
 	{
 		$this->unique_id = (string)$id;
+	}
+
+	// }}}
+	// {{{ public function setDocumentCount()
+
+	/**
+	 * Sets the document count of this search result in the results table
+	 *
+	 * @param integer $count the number of unique documents returned by this
+	 *                        search result.
+	 *
+	 * @see NateGoSearchResult::getDocumentCount()
+	 */
+	public function setDocumentCount($count)
+	{
+		$this->document_count = (integer)$count;
+	}
+
+	// }}}
+	// {{{ public function saveHistory()
+
+	/**
+	 * Saves this search result for search trend statistics and tracking
+	 */
+	public function saveHistory()
+	{
+		$sql = sprintf('insert into NateGoSearchHistory
+			(keywords, document_count) values
+			(%s, %s)',
+			$this->db->quote($this->query_string, 'text'),
+			$this->db->quote($this->document_count, 'integer'));
+
+		$result = $this->db->exec($sql);
+		if (MDB2::isError($result))
+			throw new NateGoSearchDBException($result);
 	}
 
 	// }}}
