@@ -78,12 +78,6 @@ class NateGoSearchDocument
 	 */
 	public function getField($field_name)
 	{
-		if (!property_exists($this->data, $field_name)) {
-			throw new InvalidArgumentException(sprintf(
-				"Document object (%s) does not contain a field '%s'.",
-				get_class($this->data), $field_name));
-		}
-
 		return $this->data->$field_name;
 	}
 
