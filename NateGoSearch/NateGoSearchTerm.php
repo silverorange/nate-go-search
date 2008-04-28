@@ -51,7 +51,7 @@ class NateGoSearchTerm
 	}
 
 	// }}}
-	// {{{ public function segtWeight()
+	// {{{ public function setWeight()
 
 	/**
 	 * Sets the weight of this term
