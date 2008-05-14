@@ -35,8 +35,8 @@ class NateGoSearch
 	 * If the document type already exists, it is not recreated and no warnings
 	 * are raised.
 	 *
-	 * @param MDB2_Driver_Common the database driver to use when creating the
-	 *                            new document type.
+	 * @param MDB2_Driver_Common $db the database driver to use when creating
+	 *                                the new document type.
 	 * @param string $type_shortname the shortname of the new document type.
 	 *                                Document types are managed and manipulated
 	 *                                using symbolic shortnames. Examples of
@@ -76,8 +76,8 @@ class NateGoSearch
 	/**
 	 * Gets the identifier of a document type by the type's shortname
 	 *
-	 * @param MDB2_Driver_Common the database driver to use to get the document
-	 *                            type identifier.
+	 * @param MDB2_Driver_Common $db the database driver to use to get the
+	 *                                document type identifier.
 	 * @param string $type_shortname the shortname of the document type.
 	 *
 	 * @return integer the document type identifier of the type or null if no
@@ -111,8 +111,8 @@ class NateGoSearch
 	 * After a document type is removed, documents of that type can no longer
 	 * be indexed or queried.
 	 *
-	 * @param MDB2_Driver_Common the database driver to use to remove the
-	 *                            document type identifier.
+	 * @param MDB2_Driver_Common $db the database driver to use to remove the
+	 *                                document type identifier.
 	 * @param string $type_shortname the shortname of the document type to
 	 *                                remove.
 	 *
