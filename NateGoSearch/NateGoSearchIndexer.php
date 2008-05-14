@@ -35,7 +35,9 @@ class NateGoSearchIndexer
 	/**
 	 * A list of search terms to index documents by
 	 *
-	 * @var array NateGoSearchTerm
+	 * This is an array of {@link NateGoSearchTerm} objects.
+	 *
+	 * @var array
 	 */
 	protected $terms = array();
 
@@ -142,7 +144,7 @@ class NateGoSearchIndexer
 	 *
 	 * An array to hold everyword that is added to the personal wordlist
 	 *
-	 * @var array()
+	 * @var array
 	 */
 	protected $personal_wordlist = array();
 
