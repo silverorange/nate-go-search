@@ -13,7 +13,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * Perform queries using a NateGoSearch index
  *
  * This is the class used to actually search indexed keywords. Instances of
- * this class may search the index using the {@link NateGoSearch::query()}
+ * this class may search the index using the {@link NateGoSearchQuery::query()}
  * method. For example, to search a database table called 'Article' indexed
  * with a document type of 'article', use the following code:
  *
