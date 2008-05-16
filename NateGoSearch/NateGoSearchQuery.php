@@ -13,15 +13,15 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * Perform queries using a NateGoSearch index
  *
  * This is the class used to actually search indexed keywords. Instances of
- * this class may search the index using the find() method. For example, to
- * search a database table called 'Article' indexed with a document type of
- * 'article', use the following code:
+ * this class may search the index using the {@link NateGoSearch::query()}
+ * method. For example, to search a database table called 'Article' indexed
+ * with a document type of 'article', use the following code:
  *
  * <code>
  * <?php
  * $query = new NateGoSearchQuery($db);
  * $query->addDocumentType('article');
- * $result = $query->find('some keywords');
+ * $result = $query->query('some keywords');
  *
  * $sql = 'select id, title from Article ' .
  *     'inner join %s on Article.id = %s.document_id and '.
@@ -40,16 +40,15 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * </code>
  *
  * Because of the specific PL/pgSQL implementation of the search algorithm,
- * the {@link NateGoSearchQuery::find()} method may only be called once per
- * page request.
+ * the <i>query()</i> method may only be called once per page request.
  *
  * If the PECL <i>stem</i> package is loaded, English stemming is applied to all
  * query keywords. See {@link http://pecl.php.net/package/stem/} for details
  * about the PECL stem package. Support for stemming in other languages may
  * be added in later releases of NateGoSearch.
  *
- * Otherwise, if a PorterStemmer class is defined, it is applied to all query
- * keywords. The most commonly available PHP implementation of the
+ * Otherwise, if a <i>PorterStemmer</i> class is defined, it is applied to all
+ * query keywords. The most commonly available PHP implementation of the
  * Porter-stemmer algorithm is licenced under the GPL, and is thus not
  * distributable with the LGPL licensed NateGoSearch.
  *
