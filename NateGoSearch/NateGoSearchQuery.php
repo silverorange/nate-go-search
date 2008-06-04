@@ -345,13 +345,14 @@ class NateGoSearchQuery
 	 *
 	 * This removes excess punctuation and markup. The resulting string may be
 	 * tokenized by spaces. Before searching, query strings should be further
-	 * normalized using {@link NateGoSearchQuery::normalizeKeywordsForSearch()}.
+	 * normalized using
+	 * {@link NateGoSearchQuery::normalizeKeywordsForSearching()}.
 	 *
 	 * @param string $text the string to be normalized.
 	 *
 	 * @return string the normalized string.
 	 *
-	 * @see NateGoSearchQuery::normalizeKeywordsForSearch()
+	 * @see NateGoSearchQuery::normalizeKeywordsForSearching()
 	 */
 	protected function normalizeKeywordsForSpelling($text)
 	{
