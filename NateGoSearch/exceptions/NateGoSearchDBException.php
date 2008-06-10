@@ -17,7 +17,7 @@ class NateGoSearchDBException extends NateGoSearchException
 	// {{{ public function __construct()
 
 	/**
-	 * Creates a new databsae exception
+	 * Creates a new database exception
 	 *
 	 * @param string|PEAR_Error $message either the error message or a PEAR
 	 *                                    error describing the MDB2 error that

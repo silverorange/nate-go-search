@@ -13,13 +13,13 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
  * what index the word belongs to.
  *
  * Document types allow mixed search results from a single query ordered by
- * relavence. For example, if you seach for 'roses', you could get 'product'
- * results, 'category' results and 'article' results all in the same list of
- * search results.
+ * relavence. For example, if you seach for <em>roses</em>, you could get
+ * <em>product</em> results, <em>category</em> results and <em>article</em>
+ * results all in the same list of search results.
  *
  * Document types must be created before being used. Create a document type
- * with the NateGoSearch::createDocumentType() method. Document types only
- * need to be created once when setting up a new website.
+ * with the {@link NateGoSearch::createDocumentType()} method. Document types
+ * only need to be created once when setting up a new website.
  *
  * @package   NateGoSearch
  * @copyright 2007 silverorange
@@ -40,8 +40,8 @@ class NateGoSearch
 	 * @param string $type_shortname the shortname of the new document type.
 	 *                                Document types are managed and manipulated
 	 *                                using symbolic shortnames. Examples of
-	 *                                shortnames are: 'products', 'articles' and
-	 *                                'categories'.
+	 *                                shortnames are: <em>products</em>,
+	 *                                <em>articles</em> and <em>categories</em>.
 	 *
 	 * @return integer the document type identifier of the new type.
 	 *

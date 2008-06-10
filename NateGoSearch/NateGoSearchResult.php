@@ -8,7 +8,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * Represents the result of a search using NateGoSearch
  *
  * This class is designed to be returned from a call to
- * {@link NateGoSearchQuery::find()} and is not designed to be used on its own.
+ * {@link NateGoSearchQuery::query()} and is not designed to be used on its own.
  *
  * @package   NateGoSearch
  * @copyright 2006 silverorange
@@ -59,7 +59,7 @@ class NateGoSearchResult
 	 * Adds a word to the list of blocked words
 	 *
 	 * @param string|array $words either an array containing words that were
-	 *                             not searched for or a string containing a
+	 *                             not searched for, or a string containing a
 	 *                             word that was not searched for.
 	 *
 	 * @see NateGoSearchResult::getBlockedWords()
@@ -256,8 +256,8 @@ class NateGoSearchResult
 	/**
 	 * Gets the number of unique documents returned by this search result
 	 *
-	 * A unique document is a unique combination of document_id and
-	 * document_type.
+	 * A unique document is a unique combination of <code>$document_id</code>
+	 * and <code>$document_type</code<.
 	 *
 	 * @return integer the number of unique documents returned by this search
 	 *                 result.

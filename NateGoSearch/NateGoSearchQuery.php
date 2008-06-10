@@ -14,8 +14,8 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  *
  * This is the class used to actually search indexed keywords. Instances of
  * this class may search the index using the {@link NateGoSearchQuery::query()}
- * method. For example, to search a database table called 'Article' indexed
- * with a document type of 'article', use the following code:
+ * method. For example, to search a database table called <em>Article</em>
+ * indexed with a document type of <em>article</em>, use the following code:
  *
  * <code>
  * <?php
@@ -40,15 +40,15 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * </code>
  *
  * Because of the specific PL/pgSQL implementation of the search algorithm,
- * the <i>query()</i> method may only be called once per page request.
+ * the <code>query()</code> method may only be called once per page request.
  *
- * If the PECL <i>stem</i> package is loaded, English stemming is applied to all
- * query keywords. See {@link http://pecl.php.net/package/stem/} for details
- * about the PECL stem package. Support for stemming in other languages may
- * be added in later releases of NateGoSearch.
+ * If the PECL <code>stem</code> package is loaded, English stemming is applied
+ * to all query keywords. See {@link http://pecl.php.net/package/stem/} for
+ * details about the PECL stem package. Support for stemming in other languages
+ * may be added in later releases of NateGoSearch.
  *
- * Otherwise, if a <i>PorterStemmer</i> class is defined, it is applied to all
- * query keywords. The most commonly available PHP implementation of the
+ * Otherwise, if a <code>PorterStemmer</code> class is defined, it is applied
+ * to all query keywords. The most commonly available PHP implementation of the
  * Porter-stemmer algorithm is licenced under the GPL, and is thus not
  * distributable with the LGPL licensed NateGoSearch.
  *
@@ -180,6 +180,8 @@ class NateGoSearchQuery
 	 * @param string $keywords the search string to query.
 	 *
 	 * @return NateGoSearchResult an object containing result information.
+	 *
+	 * @see NateGoSearchResult::getUniqueId()
 	 */
 	public function query($keywords)
 	{
@@ -387,7 +389,7 @@ class NateGoSearchQuery
 	 * searching
 	 *
 	 * This converts all words to lower-case and removes apostrophe s's from
-	 * all words. Keywords should have already been particlaly normalized
+	 * all words. Keywords should have already been partially normalized
 	 * using {@link NateGoSearchQuery::normalizeKeywordsForSpelling()}.
 	 *
 	 * @param string $text the string to be normalized.

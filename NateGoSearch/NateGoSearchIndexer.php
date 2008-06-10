@@ -44,7 +44,7 @@ class NateGoSearchIndexer
 	/**
 	 * An array of words to not index
 	 *
-	 * These words will be skipped by the indexer. Common examples of such
+	 * These words will be skipped by this indexer. Common examples of such
 	 * words are: a, the, it
 	 *
 	 * @var array
@@ -55,8 +55,8 @@ class NateGoSearchIndexer
 	 * The maximum length of words that are indexed
 	 *
 	 * If the word length is set as null, there is no maximum word length. This
-	 * is hte default behaviour. If a word is longer than the maximum length,
-	 * it is truncated before being indexed.
+	 * is the default behavior. If a word is longer than the maximum length, it
+	 * is truncated before being indexed.
 	 *
 	 * @var integer
 	 */
@@ -95,8 +95,8 @@ class NateGoSearchIndexer
 	 * stores all indexed words in the same index with a document type to
 	 * identify what index the word belongs to. Document types allow the
 	 * possiblilty of mixed search results ordered by relavence. For example,
-	 * if you seach for "roses" you could get product results, category results
-	 * and article results all in the same list of search results.
+	 * if you seach for <em>roses</em> you could get product results, category
+	 * results and article results all in the same list of search results.
 	 *
 	 * @var mixed
 	 */
@@ -111,7 +111,7 @@ class NateGoSearchIndexer
 
 	/**
 	 * Whether or not the old index is cleared when changes to the index are
-	 * comitted
+	 * committed
 	 *
 	 * @var boolean
 	 *
@@ -142,7 +142,7 @@ class NateGoSearchIndexer
 	/**
 	 * The words in the personal wordlist
 	 *
-	 * An array to hold everyword that is added to the personal wordlist
+	 * An array to hold every word that is added to the personal wordlist
 	 *
 	 * @var array
 	 */
@@ -291,9 +291,10 @@ class NateGoSearchIndexer
 	/**
 	 * Commits keywords indexed by this indexer to the database index table
 	 *
-	 * If this indexer was created with the 'new' parameter then the index is
-	 * cleared for this indexer's document type before new keywords are
-	 * inserted. Otherwise, the new keywords are simply appended to the index.
+	 * If this indexer was created with the <code>$new</code> parameter then
+	 * the index is cleared for this indexer's document type before new
+	 * keywords are inserted. Otherwise, the new keywords are simply appended
+	 * to the existing index.
 	 */
 	public function commit()
 	{
@@ -368,7 +369,10 @@ class NateGoSearchIndexer
 	// {{{ public function setSpellChecker()
 
 	/**
-	 * Set the spell checker to be used by the indexer
+	 * Set the spell checker to be used by this indexer
+	 *
+	 * This is used to build a custom word list from detected misspellings in
+	 * indexed words.
 	 *
 	 * @param NateGoSearchPSpellChecker
 	 */
@@ -400,14 +404,15 @@ class NateGoSearchIndexer
 	 * The basic idea behind stemmming is described on the Wikipedia article on
 	 * {@link http://en.wikipedia.org/wiki/Stemming Stemming}.
 	 *
-	 * If the PECL <i>stem</i> package is loaded, English stemming is performed
-	 * on the <i>$keyword</i>. See {@link http://pecl.php.net/package/stem/}
-	 * for details about the PECL stem package.
+	 * If the PECL <code>stem</code> package is loaded, English stemming is
+	 * performed on the <code>$keyword</code>. See
+	 * {@link http://pecl.php.net/package/stem/} for details about the PECL
+	 * stem package.
 	 *
-	 * Otherwise, if a PorterStemmer class is defined, it is applied to the
-	 * <i>$keyword</i>. The most commonly available PHP implementation of the
-	 * Porter-stemmer algorithm is licenced under the GPL, and is thus not
-	 * distributable with the LGPL licensed NateGoSearch.
+	 * Otherwise, if a <code>PorterStemmer</code< class is defined, it is
+	 * applied to the <code>$keyword</code>. The most commonly available PHP
+	 * implementation of the Porter-stemmer algorithm is licenced under the
+	 * GPL, and is thus not distributable with the LGPL licensed NateGoSearch.
 	 *
 	 * If no stemming is available, stemming is not performed and the original
 	 * keyword is returned.
@@ -430,10 +435,11 @@ class NateGoSearchIndexer
 	// {{{ public static function &getDefaultUnindexedWords()
 
 	/**
-	 * Gets a defalt list of words that are not indexed by a search indexer
+	 * Gets a default list of words that are not indexed by a search indexer
 	 *
 	 * These words may be passed directly to the
-	 * {@link NateGoSearchIndexer::addUnindexedWords()} method.
+	 * {@link NateGoSearchIndexer::addUnindexedWords()} method of an
+	 * instantiated indexer.
 	 *
 	 * @return array a default list of words not to index.
 	 */
@@ -484,7 +490,11 @@ class NateGoSearchIndexer
 	/**
 	 * Normalizes a string to prepare it for indexing
 	 *
-	 * This removes excess punctuation and markup, and lowercases all words.
+	 * Normalization involves:
+	 *
+	 *  1. removing excess punctuation and markup, and
+	 *  2. lowercasing all words.
+	 *
 	 * The resulting string may then be tokenized by spaces.
 	 *
 	 * @param string $text the string to be normalized.
@@ -556,13 +566,19 @@ class NateGoSearchIndexer
 	/**
 	 * Creates the word/proximity wordlist
 	 *
-	 * Creates a list containing an array for each word in the $text
-	 *  the array is in the form ('word' => $word, 'proximity' => $proximity)
+	 * Creates a list containing an array for each word in the specified
+	 * <code>$text</code>. The array is in the form:
 	 *
-	 * @param string $text the text to be converted into the list
+	 * <code>
+	 * array(
+	 *     'word'      => $word,
+	 *     'proximity' => $proximity
+	 * );
+	 * </code>
 	 *
-	 * @return array an array in the form ('word'      => $word,
-	 *                                     'proximity' => $proximity)
+	 * @param string $text the text to be converted into the list.
+	 *
+	 * @return array the word/proximity word list.
 	 */
 	protected function createWordProximityList($text)
 	{

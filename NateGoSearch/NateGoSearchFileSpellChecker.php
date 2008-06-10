@@ -33,7 +33,7 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * @param array $misspellings an optional array of misspellings to use. You
 	 *                             may add misspellings at any time with the
-	 *                             {@link SpellChecker::addMisspellings()}
+	 *                             {@link NateGoSearchFileSpellChecker::addMisspellings()}
 	 *                             method.
 	 */
 	public function __construct(array $misspellings = array())
@@ -51,12 +51,12 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	 * word spelling placed before the correct word spelling having both words
 	 * separated by a comma. For example:
 	 *
-	 * <code>
+	 * <pre>
 	 * hte,the
 	 * yuo,you
 	 * acheive,achieve
 	 * hasa,has a
-	 * </code>
+	 * </pre>
 	 *
 	 * @param string $filename the name of the file to load the misspellings
 	 *                          from.
