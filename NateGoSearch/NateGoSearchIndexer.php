@@ -156,6 +156,22 @@ class NateGoSearchIndexer
 	protected $create_wordlist = false;
 
 	// }}}
+	// {{{ private static properties
+
+	/**
+	 * Whether or not mb_string overloading is turned on for the strlen
+	 * function
+	 *
+	 * This value is calculated and cached when the first indexer object is
+	 * created.
+	 *
+	 * @var boolean
+	 *
+	 * @see NateGoSearchIndexer::getByteLength()
+	 */
+	private static $use_mb_string = null;
+
+	// }}}
 	// {{{ public function __construct()
 
 	/**
@@ -182,6 +198,12 @@ class NateGoSearchIndexer
 	public function __construct($document_type, MDB2_Driver_Common $db,
 		$new = false, $append = false)
 	{
+		// cache mb_string overloading status
+		if (self::$use_mb_string === null) {
+			self::$use_mb_string = (extension_loaded('mbstring') &&
+				(ini_get('mbstring.func_overload') & 2) === 2);
+		}
+
 		$type = NateGoSearch::getDocumentType($db, $document_type);
 
 		if ($type === null) {
@@ -604,9 +626,12 @@ class NateGoSearchIndexer
 
 		foreach ($text as $word) {
 			$new_word = $word[0];
-			// TODO: this strlen needs to be in bytes because the proximity
-			// offsets are in bytes
-			$proximity = $word[1] - ($old_proximity + strlen($old_word));
+
+			// we need the string length in bytes because the proximity offsets
+			// are in bytes as provided by preg_split()
+			$proximity =
+				$word[1] - ($old_proximity + self::getByteLength($old_word));
+
 			$word_list[] =
 				array('word' => $new_word, 'proximity' => $proximity);
 
@@ -615,6 +640,18 @@ class NateGoSearchIndexer
 		}
 
 		return $word_list;
+	}
+
+	// }}}
+	// {{{ protected static function getByteLength()
+
+	protected static function getByteLength($string)
+	{
+		if (self::$use_mb_string) {
+			return mb_strlen($string, '8bit');
+		}
+
+		return strlen($string);
 	}
 
 	// }}}
