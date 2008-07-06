@@ -495,55 +495,68 @@ class NateGoSearchIndexer
 	 *  1. removing excess punctuation and markup, and
 	 *  2. lowercasing all words.
 	 *
-	 * The resulting string may then be tokenized by spaces.
-	 *
-	 * @param string $text the string to be normalized.
-	 * @param integer $end_value the number of spaces used to replace end of
-	                              sentence punctuation
-	 * @param integer $tab_value the number of sapces used to replace tabs
-	 * @param integer $newline_value the number of spaces used to replace tabs
-	 * @param integer $mid_value the number of spaces used to replace middle of
-	 *                            sentence punctuation
+	 * @param string  $text           the string to be normalized.
+	 * @param integer $end_weight     the word proximity weighting relative to
+	 *                                a single space to use for end-of-sentence
+	                                  punctuation.
+	 * @param integer $tab_weight     the word proximity weighting relative to
+	 *                                a single space to use or tabs.
+	 * @param integer $newline_weight the word proximity weighting relative to
+	 *                                a single space to use for newlines.
+	 * @param integer $mid_weight     the word proximity weighting relative to
+	 *                                a single space to use or mid-sentence
+	 *                                punctuation.
 	 *
 	 * @return array an array in the form ('word'      => $word,
 	 *                                     'proximity' => $proximity)
 	 */
 	protected function normalizeKeywords($text,
-										 $end_value = 5,
-										 $tab_value = 5,
-										 $newline_value = 5,
-										 $mid_value = 2)
+										 $end_weight = 5,
+										 $tab_weight = 5,
+										 $newline_weight = 5,
+										 $mid_weight = 2)
 	{
+		// get proximity weight strings
+		$end_weight     = str_repeat(' ', max(intval($end_weight), 1));
+		$tab_weight     = str_repeat(' ', max(intval($tab_weight), 1));
+		$newline_weight = str_repeat(' ', max(intval($newline_weight), 1));
+		$mid_weight     = str_repeat(' ', max(intval($mid_weight), 1));
+
+		// lowercase
 		$text = strtolower($text);
 
-		// TODO: add some error checking and how to handle zero
-		$end_weight = str_repeat(' ', $end_value);
-		$tab_weight = str_repeat(' ', $tab_value);
-		$newline_weight = str_repeat(' ', $newline_value);
-		$mid_weight = str_repeat(' ', $mid_value);
-
 		// replace html/xhtml/xml tags with spaces
-		$text = preg_replace('@</?[^>]*>*@u', ' ', $text);
+		$text = preg_replace('/<\/?[^>]*>*/u', ' ', $text);
 
-		// remove entities
+		// convert entities to UTF-8 equivalents
 		$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
 
-		// replace apostrophe s's
+		// remove apostrophe s's
 		$text = preg_replace('/\'s\b/u', '', $text);
 
 		// remove punctuation at the beginning and end of the string
 	 	$text = preg_replace('/^\W+/u', '', $text);
 		$text = preg_replace('/\W+$/u', '', $text);
 
-		// remove any odd characters from the string
+		// remove any odd (non-recognized punctuation) characters from the
+		// string
 		$text = preg_replace('/[^\s\w?.!;:,\/d-]/u', '', $text);
 
-		// replace whitespace and end of sentence punctuation with spaces
-		$text = preg_replace('/[!\.\?]+\s+/u', $end_weight, $text);
-		$text = preg_replace('/\t+/u', $tab_weight, $text);
-		$text = preg_replace('/\n+/u', $newline_weight, $text);
+		// collapse spaces. Note: this needs to be done before proximity
+		// weighting is done.
+		$text = preg_replace('/ +/u', ' ', $text);
 
-		// mid sentence punctuation this probably won't need as much weight
+		// end-of-sentence punctuation (.?!)
+		$text = preg_replace('/[!\.\?]+\s+/u', $end_weight, $text);
+
+		// tabs
+		$text = preg_replace('/\t+/u', $tab_weight, $text);
+
+		// newlines (cr and lf)
+		$text = preg_replace('/[\r\n]+/su', $newline_weight, $text);
+
+		// mid sentence punctuation (;:,-). Note: this should not remove
+		// hyphens from hyphenated words.
 		$text = preg_replace('/(\s+[;:,-]+\s+|[;:,-]+\s+|\s+[;:,-]+)/u',
 			                 $mid_weight,
 						     $text);
@@ -551,10 +564,11 @@ class NateGoSearchIndexer
 		// replace multiple dashes with a single dash
 		$text = preg_replace('/-+/u', '-', $text);
 
-		// create an array with the words and their offset in the orginal string
+		// create an array with the words and their offset (in bytes) in the
+		// orginal string
 		$text = preg_split('/ +/u', $text, -1, PREG_SPLIT_OFFSET_CAPTURE);
 
-		// now create the array( 'word' => $word, 'proximity' => $proximity)
+		// now create the array('word' => $word, 'proximity' => $proximity)
 		$word_list = $this->createWordProximityList($text);
 
 		return $word_list;
@@ -590,6 +604,8 @@ class NateGoSearchIndexer
 
 		foreach ($text as $word) {
 			$new_word = $word[0];
+			// TODO: this strlen needs to be in bytes because the proximity
+			// offsets are in bytes
 			$proximity = $word[1] - ($old_proximity + strlen($old_word));
 			$word_list[] =
 				array('word' => $new_word, 'proximity' => $proximity);
