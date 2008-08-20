@@ -280,6 +280,9 @@ class NateGoSearchIndexer
 			foreach ($word_list as $word) {
 				$keyword = self::stemKeyword($word['word']);
 
+				if (ctype_space($keyword) || $keyword == '')
+					continue;
+
 				if (!in_array($keyword, $this->unindexed_words)) {
 					$location += $word['proximity'];
 					if ($this->max_word_length !== null &&
