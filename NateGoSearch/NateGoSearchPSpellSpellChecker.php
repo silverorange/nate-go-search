@@ -70,7 +70,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	public function __construct($language)
 	{
 		if (!extension_loaded('pspell')) {
-			throw NateGoSearchException('The Pspell PHP extension is '.
+			throw new NateGoSearchException('The Pspell PHP extension is '.
 				'required for NateGoSearchPSpellSpellChecker.');
 		}
 
