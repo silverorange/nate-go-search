@@ -38,6 +38,8 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	private $no_suggest = array();
 
+	private $custom_wordlist;
+
 	// }}}
 	// {{{ public function __construct()
 
@@ -74,8 +76,10 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		if ($repl_pairs != '')
 			pspell_config_repl($config, $repl_pairs);
 
-		if ($custom_wordlist != '')
+		if ($custom_wordlist != '') {
 			pspell_config_personal($config, $custom_wordlist);
+			$this->custom_wordlist = $custom_wordlist;
+		}
 
 		$this->dictionary = pspell_new_config($config);
 
@@ -156,7 +160,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	public function addToPersonalWordList($word)
 	{
-		if (strlen($this->path_to_personal_wordlist) > 0) {
+		if ($this->custom_wordlist != '') {
 			if (ctype_alpha($word)) {
 				pspell_add_to_personal($this->dictionary, $word);
 				pspell_save_wordlist($this->dictionary);
