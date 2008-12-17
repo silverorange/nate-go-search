@@ -30,25 +30,13 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	private $dictionary;
 
 	/**
-	 * The language of the current dictionary
+	 * An array of words the spell checker should never suggest
 	 *
-	 * @var string
-	 */
-	private $language;
-
-	/**
-	 * A path to an aspell replacement pair list
+	 * This array is built from the words in system/no-suggest-words.txt.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	private $path_to_replacement_pairs;
-
-	/**
-	 * A path to an aspell personal wordlist
-	 *
-	 * @var string
-	 */
-	private $path_to_personal_wordlist;
+	private $no_suggest = array();
 
 	// }}}
 	// {{{ public function __construct()
@@ -67,21 +55,37 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @throws NateGoSearchtException if a dictionary in the specified language
 	 *                                could not be loaded.
 	 */
-	public function __construct($language)
+	public function __construct($language, $path_to_data = '', $repl_pairs = '',
+		$custom_wordlist = '')
 	{
 		if (!extension_loaded('pspell')) {
 			throw new NateGoSearchException('The Pspell PHP extension is '.
 				'required for NateGoSearchPSpellSpellChecker.');
 		}
 
-		$this->language = $language;
-		$this->dictionary = pspell_new($language, '', '', 'utf-8', PSPELL_FAST);
+		$config = pspell_config_create($language, '', '', 'utf-8');
+		pspell_config_mode($config, PSPELL_FAST);
+
+		if ($path_to_data != '') {
+			pspell_config_data_dir($config, $path_to_data);
+			pspell_config_dict_dir($config, $path_to_data);
+		}
+
+		if ($repl_pairs != '')
+			pspell_config_repl($config, $repl_pairs);
+
+		if ($custom_wordlist != '')
+			pspell_config_personal($config, $custom_wordlist);
+
+		$this->dictionary = pspell_new_config($config);
 
 		if ($this->dictionary === false) {
 			throw new NateGoSearchException(sprintf(
 				"Could not create Pspell dictionary with language '%s'.",
-				$language));
+				$this->language));
 		}
+
+		$this->buildNoSuggestList();
 	}
 
 	// }}}
@@ -143,25 +147,6 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ public function loadCustomContent()
-
-	/**
-	 * Load the personal wordlist and replacement pairs into the spell checker
-	 */
-	public function loadCustomContent()
-	{
-		$config = pspell_config_create($this->language);
-
-		if ($this->path_to_replacement_pairs)
-			pspell_config_repl($config, $this->path_to_replacement_pairs);
-
-		if ($this->path_to_personal_wordlist)
-			pspell_config_personal($config, $this->path_to_personal_wordlist);
-
-		$this->dictionary = pspell_new_config($config);
-	}
-
-	// }}}
 	// {{{ public function addToPersonalWordlist()
 
 	/**
@@ -188,38 +173,6 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ public function setCustomWordList()
-
-	/**
-	 * Set the custom wordlist
-	 *
-	 * Set the custom word list by passing the path to the custom word list.
-	 *
-	 * @param string $filename the path to the custom word list
-	 */
-	public function setCustomWordList($filename)
-	{
-		// TODO: add error checking
-		$this->path_to_personal_wordlist = $filename;
-	}
-
-	// }}}
-	// {{{ public function setCustomReplacementPairs()
-
-	/**
-	 * Set the replacement pairs
-	 *
-	 * Set the replacement pairs by passing the path to the custom word list.
-	 *
-	 * @param string the path to the custom replacement pairs
-	 */
-	public function setCustomReplacementPairs($filename)
-	{
-		// TODO: add error checking
-		$this->path_to_replacement_pairs = $filename;
-	}
-
-	// }}}
 	// {{{ private function getSuggestedSpelling()
 
 	/**
@@ -241,6 +194,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		if (!pspell_check($this->dictionary, $word)) {
 			$suggestions = pspell_suggest($this->dictionary, $word);
+			$suggestions = $this->getCleanSuggestions($suggestions);
 
 			// if pspell has no suggestions then we should stop checking
 			if (count($suggestions) === 0)
@@ -310,6 +264,36 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		}
 
 		return $match;
+	}
+
+	// }}}
+	// {{{ private function getCleanSuggestions()
+
+	private function getCleanSuggestions(array $suggestions)
+	{
+		$clean_list = array();
+
+		foreach ($suggestions as $suggestion) {
+			if (!in_array(strtolower($suggestion), $this->no_suggest))
+				$clean_list[] = $suggestion;
+		}
+
+		return $clean_list;
+	}
+
+	// }}}
+	// {{{ private function buildNoSuggestList()
+
+	private function buildNoSuggestList()
+	{
+		if (substr('@DATA-DIR@', 0, 1) === '@')
+			$filename = dirname(__FILE__).'/../system/no-suggest-words.txt';
+		else
+			$filename = '@DATA-DIR@/NateGoSearch/system/no-suggest-words.txt';
+
+		$words = file($filename, FILE_IGNORE_NEW_LINES);
+		if ($words !== false)
+			$this->no_suggest = $words;
 	}
 
 	// }}}
