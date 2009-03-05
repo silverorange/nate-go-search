@@ -83,6 +83,17 @@ class NateGoSearchQuery
 	protected $blocked_words = array();
 
 	/**
+	 * Popular keywords that are searched often on the site
+	 *
+	 * This is an array of of popular keywords.
+	 *
+	 * @var array
+	 *
+	 * @see NateGoSearchQuery::getPopularWords()
+	 */
+	protected $popular_words = array();
+
+	/**
 	 * Spell checked used to check the spelling of keywords used in this
 	 * query
 	 *
@@ -116,6 +127,8 @@ class NateGoSearchQuery
 	public function __construct(MDB2_Driver_Common $db)
 	{
 		$this->db = $db;
+
+		$this->popular_words = $this->getPopularWords();
 	}
 
 	// }}}
@@ -197,6 +210,8 @@ class NateGoSearchQuery
 			$misspellings =
 				$this->spell_checker->getMisspellingsInPhrase($keywords);
 		}
+
+		$misspellings = $this->getPopularReplacements($keywords, $misspellings);
 
 		$keywords = $this->normalizeKeywordsForSearching($keywords);
 		$keywords_hash = sha1($keywords);
@@ -407,6 +422,139 @@ class NateGoSearchQuery
 		$text = preg_replace('/\'s\b/u', '', $text);
 
 		return $text;
+	}
+
+	// }}}
+	// {{{ protected function getPopularReplacements()
+
+	/**
+	 * Get popular replacements for words in the search keywords.
+	 *
+	 * This is used to check search keywords along with their coresponding
+	 * spelling suggestion for matches in the popular words list. If a match
+	 * is found we either replace the current misspelling, if one exists, or
+	 * add an entry to the mispelling list with the new popular suggestion
+	 * added.
+	 *
+	 * @param string $keywords the keywords to check for improved suggestions
+	 * @param array $misspellings the misspellings for the given $keywords
+	 *
+	 * @param array $misspellings the misspellings with added suggestions for
+	 *   popular words
+	 */
+	protected function getPopularReplacements($keywords, array $misspellings)
+	{
+		$words = explode(' ', $keywords);
+
+		foreach ($words as $word) {
+			if (!in_array($word, $this->blocked_words)
+				&& !in_array($word, $this->popular_words)) {
+				foreach ($this->popular_words as $popular_word) {
+					if (array_key_exists($word, $misspellings)) {
+						if ($this->isPopularMatch($popular_word,
+								$misspellings[$word])) {
+							$misspellings[$word] = $popular_word;
+							break;
+						}
+					} else {
+						if ($this->isPopularMatch($popular_word, $word)) {
+							$misspellings[$word] = $popular_word;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return $misspellings;
+	}
+
+	// }}}
+	// {{{ protected function getPopularWords()
+
+	/**
+	 * Get a list of popular/successful search keywords
+	 *
+	 * This is used to query the database for a list of keywords from the
+	 * NateGoSearchHistory table. The results are based upon the document_count
+	 * of each of the keywords and if the words have been searched recently.
+	 *
+	 * @return array an array of popular search words
+	 */
+	protected function getPopularWords()
+	{
+		// TODO: Change the hard coded values for config settings maybe?
+		$sql = sprintf("select distinct keywords from NateGoSearchHistory
+			where document_count > %s and
+				creation_date > LOCALTIMESTAMP - interval '6 months'",
+			$this->db->quote(150, 'integer'));
+
+		$results = $this->db->queryCol($sql, 'text');
+		if (MDB2::isError($results))
+			throw new NateGoSearchDBException($results);
+
+		$popular_words = $this->cleanPopularResults($results);
+
+		return $popular_words;
+	}
+
+	// }}}
+	// {{{ protected function cleanPopularResults()
+
+	/**
+	 * Clean the popular words list
+	 *
+	 * This is used to clean up the results queried in
+	 * {@link NateGoSearchQuery::getPopularWords()} to a list of unique words
+	 * that contains only on word per array entry. Numbers and common words
+	 * found in {@link NateGoSearchQuery::blocked_words} are also removed from
+	 * the list.
+	 *
+	 * @param array $results an array of results to clean
+	 *
+	 * @return array an array of cleaned results.
+	 */
+	protected function cleanPopularResults(array $results)
+	{
+		$clean_results = array();
+
+		foreach ($results as $result)
+		{
+			$result = preg_replace('/\s+/u', ' ', $result);
+			$words = explode(' ', $result);
+
+			foreach ($words as $word)
+			{
+				if (!in_array($word, $this->blocked_words)
+					&& !is_numeric($word)
+					&& !in_array($word, $clean_results)
+					&& $word != '')
+					$clean_results[] = $word;
+			}
+		}
+
+		return $clean_results;
+	}
+
+	// }}}
+	// {{{ protected isPopularMatch()
+
+	/**
+	 * Checks if two words are similar
+	 *
+	 * This is used to check if a one word matches a another word from the
+	 * popular wordlist. Used to improve search suggestions by confirming
+	 * whether two words are similar in sound and/or spelling.
+	 *
+	 * @param string $word1 the first word being compared for similarities
+	 * @param string $word2 the second word being compared for similarities
+	 *
+	 * @return boolean whether or not the strings are similar
+	 */
+	protected function isPopularMatch($word1, $word2)
+	{
+		return (levenshtein($word1, $word2) < 2)
+			|| (metaphone($word1) == metaphone($word2));
 	}
 
 	// }}}
