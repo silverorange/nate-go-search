@@ -550,6 +550,10 @@ class NateGoSearchIndexer
 		// lowercase
 		$text = strtolower($text);
 
+		// remove punctuation at the beginning and end of the string
+	 	$text = preg_replace('/^\W+/u', '', $text);
+		$text = preg_replace('/\W+$/u', '', $text);
+
 		// replace html/xhtml/xml tags with spaces
 		$text = preg_replace('/<\/?[^>]*>*/u', ' ', $text);
 
