@@ -79,6 +79,20 @@ class NateGoSearchIndexer
 	protected $keywords = array();
 
 	/**
+	 * The name of the database table where the popular keywords are stored
+	 *
+	 * @var string
+	 */
+	protected $popular_keywords_table = 'nategosearchpopularkeywords';
+
+	/**
+	 * An array of popular keywords to be added to the popular keywords table
+	 *
+	 * @var array
+	 */
+	protected $popular_keywords = array();
+
+	/**
 	 * A list of document ids we are indexing in the current operation
 	 *
 	 * When commit is called, indexed entries for these ids are removed from
@@ -306,6 +320,13 @@ class NateGoSearchIndexer
 								$word['word']);
 					}
 				}
+
+				// add any popular keywords to the popular keywords list
+				if ($term->isPopular()
+					&& !in_array($word['word'], $this->unindexed_words)
+					&& !is_numeric($word['word'])) {
+					$this->popular_keywords[] = $word['word'];
+				}
 			}
 		}
 	}
@@ -361,6 +382,32 @@ class NateGoSearchIndexer
 					throw new NateGoSearchDBException($result);
 
 				$keyword = array_pop($this->keywords);
+			}
+
+			$popular_keyword = array_pop($this->popular_keywords);
+			while ($popular_keyword !== null) {
+				// TODO: there must be a better way to handle dupe words...
+				$sql = sprintf(
+					'select count(keyword) from %s where keyword = %s',
+					$this->db->quoteIdentifier($this->popular_keywords_table),
+					$this->db->quote($popular_keyword, 'text'));
+
+				$exists = $this->db->queryOne($sql);
+				if (MDB2::isError($result))
+					throw new NateGoSearchDBException($result);
+
+				if (!$exists) {
+					$sql = sprintf('insert into %s (keyword) values (%s)',
+						$this->db->quoteIdentifier(
+							$this->popular_keywords_table),
+						$this->db->quote($popular_keyword, 'text'));
+
+					$result = $this->db->exec($sql);
+					if (MDB2::isError($result))
+						throw new NateGoSearchDBException($result);
+				}
+
+				$popular_keyword = array_pop($this->popular_keywords);
 			}
 
 			$this->clear_document_ids = array();

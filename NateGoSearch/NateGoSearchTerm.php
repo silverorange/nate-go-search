@@ -9,7 +9,7 @@
  * based on all terms.
  *
  * @package   NateGoSearch
- * @copyright 2006 silverorange
+ * @copyright 2006-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @see       NateGoSearchIndexer
  */
@@ -35,6 +35,16 @@ class NateGoSearchTerm
 	 */
 	protected $weight;
 
+	/**
+	 * If this field should be used for popular keyword suggestions.
+	 *
+	 * Whether or not the words of this field should be added to the popular
+	 *  keywords table.
+	 *
+	 * @var boolean
+	 */
+	protected $is_popular = false;
+
 	// }}}
 	// {{{ public function __construct()
 
@@ -43,11 +53,15 @@ class NateGoSearchTerm
 	 *
 	 * @param string $data_field the name of the document field to index.
 	 * @param integer $weight the relative weight of this term. Defaults to 1.
+	 * @param boolean $is_popular if this words in this field should be added to
+	 *                             the popular keywords tables. Defaults to
+	 *                             false.
 	 */
-	public function __construct($data_field, $weight = 1)
+	public function __construct($data_field, $weight = 1, $is_popular = false)
 	{
 		$this->data_field = $data_field;
 		$this->weight = $weight;
+		$this->is_popular = $is_popular;
 	}
 
 	// }}}
@@ -91,6 +105,21 @@ class NateGoSearchTerm
 	public function getWeight()
 	{
 		return $this->weight;
+	}
+
+	// }}}
+	// {{{ public function isPopular()
+
+	/**
+	 * Returns whether or not this field should be added to the popular keyword
+	 *  table.
+	 *
+	 * @return boolean whether this field should to be added to the popular
+	 *                  keyword table.
+	 */
+	public function isPopular()
+	{
+		return $this->is_popular;
 	}
 
 	// }}}

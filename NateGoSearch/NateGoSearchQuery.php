@@ -127,8 +127,6 @@ class NateGoSearchQuery
 	public function __construct(MDB2_Driver_Common $db)
 	{
 		$this->db = $db;
-
-		$this->popular_words = $this->getPopularWords();
 	}
 
 	// }}}
@@ -325,6 +323,22 @@ class NateGoSearchQuery
 	}
 
 	// }}}
+	// {{{ public function addPopularWords()
+
+	/**
+	 * Adds words to the list of popular words that should be suggested
+	 *
+	 * @param string|array $words the list of popular words.
+	 */
+	public function addPopularWords($words)
+	{
+		if (!is_array($words))
+			$words = array((string)$words);
+
+		$this->popular_words = array_merge($this->popular_words, $words);
+	}
+
+	// }}}
 	// {{{ public static function &getDefaultBlockedWords()
 
 	/**
@@ -467,35 +481,6 @@ class NateGoSearchQuery
 		}
 
 		return $misspellings;
-	}
-
-	// }}}
-	// {{{ protected function getPopularWords()
-
-	/**
-	 * Get a list of popular/successful search keywords
-	 *
-	 * This is used to query the database for a list of keywords from the
-	 * NateGoSearchHistory table. The results are based upon the document_count
-	 * of each of the keywords and if the words have been searched recently.
-	 *
-	 * @return array an array of popular search words
-	 */
-	protected function getPopularWords()
-	{
-		// TODO: Change the hard coded values for config settings maybe?
-		$sql = sprintf("select distinct keywords from NateGoSearchHistory
-			where document_count > %s and
-				creation_date > LOCALTIMESTAMP - interval '6 months'",
-			$this->db->quote(150, 'integer'));
-
-		$results = $this->db->queryCol($sql, 'text');
-		if (MDB2::isError($results))
-			throw new NateGoSearchDBException($results);
-
-		$popular_words = $this->cleanPopularResults($results);
-
-		return $popular_words;
 	}
 
 	// }}}
