@@ -8,3 +8,5 @@ create table NateGoSearchResult (
 	unique_id varchar(50) not null,
 	createdate timestamp not null
 );
+
+CREATE INDEX NateGoSearchResult_search_index ON NateGoSearchResult(document_id, document_type, unique_id);
