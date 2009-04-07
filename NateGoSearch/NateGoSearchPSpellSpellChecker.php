@@ -35,8 +35,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * This array is built from the words in system/no-suggest-words.txt.
 	 *
 	 * @var array
+	 * @see NateGoSearchPSpellSpellChecker::loadBlacklistedSuggestions()
 	 */
-	private $no_suggest = array();
+	private $blacklisted_suggestions = array();
 
 	/**
 	 * @var string
@@ -98,7 +99,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 				$this->language));
 		}
 
-		$this->buildNoSuggestList();
+		$this->loadBlacklistedSuggestions();
 	}
 
 	// }}}
@@ -211,7 +212,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 			$suggestions = pspell_suggest($this->dictionary, $word);
 
 			// filter out potentially offensive suggestions
-			$suggestions = $this->getCleanSuggestions($suggestions);
+			$suggestions = $this->getFilteredSuggestions($suggestions);
 
 			if (count($suggestions) === 0) {
 				// if there are no spelling suggestions then we should stop
@@ -296,7 +297,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
-	// {{{ private function getCleanSuggestions()
+	// {{{ private function getFilteredSuggestions()
 
 	/**
 	 * Filters potentially offensive words out of an array of spelling
@@ -306,37 +307,38 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * @return array the filtered array of suggestions.
 	 *
-	 * @see NateGoSearchPSpellSpellChecker::buildNoSuggestList()
-	 * @see NateGoSearchPSpellSpellChecker::$no_suggest
+	 * @see NateGoSearchPSpellSpellChecker::loadBlacklistedSuggestions()
+	 * @see NateGoSearchPSpellSpellChecker::$blacklisted_suggestions
 	 */
-	private function getCleanSuggestions(array $suggestions)
+	private function getFilteredSuggestions(array $suggestions)
 	{
-		$clean_list = array();
+		$clean_suggestions = array();
 
 		// filter out potentially offensive words we never want to suggest
 		foreach ($suggestions as $suggestion) {
-			if (!in_array(strtolower($suggestion), $this->no_suggest)) {
-				$clean_list[] = $suggestion;
+			$lower_suggestion = strtolower($suggestion);
+			if (!in_array($lower_suggestion, $this->blacklisted_suggestions)) {
+				$clean_suggestions[] = $suggestion;
 			}
 		}
 
-		return $clean_list;
+		return $clean_suggestions;
 	}
 
 	// }}}
-	// {{{ private function buildNoSuggestList()
+	// {{{ private function loadBlacklistedSuggestions()
 
 	/**
-	 * Builds the list of potentially offensive words that should never
-	 * be used for spelling suggestions
+	 * Loads the list of potentially offensive words that should never be used
+	 * for spelling suggestions
 	 *
 	 * The list is build from the file 'no-suggest-words.txt' that is
 	 * distributed with NateGoSearch.
 	 *
-	 * @see NateGoSearchPSpellSpellChecker::getCleanSuggestions()
-	 * @see NateGoSearchPSpellSpellChecker::$no_suggest
+	 * @see NateGoSearchPSpellSpellChecker::getFilteredSuggestions()
+	 * @see NateGoSearchPSpellSpellChecker::$blacklisted_suggestions
 	 */
-	private function buildNoSuggestList()
+	private function loadBlacklistedSuggestions()
 	{
 		if (substr('@DATA-DIR@', 0, 1) === '@') {
 			$filename = dirname(__FILE__).'/../system/no-suggest-words.txt';
@@ -347,7 +349,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$words = file($filename, FILE_IGNORE_NEW_LINES);
 
 		if ($words !== false) {
-			$this->no_suggest = $words;
+			$this->blacklisted_suggestions = $words;
 		}
 	}
 
