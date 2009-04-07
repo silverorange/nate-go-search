@@ -25,9 +25,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * This is the dictionary link identifier returned by pspell_new().
 	 *
-	 * @var integer
+	 * @var resource
 	 */
-	private $dictionary;
+	private $dictionary = null;
 
 	/**
 	 * An array of words the spell checker should never suggest
@@ -40,9 +40,11 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	private $blacklisted_suggestions = array();
 
 	/**
+	 * The filename of the personal wordlist
+	 *
 	 * @var string
 	 */
-	private $custom_wordlist;
+	private $personal_wordlist = '';
 
 	// }}}
 	// {{{ public function __construct()
@@ -56,19 +58,19 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *                          country code separated by a dash or underscore.
 	 *                          For example, 'en', 'en-CA' and 'en_CA' are
 	 *                          valid languages.
-	 * @param string $custom_wordlist optional. The filename of the personal
-	 *                                 wordlist for this spell checker. If not
-	 *                                 specified, no personal wordlist is used.
-	 *                                 The personal wordlist may contain
-	 *                                 spellings for words that are correct but
-	 *                                 are not in the regular dictionary.
+	 * @param string $personal_wordlist optional. The filename of the personal
+	 *                                   wordlist for this spell checker. If not
+	 *                                   specified, no personal wordlist is
+	 *                                   used. The personal wordlist may contain
+	 *                                   spellings for words that are correct
+	 *                                   but are not in the regular dictionary.
 	 *
 	 * @throws NateGoSearchException if the Pspell extension is not available.
 	 * @throws NateGoSearchtException if a dictionary in the specified language
 	 *                                could not be loaded.
 	 */
 	public function __construct($language, $path_to_data = '', $repl_pairs = '',
-		$custom_wordlist = '')
+		$personal_wordlist = '')
 	{
 		if (!extension_loaded('pspell')) {
 			throw new NateGoSearchException('The Pspell PHP extension is '.
@@ -86,9 +88,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		if ($repl_pairs != '')
 			pspell_config_repl($config, $repl_pairs);
 
-		if ($custom_wordlist != '') {
-			pspell_config_personal($config, $custom_wordlist);
-			$this->custom_wordlist = $custom_wordlist;
+		if ($personal_wordlist != '') {
+			pspell_config_personal($config, $personal_wordlist);
+			$this->personal_wordlist = $personal_wordlist;
 		}
 
 		$this->dictionary = pspell_new_config($config);
@@ -167,18 +169,24 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * Adds a word to the personal wordlist
 	 *
 	 * @param string $word the word to add to the list.
+	 *
+	 * @throws NateGoSearchException if no personal wordlist is set for this
+	 *                               spell checker or if the word does not
+	 *                               contain at least one alphabetic character.
 	 */
 	public function addToPersonalWordList($word)
 	{
-		if ($this->custom_wordlist == '') {
+		if ($this->personal_wordlist == '') {
 			throw new NateGoSearchException(sprintf("The word '%s' cannot ".
 				"be added to the personal wordlist because no personal ".
 				"wordlist is set.", $word));
 		}
 
-		if (!ctype_alpha($word)) {
+		// make sure word contains a letter
+		$word_regexp = '/\pL/u';
+		if (preg_match($word_regexp, $word) === 0) {
 			throw new NateGoSearchException(sprintf("The word '%s' cannot ".
-				"be added to the custom wordlist because it contains non-".
+				"be added to the custom wordlist because it contains no ".
 				"alphabetic characters.", $word));
 		}
 
