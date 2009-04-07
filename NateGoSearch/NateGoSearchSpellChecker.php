@@ -7,7 +7,7 @@
  * indexers
  *
  * @package   NateGoSearch
- * @copyright 2004-2007 silverorange
+ * @copyright 2004-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 abstract class NateGoSearchSpellChecker
@@ -35,6 +35,16 @@ abstract class NateGoSearchSpellChecker
 	 * @return string corrected phrase.
 	 */
 	abstract public function getProperSpelling($phrase);
+
+	// }}}
+	// {{{ abstract public function addToPersonalWordlist()
+
+	/**
+	 * Adds a word to the personal wordlist
+	 *
+	 * @param string $word the word to add to the list.
+	 */
+	abstract public function addToPersonalWordList($word);
 
 	// }}}
 }

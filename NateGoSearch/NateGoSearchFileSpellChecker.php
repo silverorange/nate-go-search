@@ -168,6 +168,23 @@ class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
 	}
 
 	// }}}
+	// {{{ public function addToPersonalWordlist()
+
+	/**
+	 * Adds a word to the personal wordlist
+	 *
+	 * @param string $word the word to add to the list.
+	 *
+	 * @throws NateGoSearchException due to not being implemented.
+	 */
+	public function addToPersonalWordList($word)
+	{
+		throw new NateGoSearchException(
+			"The personal wordlist feature is not implemented for the ".
+			"file-based spell checker.");
+	}
+
+	// }}}
 }
 
 ?>

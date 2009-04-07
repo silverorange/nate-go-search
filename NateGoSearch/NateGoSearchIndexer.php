@@ -7,7 +7,7 @@ require_once 'NateGoSearch.php';
 require_once 'NateGoSearch/NateGoSearchTerm.php';
 require_once 'NateGoSearch/NateGoSearchDocument.php';
 require_once 'NateGoSearch/NateGoSearchKeyword.php';
-require_once 'NateGoSearch/NateGoSearchPSpellSpellChecker.php';
+require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
 require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
 require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
 
@@ -25,7 +25,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * distributable with the LGPL licensed NateGoSearch.
  *
  * @package   NateGoSearch
- * @copyright 2006-2007 silverorange
+ * @copyright 2006-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchIndexer
@@ -149,7 +149,7 @@ class NateGoSearchIndexer
 	/**
 	 * The spell checker for this indexer
 	 *
-	 * @var NateGoSearchPSpellSpellChecker
+	 * @var NateGoSearchSpellChecker
 	 */
 	protected $spell_checker;
 
@@ -161,13 +161,6 @@ class NateGoSearchIndexer
 	 * @var array
 	 */
 	protected $personal_wordlist = array();
-
-	/**
-	 * Whether or not a custom wordlist should be created
-	 *
-	 * @var boolean
-	 */
-	protected $create_wordlist = false;
 
 	// }}}
 	// {{{ private static properties
@@ -306,18 +299,21 @@ class NateGoSearchIndexer
 					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
 						$term->getWeight(), $location, $this->document_type);
 				}
-				// add any words that the spell checker would flag to a
-				// personal wordlist
-				if ($this->create_wordlist) {
-					$new_tok =
-						$this->spell_checker->getProperSpelling($word['word']);
 
-					if (($new_tok != $word['word']) &&
+				// add any words that the spell checker would flag
+				// to the spell checker's personal wordlist
+				if ($this->spell_checker instanceof NateGoSearchSpellChecker) {
+					$speller = $this->spell_checker;
+					$corrected = $speller->getProperSpelling($word['word']);
+
+					// if it is missspelled and not already in the wordlist
+					// and is a considered a 'word', add it to the wordlist
+					if (($corrected != $word['word']) &&
 						!in_array($word['word'], $this->personal_wordlist) &&
 						ctype_alpha($word['word'])) {
-							$this->personal_wordlist[] = $word['word'];
-							$this->spell_checker->addToPersonalWordlist(
-								$word['word']);
+
+						$this->personal_wordlist[] = $word['word'];
+						$speller->addToPersonalWordlist($word['word']);
 					}
 				}
 
@@ -446,11 +442,10 @@ class NateGoSearchIndexer
 	 * This is used to build a custom word list from detected misspellings in
 	 * indexed words.
 	 *
-	 * @param NateGoSearchPSpellChecker
+	 * @param NateGoSearchSpellChecker
 	 */
-	public function setSpellChecker(NateGoSearchPSpellSpellChecker $checker)
+	public function setSpellChecker(NateGoSearchSpellChecker $checker)
 	{
-		$this->create_wordlist = true;
 		$this->spell_checker = $checker;
 	}
 
