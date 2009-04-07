@@ -154,26 +154,26 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ public function addToPersonalWordlist()
 
 	/**
-	 * Add a word to the personal wordlist
+	 * Adds a word to the personal wordlist
 	 *
-	 * @param string $word the word to add to the list
+	 * @param string $word the word to add to the lists.
 	 */
 	public function addToPersonalWordList($word)
 	{
-		if ($this->custom_wordlist != '') {
-			if (ctype_alpha($word)) {
-				pspell_add_to_personal($this->dictionary, $word);
-				pspell_save_wordlist($this->dictionary);
-			} else {
-				throw new NateGoSearchException(sprintf("The word '%s' cannot ".
-					"be added to the custom wordlist. The word may contain ".
-					"non-alphabetic characters.", $word));
-			}
-		} else {
+		if ($this->custom_wordlist == '') {
 			throw new NateGoSearchException(sprintf("The word '%s' cannot ".
 				"be added to the personal wordlist because no personal ".
 				"wordlist is set.", $word));
 		}
+
+		if (!ctype_alpha($word)) {
+			throw new NateGoSearchException(sprintf("The word '%s' cannot ".
+				"be added to the custom wordlist because it contains non-".
+				"alphabetic characters.", $word));
+		}
+
+		pspell_add_to_personal($this->dictionary, $word);
+		pspell_save_wordlist($this->dictionary);
 	}
 
 	// }}}
