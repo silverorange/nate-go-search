@@ -7,13 +7,13 @@ require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
 
 /**
  * A spell checker to correct commonly misspelled words and phrases using
- * the <code>pspell</code> extension for PHP.
+ * the <kbd>pspell</kbd> extension for PHP.
  *
  * This class uses the PHP interface to the GNU Aspell library for
  * spell-checking.
  *
  * @package   NateGoSearch
- * @copyright 2007 silverorange
+ * @copyright 2007-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
@@ -91,6 +91,10 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		if ($personal_wordlist != '') {
 			pspell_config_personal($config, $personal_wordlist);
 			$this->personal_wordlist = $personal_wordlist;
+			if (file_exists($this->personal_wordlist)) {
+				// update permissions (-rw-rw----)
+				chmod($this->personal_wordlist, 0660);
+			}
 		}
 
 		$this->dictionary = pspell_new_config($config);
@@ -192,6 +196,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		pspell_add_to_personal($this->dictionary, $word);
 		pspell_save_wordlist($this->dictionary);
+
+		// update permissions (-rw-rw----)
+		chmod($this->personal_wordlist, 0660);
 	}
 
 	// }}}
