@@ -38,6 +38,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	private $no_suggest = array();
 
+	/**
+	 * @var string
+	 */
 	private $custom_wordlist;
 
 	// }}}
@@ -52,6 +55,12 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *                          country code separated by a dash or underscore.
 	 *                          For example, 'en', 'en-CA' and 'en_CA' are
 	 *                          valid languages.
+	 * @param string $custom_wordlist optional. The filename of the personal
+	 *                                 wordlist for this spell checker. If not
+	 *                                 specified, no personal wordlist is used.
+	 *                                 The personal wordlist may contain
+	 *                                 spellings for words that are correct but
+	 *                                 are not in the regular dictionary.
 	 *
 	 * @throws NateGoSearchException if the Pspell extension is not available.
 	 * @throws NateGoSearchtException if a dictionary in the specified language
@@ -156,7 +165,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	/**
 	 * Adds a word to the personal wordlist
 	 *
-	 * @param string $word the word to add to the lists.
+	 * @param string $word the word to add to the list.
 	 */
 	public function addToPersonalWordList($word)
 	{
@@ -184,11 +193,11 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * incorrectly, suggests an alternative spelling
 	 *
 	 * Spell checking ignores case. The best suggestion is considered to be the
-	 * first suggestion.
+	 * first suggestion returned by pspell.
 	 *
 	 * @param string $word the word to check.
 	 *
-	 * @return string the best suggestion for the correct spelling of the word
+	 * @return string the best suggestion for the correct spelling of the word,
 	 *                 or null if the word is correct or if no suggested
 	 *                 spelling exists.
 	 */
@@ -197,16 +206,24 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		$suggestion = null;
 
 		if (!pspell_check($this->dictionary, $word)) {
+
+			// get spelling suggestions from pspell
 			$suggestions = pspell_suggest($this->dictionary, $word);
+
+			// filter out potentially offensive suggestions
 			$suggestions = $this->getCleanSuggestions($suggestions);
 
-			// if pspell has no suggestions then we should stop checking
-			if (count($suggestions) === 0)
+			if (count($suggestions) === 0) {
+				// if there are no spelling suggestions then we should stop
+				// checking
 				$suggestion = null;
-			elseif (strtolower($suggestions[0]) === strtolower($word))
+			} elseif (strtolower($suggestions[0]) === strtolower($word)) {
+				// if pspell is only correcting the capitalization, stop
+				// checking
 				$suggestion = null;
-			else
+			} else {
 				$suggestion = $this->getBestSuggestion($word, $suggestions);
+			}
 		}
 
 		return $suggestion;
@@ -222,24 +239,29 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 *
 	 * @param array $suggestions an array of suggestions.
 	 *
-	 * @return string the best suggestion in the set of suggestions. If no
-	 *                suitable suggestion is found, a default word is returned.
+	 * @return string the best suggestion in the array of suggestions. If no
+	 *                suitable suggestion is found, null is returned.
 	 */
 	private function getBestSuggestion($misspelling, array $suggestions)
 	{
 		$best_suggestion = null;
 
 		if (count($suggestions) > 0) {
-			// checks to see if the user entered a lower case word
-			if (ctype_lower($misspelling[0]))
+			// check to see if the user entered a lower-case word
+			if (ctype_lower($misspelling[0])) {
+				// if a lower-case word was entered, exclude proper nouns from
+				// suggestions
 				$best_suggestion = $this->getLowerCaseSuggestion($suggestions);
-			else
-				$best_suggestion = $suggestions[0];
 
-			// if there was no lowercase suggestion then use the first
-			// suggestion
-			if ($best_suggestion === null)
+				// if there was no lower-case suggestion then use the first
+				// suggestion
+				if ($best_suggestion === null) {
+					$best_suggestion = $suggestions[0];
+				}
+			} else {
+				// otherwise, include proper nouns
 				$best_suggestion = $suggestions[0];
+			}
 		}
 
 		return $best_suggestion;
@@ -249,12 +271,15 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// {{{ private function getLowerCaseSuggestion()
 
 	/**
-	 * Gets the best lower-case suggestion for a word
+	 * Gets the best lower-case suggestion from a list of suggestions
+	 *
+	 * This method is used if proper nouns should be excluded from spelling
+	 * suggestions.
 	 *
 	 * @param array $suggestions an array of suggestions.
 	 *
-	 * @return string the best lowercase suggestion for a word or null if no
-	 *                 lower case suggestion exists.
+	 * @return string the best lower-case suggestion or null if no lower-case
+	 *                suggestion exists.
 	 */
 	private function getLowerCaseSuggestion(array $suggestions)
 	{
@@ -273,13 +298,26 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// }}}
 	// {{{ private function getCleanSuggestions()
 
+	/**
+	 * Filters potentially offensive words out of an array of spelling
+	 * suggestions
+	 *
+	 * @param array $suggestions the raw array of suggestions.
+	 *
+	 * @return array the filtered array of suggestions.
+	 *
+	 * @see NateGoSearchPSpellSpellChecker::buildNoSuggestList()
+	 * @see NateGoSearchPSpellSpellChecker::$no_suggest
+	 */
 	private function getCleanSuggestions(array $suggestions)
 	{
 		$clean_list = array();
 
+		// filter out potentially offensive words we never want to suggest
 		foreach ($suggestions as $suggestion) {
-			if (!in_array(strtolower($suggestion), $this->no_suggest))
+			if (!in_array(strtolower($suggestion), $this->no_suggest)) {
 				$clean_list[] = $suggestion;
+			}
 		}
 
 		return $clean_list;
@@ -288,16 +326,29 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	// }}}
 	// {{{ private function buildNoSuggestList()
 
+	/**
+	 * Builds the list of potentially offensive words that should never
+	 * be used for spelling suggestions
+	 *
+	 * The list is build from the file 'no-suggest-words.txt' that is
+	 * distributed with NateGoSearch.
+	 *
+	 * @see NateGoSearchPSpellSpellChecker::getCleanSuggestions()
+	 * @see NateGoSearchPSpellSpellChecker::$no_suggest
+	 */
 	private function buildNoSuggestList()
 	{
-		if (substr('@DATA-DIR@', 0, 1) === '@')
+		if (substr('@DATA-DIR@', 0, 1) === '@') {
 			$filename = dirname(__FILE__).'/../system/no-suggest-words.txt';
-		else
+		} else {
 			$filename = '@DATA-DIR@/NateGoSearch/system/no-suggest-words.txt';
+		}
 
 		$words = file($filename, FILE_IGNORE_NEW_LINES);
-		if ($words !== false)
+
+		if ($words !== false) {
 			$this->no_suggest = $words;
+		}
 	}
 
 	// }}}
