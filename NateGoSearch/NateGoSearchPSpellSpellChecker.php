@@ -91,7 +91,8 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		if ($personal_wordlist != '') {
 			pspell_config_personal($config, $personal_wordlist);
 			$this->personal_wordlist = $personal_wordlist;
-			if (file_exists($this->personal_wordlist)) {
+			if (file_exists($this->personal_wordlist) &&
+				is_writeable($this->personal_wordlist)) {
 				// update permissions (-rw-rw----)
 				chmod($this->personal_wordlist, 0660);
 			}
@@ -198,7 +199,9 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		pspell_save_wordlist($this->dictionary);
 
 		// update permissions (-rw-rw----)
-		chmod($this->personal_wordlist, 0660);
+		if (is_writeable($this->personal_wordlist)) {
+			chmod($this->personal_wordlist, 0660);
+		}
 	}
 
 	// }}}
