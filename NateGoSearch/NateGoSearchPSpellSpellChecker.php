@@ -199,7 +199,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 		pspell_save_wordlist($this->dictionary);
 
 		// update permissions (-rw-rw----)
-		if (fileowner($personal_wordlist) == posix_getuid()) {
+		if (fileowner($this->personal_wordlist) == posix_getuid()) {
 			chmod($this->personal_wordlist, 0660);
 		}
 	}
