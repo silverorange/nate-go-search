@@ -202,7 +202,7 @@ class NateGoSearchResult
 	 */
 	public function getResultTable()
 	{
-		return 'nategosearchresult';
+		return 'NateGoSearchResult';
 	}
 
 	// }}}
