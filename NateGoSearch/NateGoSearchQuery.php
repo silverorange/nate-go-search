@@ -264,7 +264,7 @@ class NateGoSearchQuery
 
 			$sql = sprintf('select count(document_id) from %s
 				where unique_id = %s',
-				$this->db->quoteIdentifier($results->getResultTable()),
+				$results->getResultTable(),
 				$this->db->quote($unique_id, 'text'));
 
 			$document_count = $this->db->queryOne($sql);
