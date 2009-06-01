@@ -69,7 +69,7 @@ class NateGoSearchIndexer
 	 *
 	 * @var string
 	 */
-	protected $index_table = 'nategosearchindex';
+	protected $index_table = 'NateGoSearchIndex';
 
 	/**
 	 * An array of keywords collected from the current index operation
@@ -83,7 +83,7 @@ class NateGoSearchIndexer
 	 *
 	 * @var string
 	 */
-	protected $popular_keywords_table = 'nategosearchpopularkeywords';
+	protected $popular_keywords_table = 'NateGoSearchPopularKeywords';
 
 	/**
 	 * An array of popular keywords to be added to the popular keywords table
@@ -353,8 +353,7 @@ class NateGoSearchIndexer
 
 			$delete_sql = sprintf('delete from %s
 				where document_id in (%s) and document_type = %s',
-				$this->db->quoteIdentifier($this->index_table),
-				$indexed_ids,
+				$this->index_table, $indexed_ids,
 				$this->db->quote($this->document_type, 'integer'));
 
 			$result = $this->db->exec($delete_sql);
@@ -366,7 +365,7 @@ class NateGoSearchIndexer
 				$sql = sprintf('insert into %s
 					(document_id, word, weight, location, document_type) values
 					(%s, %s, %s, %s, %s)',
-					$this->db->quoteIdentifier($this->index_table),
+					$this->index_table,
 					$this->db->quote($keyword->getDocumentId(), 'integer'),
 					$this->db->quote($keyword->getWord(), 'text'),
 					$this->db->quote($keyword->getWeight(), 'integer'),
@@ -385,7 +384,7 @@ class NateGoSearchIndexer
 				// TODO: there must be a better way to handle dupe words...
 				$sql = sprintf(
 					'select count(keyword) from %s where keyword = %s',
-					$this->db->quoteIdentifier($this->popular_keywords_table),
+					$this->popular_keywords_table,
 					$this->db->quote($popular_keyword, 'text'));
 
 				$exists = $this->db->queryOne($sql);
@@ -394,8 +393,7 @@ class NateGoSearchIndexer
 
 				if (!$exists) {
 					$sql = sprintf('insert into %s (keyword) values (%s)',
-						$this->db->quoteIdentifier(
-							$this->popular_keywords_table),
+						$this->popular_keywords_table,
 						$this->db->quote($popular_keyword, 'text'));
 
 					$result = $this->db->exec($sql);
@@ -543,7 +541,7 @@ class NateGoSearchIndexer
 	protected function clear()
 	{
 		$sql = sprintf('delete from %s where document_type = %s',
-			$this->db->quoteIdentifier($this->index_table),
+			$this->index_table,
 			$this->db->quote($this->document_type, 'integer'));
 
 		$result = $this->db->exec($sql);
