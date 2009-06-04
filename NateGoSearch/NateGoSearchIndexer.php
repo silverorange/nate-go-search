@@ -63,27 +63,11 @@ class NateGoSearchIndexer
 	protected $max_word_length;
 
 	/**
-	 * The name of the database table the NateGoSearch index is stored in
-	 *
-	 * @todo Add setter method.
-	 *
-	 * @var string
-	 */
-	protected $index_table = 'NateGoSearchIndex';
-
-	/**
 	 * An array of keywords collected from the current index operation
 	 *
 	 * @var array NateGoSearchKeyword
 	 */
 	protected $keywords = array();
-
-	/**
-	 * The name of the database table where the popular keywords are stored
-	 *
-	 * @var string
-	 */
-	protected $popular_keywords_table = 'NateGoSearchPopularKeywords';
 
 	/**
 	 * An array of popular keywords to be added to the popular keywords table
@@ -351,9 +335,9 @@ class NateGoSearchIndexer
 			$indexed_ids =
 				$this->db->implodeArray($this->clear_document_ids, 'integer');
 
-			$delete_sql = sprintf('delete from %s
+			$delete_sql = sprintf('delete from NateGoSearchIndex
 				where document_id in (%s) and document_type = %s',
-				$this->index_table, $indexed_ids,
+				$indexed_ids,
 				$this->db->quote($this->document_type, 'integer'));
 
 			$result = $this->db->exec($delete_sql);
@@ -362,10 +346,9 @@ class NateGoSearchIndexer
 
 			$keyword = array_pop($this->keywords);
 			while ($keyword !== null) {
-				$sql = sprintf('insert into %s
+				$sql = sprintf('insert into NateGoSearchIndex
 					(document_id, word, weight, location, document_type) values
 					(%s, %s, %s, %s, %s)',
-					$this->index_table,
 					$this->db->quote($keyword->getDocumentId(), 'integer'),
 					$this->db->quote($keyword->getWord(), 'text'),
 					$this->db->quote($keyword->getWeight(), 'integer'),
@@ -383,8 +366,8 @@ class NateGoSearchIndexer
 			while ($popular_keyword !== null) {
 				// TODO: there must be a better way to handle dupe words...
 				$sql = sprintf(
-					'select count(keyword) from %s where keyword = %s',
-					$this->popular_keywords_table,
+					'select count(keyword) from NateGoSearchPopularKeywords
+					where keyword = %s',
 					$this->db->quote($popular_keyword, 'text'));
 
 				$exists = $this->db->queryOne($sql);
@@ -392,8 +375,8 @@ class NateGoSearchIndexer
 					throw new NateGoSearchDBException($result);
 
 				if (!$exists) {
-					$sql = sprintf('insert into %s (keyword) values (%s)',
-						$this->popular_keywords_table,
+					$sql = sprintf('insert into NateGoSearchPopularKeywords
+						(keyword) values (%s)',
 						$this->db->quote($popular_keyword, 'text'));
 
 					$result = $this->db->exec($sql);
@@ -540,8 +523,7 @@ class NateGoSearchIndexer
 	 */
 	protected function clear()
 	{
-		$sql = sprintf('delete from %s where document_type = %s',
-			$this->index_table,
+		$sql = sprintf('delete from NateGoSearchIndex where document_type = %s',
 			$this->db->quote($this->document_type, 'integer'));
 
 		$result = $this->db->exec($sql);
