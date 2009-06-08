@@ -2,7 +2,7 @@
 
 require_once 'PEAR/PackageFileManager2.php';
 
-$version = '1.0.25';
+$version = '1.0.26';
 $notes = <<<EOT
 see ChangeLog
 EOT;
@@ -23,7 +23,8 @@ $result = $package->setOptions(
 		'dir_roles'         => array(
 			'NateGoSearch' => 'php',
 			'system' => 'data',
-			'sql' => 'data'
+			'sql' => 'data',
+			'/' => 'data'
 		),
 	)
 );
