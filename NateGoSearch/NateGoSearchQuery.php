@@ -461,6 +461,7 @@ class NateGoSearchQuery
 		$words = explode(' ', $keywords);
 
 		foreach ($words as $word) {
+			$word = strtolower($word);
 			if (!in_array($word, $this->blocked_words)
 				&& !in_array($word, $this->popular_words)) {
 				foreach ($this->popular_words as $popular_word) {
