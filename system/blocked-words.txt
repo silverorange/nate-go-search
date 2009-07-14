@@ -2,7 +2,6 @@ a
 ai
 ainsi
 al
-all
 also
 am
 an
@@ -18,8 +17,6 @@ avec
 ayant
 be
 by
-can
-car
 ce
 certaine
 certaines
@@ -32,7 +29,6 @@ chacune
 chaque
 co
 con
-corp
 could
 dans
 de
@@ -41,11 +37,9 @@ dela
 depuis
 der
 des
-divers
 donc
 dont
 du
-each
 el
 elle
 elles
@@ -56,7 +50,6 @@ et
 etc
 for
 from
-fur
 gmbh
 has
 have
@@ -71,7 +64,6 @@ it
 its
 la
 las
-last
 le
 les
 leur
@@ -96,11 +88,9 @@ or
 other
 ou
 out
-over
 par
 para
 pas
-plus
 por
 pour
 pre
@@ -119,13 +109,9 @@ sarl
 se
 ses
 she
-should
-since
 so
 sont
 sous
-sub
-such
 sur
 ta
 te
@@ -148,7 +134,6 @@ und
 une
 use
 uses
-well
 were
 what
 when
