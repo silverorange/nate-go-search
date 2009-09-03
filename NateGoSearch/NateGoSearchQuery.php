@@ -463,7 +463,8 @@ class NateGoSearchQuery
 		foreach ($words as $word) {
 			$word = strtolower($word);
 			if (!in_array($word, $this->blocked_words)
-				&& !in_array($word, $this->popular_words)) {
+				&& !in_array($word, $this->popular_words)
+				&& !is_numeric($word)) {
 				foreach ($this->popular_words as $popular_word) {
 					if (array_key_exists($word, $misspellings)) {
 						if ($this->isPopularMatch($popular_word,
