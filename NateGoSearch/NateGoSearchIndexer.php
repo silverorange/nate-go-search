@@ -38,6 +38,8 @@ class NateGoSearchIndexer
 	 * This is an array of {@link NateGoSearchTerm} objects.
 	 *
 	 * @var array
+	 *
+	 * @depracated use the field API on NateGoSearchDocument instead.
 	 */
 	protected $terms = array();
 
@@ -231,12 +233,18 @@ class NateGoSearchIndexer
 	/**
 	 * Adds a search term to this index
 	 *
+	 * This method is deprecated. Use the 'fields' API on
+	 * {@link NateGoSearchDocument} instead.
+	 *
 	 * Adding a term creates index entries for the words in the document
 	 * matching the term. Index terms may have different weights.
 	 *
 	 * @param NateGoSearchTerm $term the term to add.
 	 *
 	 * @see NateGoSearchTerm
+	 *
+	 * @depracated use the {@link NateGoSearchDocument::addField()} method
+	 *             instead.
 	 */
 	public function addTerm(NateGoSearchTerm $term)
 	{
@@ -249,7 +257,7 @@ class NateGoSearchIndexer
 	/**
 	 * Indexes a document
 	 *
-	 * The document is indexed for all the terms of this indexer.
+	 * The document is indexed for all of its fields by this indexer.
 	 *
 	 * @param NateGoSearchDocument $document the document to index.
 	 *
@@ -264,8 +272,21 @@ class NateGoSearchIndexer
 		if (!$this->append && !in_array($id, $this->clear_document_ids))
 			$this->clear_document_ids[] = $id;
 
+		// backwards compatibility with the deprecated 'terms' API
 		foreach ($this->terms as $term) {
-			$text = $document->getField($term->getDataField());
+			$document->addField(
+				new NateGoSearchField(
+					$term->getDataField(),
+					$term->getWeight(),
+					$term->isPopular()
+				)
+			);
+		}
+
+		$field_id = 0;
+		foreach ($document->getFields() as $field) {
+
+			$text = $document->getFieldValue($field->getName());
 			$word_list = $this->normalizeKeywords($text);
 
 			foreach ($word_list as $word) {
@@ -276,12 +297,20 @@ class NateGoSearchIndexer
 
 				if (!in_array($keyword, $this->unindexed_words)) {
 					$location += $word['proximity'];
-					if ($this->max_word_length !== null &&
-						strlen($keyword) > $this->max_word_length)
-						$keyword = substr($keyword, 0, $this->max_word_length);
 
-					$this->keywords[] = new NateGoSearchKeyword($keyword, $id,
-						$term->getWeight(), $location, $this->document_type);
+					if ($this->max_word_length !== null &&
+						strlen($keyword) > $this->max_word_length) {
+						$keyword = substr($keyword, 0, $this->max_word_length);
+					}
+
+					$this->keywords[] = new NateGoSearchKeyword(
+						$keyword,
+						$id,
+						$field->getWeight(),
+						$location,
+						$this->document_type,
+						$field_id
+					);
 				}
 
 				// add any words that the spell checker would flag
@@ -302,12 +331,14 @@ class NateGoSearchIndexer
 				}
 
 				// add any popular keywords to the popular keywords list
-				if ($term->isPopular()
+				if ($field->isPopular()
 					&& !in_array($word['word'], $this->unindexed_words)
 					&& !is_numeric($word['word'])) {
 					$this->popular_keywords[] = $word['word'];
 				}
 			}
+
+			$field_id++;
 		}
 	}
 
@@ -346,18 +377,26 @@ class NateGoSearchIndexer
 
 			$keyword = array_pop($this->keywords);
 			while ($keyword !== null) {
-				$sql = sprintf('insert into NateGoSearchIndex
-					(document_id, word, weight, location, document_type) values
-					(%s, %s, %s, %s, %s)',
+				$sql = sprintf('insert into NateGoSearchIndex (
+						document_id,
+						document_type,
+						field_id,
+						word,
+						weight,
+						location
+					) values (%s, %s, %s, %s, %s, %s)',
 					$this->db->quote($keyword->getDocumentId(), 'integer'),
+					$this->db->quote($keyword->getDocumentType(), 'integer'),
+					$this->db->quote($keyword->getTermId(), 'integer'),
 					$this->db->quote($keyword->getWord(), 'text'),
 					$this->db->quote($keyword->getWeight(), 'integer'),
-					$this->db->quote($keyword->getLocation(), 'integer'),
-					$this->db->quote($keyword->getDocumentType(), 'integer'));
+					$this->db->quote($keyword->getLocation(), 'integer'));
 
 				$result = $this->db->exec($sql);
 				if (MDB2::isError($result))
 					throw new NateGoSearchDBException($result);
+
+				unset($keyword);
 
 				$keyword = array_pop($this->keywords);
 			}
@@ -383,6 +422,8 @@ class NateGoSearchIndexer
 					if (MDB2::isError($result))
 						throw new NateGoSearchDBException($result);
 				}
+
+				unset($popular_keyword);
 
 				$popular_keyword = array_pop($this->popular_keywords);
 			}

@@ -1,6 +1,6 @@
 /**
  * Performs a fulltext search.
- * 
+ *
  * No search results are returned by this procedure. The results are stored
  * in a separate table accessed by a unique id. The table is called
  * 'NateGoSearchResult' by default. This table does not get dropped after the
@@ -76,6 +76,7 @@ create or replace function nateGoSearch (varchar(255), varchar(50), integer[], v
 		create temporary table TemporaryKeyword (
 			document_id integer,
 			document_type integer,
+			field_id integer,
 			word varchar(255),
 			location integer,
 			weight smallint
@@ -94,40 +95,52 @@ create or replace function nateGoSearch (varchar(255), varchar(50), integer[], v
 
 				if param_document_types is null then
 					-- search all document types
-					insert into TemporaryKeyword (document_id, document_type, word, location, weight)
-					select document_id, document_type, word, location, weight from NateGoSearchIndex
+					insert into TemporaryKeyword (document_id, document_type, field_id, word, location, weight)
+					select document_id, document_type, field_id, word, location, weight from NateGoSearchIndex
 						where word = local_word;
 				else
 					-- search specific document types
-					insert into TemporaryKeyword (document_id, document_type, word, location, weight)
-					select document_id, document_type, word, location, weight from NateGoSearchIndex
+					insert into TemporaryKeyword (document_id, document_type, field_id, word, location, weight)
+					select document_id, document_type, field_id, word, location, weight from NateGoSearchIndex
 						where word = local_word and document_type = any(param_document_types);
 				end if;
 			END;
 		END LOOP;
 
+		-- filter out document matches that do not contain all query keywords
 		delete from TemporaryKeyword where document_id not in (
 			select document_id from TemporaryKeyword
 			group by document_id having count(distinct word) = local_wordcount);
 
 		create temporary table TemporaryKeywordPair (
-			document_id int,
+			document_id integer,
+			field_id integer,
 			word1 varchar(255),
 			word2 varchar(255),
 			distance int
 		);
 
-		insert into TemporaryKeywordPair (document_id, word1, word2, distance)
-		select a.document_id, a.word, b.word, min(abs(a.location - b.location))
+		-- create word pair data for each field in the document
+		insert into TemporaryKeywordPair (document_id, field_id, word1, word2, distance)
+		select a.document_id, a.field_id, a.word, b.word, min(abs(a.location - b.location))
 			from TemporaryKeyword as a, TemporaryKeyword as b
-			where a.word < b.word and a.document_id = b.document_id
-			group by a.document_id, a.word, b.word;
+			where a.word < b.word and a.document_id = b.document_id and a.field_id = b.field_id
+			group by a.document_id, a.field_id, a.word, b.word;
 
+		-- aggregate document results, proximity relevance and weighted
+		-- relevance. Display orders are ascending with the highest ranked
+		-- matches listed first. If there is no average distance between matched
+		-- worlds in the document (for example, two different fields contain the
+		-- keywords, or only one keyword is specified) the first displayorder is
+		-- coalesced to 1e37 so it appears after other matches.
 		insert into NateGoSearchResult (document_id, document_type, displayorder1, displayorder2, unique_id, createdate)
 		select TemporaryKeyword.document_id,
 				TemporaryKeyword.document_type,
-				coalesce(cast(avg(distance) as float) / cast(sum(weight) as float), 0) as displayorder1,
-				1 / cast(sum(weight) as float) as displayorder2,
+				coalesce(
+					cast(avg(distance) as float) / cast(sum(weight) as float)
+					1e37
+				) as displayorder1,
+				1.0 / cast(sum(weight) as float) as displayorder2,
 				param_unique_id,
 				CURRENT_TIMESTAMP
 			from TemporaryKeyword

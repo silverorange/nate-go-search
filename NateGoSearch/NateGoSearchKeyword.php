@@ -9,7 +9,7 @@
  * NateGoSearchIndexer.
  *
  * @package   NateGoSearch
- * @copyright 2006 silverorange
+ * @copyright 2006-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @see       NateGoSearchIndexer
  */
@@ -22,6 +22,7 @@ class NateGoSearchKeyword
 	protected $weight;
 	protected $location;
 	protected $document_type;
+	protected $term_id;
 
 	// }}}
 	// {{{ public function __construct()
@@ -37,15 +38,18 @@ class NateGoSearchKeyword
 	 *                           document. First word, second word, etc...
 	 * @param integer $document_type the document type this keyword's document
 	 *                                belongs to.
+	 * @parma integer $term_id the term in the document to which this keyword
+	 *                          belongs.
 	 */
 	public function __construct($word, $document_id, $weight, $location,
-		$document_type)
+		$document_type, $term_id)
 	{
-		$this->word = $word;
-		$this->document_id = $document_id;
-		$this->weight = $weight;
-		$this->location = $location;
+		$this->word          = $word;
+		$this->document_id   = $document_id;
+		$this->weight        = $weight;
+		$this->location      = $location;
 		$this->document_type = $document_type;
+		$this->term_id       = $term_id;
 	}
 
 	// }}}
@@ -102,6 +106,17 @@ class NateGoSearchKeyword
 	public function getDocumentType()
 	{
 		return $this->document_type;
+	}
+
+	// }}}
+	// {{{ public function getTermId()
+
+	/**
+	 * @return integer the term in the document to which this keyword belongs.
+	 */
+	public function getTermId()
+	{
+		return $this->term_id;
 	}
 
 	// }}}

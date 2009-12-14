@@ -2,6 +2,8 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
+require_once 'NateGoSearch/NateGoSearchField.php';
+
 /**
  * Represents a single searchable entity
  *
@@ -9,7 +11,7 @@
  * extremely custom document objects, this class may be extended.
  *
  * @package   NateGoSearch
- * @copyright 2006 silverorange
+ * @copyright 2006-2009 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchDocument
@@ -32,6 +34,15 @@ class NateGoSearchDocument
 	 * @var mixed
 	 */
 	protected $data;
+
+	/**
+	 * The fields of this document to index
+	 *
+	 * @var array
+	 *
+	 * @see NateGoSearchDocument::addField()
+	 * @see NateGoSearchDocument::getFields()
+	protected $fields = array();
 
 	// }}}
 	// {{{ public function __construct()
@@ -66,19 +77,66 @@ class NateGoSearchDocument
 	}
 
 	// }}}
+	// {{{ public function addField()
+
+	/**
+	 * Adds a field to be indexed to this document
+	 *
+	 * @param NateGoSearchField $field the field to add.
+	 */
+	public function addField(NateGoSearchField $field)
+	{
+		$this->fields[$field->getName()] = $field;
+	}
+
+	// }}}
 	// {{{ public function getField()
 
 	/**
 	 * Gets a field of this document by name
 	 *
+	 * This method is deprecated and will be removed in a later release.
+	 *
 	 * @param string $name the name of the field to get.
 	 *
 	 * @return mixed the value of the field in this document with the given
 	 *                name.
+	 *
+	 * @deprecated Use {@link NateGoSearchDocument::getFieldValue()} instead.
 	 */
-	public function getField($field_name)
+	public function getField($name)
 	{
-		return $this->data->$field_name;
+		return $this->getFieldValue($name);
+	}
+
+	// }}}
+	// {{{ public function getFieldValue()
+
+	/**
+	 * Gets a field value of this document by name
+	 *
+	 * @param string $name the name of the field value to get.
+	 *
+	 * @return mixed the value of the field in this document with the given
+	 *                name.
+	 */
+	public function getFieldValue($name)
+	{
+		return $this->data->$name;
+	}
+
+	// }}}
+	// {{{ public function getFields()
+
+	/**
+	 * Gets the defined fields of this document, indexed by field name
+	 *
+	 * @return array the defined fields of this document, indexed by field
+	 *               name.
+	 */
+	public function getFields()
+	{
+		return $this->fields;
 	}
 
 	// }}}
