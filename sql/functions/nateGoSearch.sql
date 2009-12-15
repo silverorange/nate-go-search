@@ -137,7 +137,7 @@ create or replace function nateGoSearch (varchar(255), varchar(50), integer[], v
 		select TemporaryKeyword.document_id,
 				TemporaryKeyword.document_type,
 				coalesce(
-					cast(avg(distance) as float) / cast(sum(weight) as float)
+					cast(avg(distance) as float) / cast(sum(weight) as float),
 					1e37
 				) as displayorder1,
 				1.0 / cast(sum(weight) as float) as displayorder2,
