@@ -56,13 +56,15 @@ class NateGoSearchIndexer
 	/**
 	 * The maximum length of words that are indexed
 	 *
-	 * If the word length is set as null, there is no maximum word length. This
-	 * is the default behavior. If a word is longer than the maximum length, it
-	 * is truncated before being indexed.
+	 * If the word length is set as null, there is no maximum word length. If a
+	 * word is longer than the maximum length, it is truncated before being
+	 * indexed. The default maximum word length is 32 characters.
 	 *
 	 * @var integer
+	 *
+	 * @see NateGoSearchIndexer::setMaximumWordLength()
 	 */
-	protected $max_word_length;
+	protected $max_word_length = 32;
 
 	/**
 	 * An array of keywords collected from the current index operation
@@ -217,6 +219,10 @@ class NateGoSearchIndexer
 
 	/**
 	 * Sets the maximum length of words in the index
+	 *
+	 * If the word length is set as null, there is no maximum word length. If a
+	 * word is longer than the maximum length, it is truncated before being
+	 * indexed. The default maximum word length is 32 characters.
 	 *
 	 * @param integer $length the maximum length of words in the index.
 	 *
