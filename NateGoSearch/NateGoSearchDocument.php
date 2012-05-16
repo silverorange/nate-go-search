@@ -42,6 +42,7 @@ class NateGoSearchDocument
 	 *
 	 * @see NateGoSearchDocument::addField()
 	 * @see NateGoSearchDocument::getFields()
+	 */
 	protected $fields = array();
 
 	// }}}
