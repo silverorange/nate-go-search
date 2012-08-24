@@ -9,7 +9,7 @@
  * based on all terms.
  *
  * @package   NateGoSearch
- * @copyright 2006-2009 silverorange
+ * @copyright 2006-2012 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @see       NateGoSearchIndexer
  */
@@ -39,7 +39,7 @@ class NateGoSearchTerm
 	 * If this field should be used for popular keyword suggestions.
 	 *
 	 * Whether or not the words of this field should be added to the popular
-	 *  keywords table.
+	 * keywords table.
 	 *
 	 * @var boolean
 	 */
