@@ -369,7 +369,7 @@ class NateGoSearchQuery
 			$db->quote($interval_threshold, 'text')
 		);
 
-		$results = $this->db->queryCol($sql, 'text');
+		$results = $db->queryCol($sql, 'text');
 		if (MDB2::isError($results))
 			throw new NateGoSearchDBException($results);
 
