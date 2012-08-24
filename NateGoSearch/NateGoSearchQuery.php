@@ -53,7 +53,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * distributable with the LGPL licensed NateGoSearch.
  *
  * @package   NateGoSearch
- * @copyright 2006-2007 silverorange
+ * @copyright 2006-2012 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchQuery
@@ -90,6 +90,7 @@ class NateGoSearchQuery
 	 * @var array
 	 *
 	 * @see NateGoSearchQuery::getPopularWords()
+	 * @see NateGoSearchQuery::addPopularWords()
 	 */
 	protected $popular_words = array();
 
@@ -172,10 +173,31 @@ class NateGoSearchQuery
 	 */
 	public function addBlockedWords($words)
 	{
-		if (!is_array($words))
+		if (!is_array($words)) {
 			$words = array((string)$words);
+		}
 
 		$this->blocked_words = array_merge($this->blocked_words, $words);
+	}
+
+	// }}}
+	// {{{ public function addPopularWords()
+
+	/**
+	 * Adds words to the list of popular words that should be suggested
+	 *
+	 * @param string|array $words the list of popular words.
+	 */
+	public function addPopularWords($words)
+	{
+		if (!is_array($words)) {
+			$words = array((string)$words);
+		}
+
+		$this->popular_words = array_merge(
+			$this->popular_words,
+			$this->cleanWords($words)
+		);
 	}
 
 	// }}}
@@ -291,51 +313,6 @@ class NateGoSearchQuery
 		NateGoSearchSpellChecker $spell_checker = null)
 	{
 		$this->spell_checker = $spell_checker;
-	}
-
-	// }}}
-	// {{{ public function quoteArray()
-
-	/**
-	 * Quotes a PHP array into a PostgreSQL array
-	 *
-	 * This is used to quote the list of document types used in the internal
-	 * SQL query.
-	 *
-	 * @param array $array the array to quote.
-	 * @param string $type the SQL data type to use. The type is 'integer' by
-	 *                      default.
-	 *
-	 * @return string the array quoted as an SQL array.
-	 */
-	private function quoteArray($array, $type = 'integer')
-	{
-		$this->db->loadModule('Datatype');
-
-		$return = 'ARRAY[';
-
-		if (is_array($array))
-			$return.= $this->db->datatype->implodeArray($array, $type);
-
-		$return.= ']';
-
-		return $return;
-	}
-
-	// }}}
-	// {{{ public function addPopularWords()
-
-	/**
-	 * Adds words to the list of popular words that should be suggested
-	 *
-	 * @param string|array $words the list of popular words.
-	 */
-	public function addPopularWords($words)
-	{
-		if (!is_array($words))
-			$words = array((string)$words);
-
-		$this->popular_words = array_merge($this->popular_words, $words);
 	}
 
 	// }}}
@@ -486,22 +463,21 @@ class NateGoSearchQuery
 	}
 
 	// }}}
-	// {{{ protected function cleanPopularResults()
+	// {{{ protected function cleanWords()
 
 	/**
-	 * Clean the popular words list
+	 * Clean a words list
 	 *
-	 * This is used to clean up the results queried in
-	 * {@link NateGoSearchQuery::getPopularWords()} to a list of unique words
+	 * This is used to clean up an array of words to a list of unique words
 	 * that contains only on word per array entry. Numbers and common words
-	 * found in {@link NateGoSearchQuery::blocked_words} are also removed from
-	 * the list.
+	 * found in {@link NateGoSearchQuery::blocked_words} are removed from the
+	 * list.
 	 *
-	 * @param array $results an array of results to clean
+	 * @param array $words an array of words to clean
 	 *
-	 * @return array an array of cleaned results.
+	 * @return array the cleaned results.
 	 */
-	protected function cleanPopularResults(array $results)
+	protected function cleanWords(array $words)
 	{
 		$clean_results = array();
 
@@ -510,13 +486,13 @@ class NateGoSearchQuery
 			$result = preg_replace('/\s+/u', ' ', $result);
 			$words = explode(' ', $result);
 
-			foreach ($words as $word)
-			{
+			foreach ($words as $word) {
 				if (!in_array($word, $this->blocked_words)
 					&& !is_numeric($word)
 					&& !in_array($word, $clean_results)
-					&& $word != '')
+					&& $word != '') {
 					$clean_results[] = $word;
+				}
 			}
 		}
 
@@ -542,6 +518,35 @@ class NateGoSearchQuery
 	{
 		return (levenshtein($word1, $word2) < 2)
 			|| (metaphone($word1) == metaphone($word2));
+	}
+
+	// }}}
+	// {{{ protected function quoteArray()
+
+	/**
+	 * Quotes a PHP array into a PostgreSQL array
+	 *
+	 * This is used to quote the list of document types used in the internal
+	 * SQL query.
+	 *
+	 * @param array $array the array to quote.
+	 * @param string $type the SQL data type to use. The type is 'integer' by
+	 *                      default.
+	 *
+	 * @return string the array quoted as an SQL array.
+	 */
+	protected function quoteArray($array, $type = 'integer')
+	{
+		$this->db->loadModule('Datatype');
+
+		$return = 'ARRAY[';
+
+		if (is_array($array))
+			$return.= $this->db->datatype->implodeArray($array, $type);
+
+		$return.= ']';
+
+		return $return;
 	}
 
 	// }}}
