@@ -128,6 +128,7 @@ class NateGoSearchQuery
 	public function __construct(MDB2_Driver_Common $db)
 	{
 		$this->db = $db;
+		$this->popular_words = $this->getPopularWords();
 	}
 
 	// }}}
@@ -345,6 +346,38 @@ class NateGoSearchQuery
 	}
 
 	// }}}
+	// {{{ protected function getPopularWords()
+
+	/**
+	 * Get a list of popular/successful search keywords
+	 *
+	 * This is used to query the database for a list of keywords from the
+	 * NateGoSearchHistory table. The results are based upon the document_count
+	 * of each of the keywords and if the words have been searched recently.
+	 *
+	 * @return array an array of popular search words
+	 */
+	protected function getPopularWords()
+	{
+		// TODO: Change the hard coded interval and threshold values for config
+		// settings
+		$sql = sprintf(
+			"select distinct keywords from NateGoSearchHistory
+			where document_count > %s and
+				creation_date > LOCALTIMESTAMP - interval '6 months'",
+			$this->db->quote(150, 'integer')
+		);
+
+		$results = $this->db->queryCol($sql, 'text');
+		if (MDB2::isError($results))
+			throw new NateGoSearchDBException($results);
+
+		$popular_words = $this->cleanWords($results);
+
+		return $popular_words;
+	 }
+
+	 // }}}
 	// {{{ protected function normalizeKeywordsForSpelling()
 
 	/**
