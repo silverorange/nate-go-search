@@ -509,14 +509,14 @@ class NateGoSearchQuery
 	 *
 	 * @return array the cleaned results.
 	 */
-	protected function cleanWords(array $words)
+	protected function cleanWords(array $dirty_words)
 	{
-		$clean_results = array();
+		$clean_words = array();
 
-		foreach ($results as $result)
+		foreach ($dirty_words as $dirty_word)
 		{
-			$result = preg_replace('/\s+/u', ' ', $result);
-			$words = explode(' ', $result);
+			$dirty_word = preg_replace('/\s+/u', ' ', $dirty_word);
+			$words = explode(' ', $dirty_word);
 
 			foreach ($words as $word) {
 				if (!in_array($word, $this->blocked_words)
@@ -528,7 +528,7 @@ class NateGoSearchQuery
 			}
 		}
 
-		return $clean_results;
+		return $clean_words;
 	}
 
 	// }}}
