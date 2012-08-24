@@ -369,11 +369,11 @@ class NateGoSearchQuery
 			$db->quote($interval_threshold, 'text')
 		);
 
-		$results = $db->queryCol($sql, 'text');
-		if (MDB2::isError($results))
-			throw new NateGoSearchDBException($results);
+		$words = $db->queryCol($sql, 'text');
+		if (MDB2::isError($words))
+			throw new NateGoSearchDBException($words);
 
-		return $popular_words;
+		return $words;
 	 }
 
 	 // }}}
