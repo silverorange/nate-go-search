@@ -521,9 +521,9 @@ class NateGoSearchQuery
 			foreach ($words as $word) {
 				if (!in_array($word, $this->blocked_words)
 					&& !is_numeric($word)
-					&& !in_array($word, $clean_results)
+					&& !in_array($word, $clean_words)
 					&& $word != '') {
-					$clean_results[] = $word;
+					$clean_words[] = $word;
 				}
 			}
 		}
