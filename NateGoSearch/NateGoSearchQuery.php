@@ -128,7 +128,6 @@ class NateGoSearchQuery
 	public function __construct(MDB2_Driver_Common $db)
 	{
 		$this->db = $db;
-		$this->popular_words = $this->getPopularWords();
 	}
 
 	// }}}
@@ -346,7 +345,7 @@ class NateGoSearchQuery
 	}
 
 	// }}}
-	// {{{ protected function getPopularWords()
+	// {{{ protected function getDefaultPopularWords()
 
 	/**
 	 * Get a list of popular/successful search keywords
@@ -355,24 +354,24 @@ class NateGoSearchQuery
 	 * NateGoSearchHistory table. The results are based upon the document_count
 	 * of each of the keywords and if the words have been searched recently.
 	 *
+	 * @param MDB2_Driver_Common $db the database driver to use.
+	 *
 	 * @return array an array of popular search words
 	 */
-	protected function getPopularWords()
+	public static function getDefaultPopularWords(MDB2_Driver_Common $db,
+		$document_threshold = 150, $interval_threshold = '6 months')
 	{
-		// TODO: Change the hard coded interval and threshold values for config
-		// settings
 		$sql = sprintf(
 			"select distinct keywords from NateGoSearchHistory
 			where document_count > %s and
-				creation_date > LOCALTIMESTAMP - interval '6 months'",
-			$this->db->quote(150, 'integer')
+				creation_date > LOCALTIMESTAMP - interval %s",
+			$db->quote($document_threshold, 'integer'),
+			$db->quote($interval_threshold, 'text')
 		);
 
 		$results = $this->db->queryCol($sql, 'text');
 		if (MDB2::isError($results))
 			throw new NateGoSearchDBException($results);
-
-		$popular_words = $this->cleanWords($results);
 
 		return $popular_words;
 	 }
