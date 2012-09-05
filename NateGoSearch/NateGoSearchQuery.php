@@ -89,7 +89,7 @@ class NateGoSearchQuery
 	 *
 	 * @var array
 	 *
-	 * @see NateGoSearchQuery::getPopularWords()
+	 * @see NateGoSearchQuery::getSearchHistoryPopularWords()
 	 * @see NateGoSearchQuery::addPopularWords()
 	 */
 	protected $popular_words = array();
@@ -345,7 +345,7 @@ class NateGoSearchQuery
 	}
 
 	// }}}
-	// {{{ protected function getDefaultPopularWords()
+	// {{{ protected function getSearchHistoryPopularWords()
 
 	/**
 	 * Get a list of popular/successful search keywords
@@ -355,23 +355,36 @@ class NateGoSearchQuery
 	 * of each of the keywords and if the words have been searched recently.
 	 *
 	 * @param MDB2_Driver_Common $db the database driver to use.
+	 * @param integer $document_threshold optional. The minimum number of
+	 *                                     results in which a word must be
+	 *                                     contained to be considered
+	 *                                     popular. If not specified, 150
+	 *                                     is used.
+	 * @param string $date_threshold optional. Search keywords must be after
+	 *                                this date to be considered popular. Uses
+	 *                                strtotime format. If not specified,
+	 *                                '6 months ago' is used.
 	 *
 	 * @return array an array of popular search words
 	 */
-	public static function getDefaultPopularWords(MDB2_Driver_Common $db,
-		$document_threshold = 150, $interval_threshold = '6 months')
+	public static function getSearchHistoryPopularWords(
+		MDB2_Driver_Common $db,
+		$document_threshold = 150, $date_threshold = '6 months ago')
 	{
+		$date = strtotime($date_threshold);
+		$date = date('c', $date);
+
 		$sql = sprintf(
-			"select distinct keywords from NateGoSearchHistory
-			where document_count > %s and
-				creation_date > LOCALTIMESTAMP - interval %s",
+			'select distinct keywords from NateGoSearchHistory
+			where document_count > %s and creation_date > %s',
 			$db->quote($document_threshold, 'integer'),
-			$db->quote($interval_threshold, 'text')
+			$db->quote($date, 'date')
 		);
 
 		$words = $db->queryCol($sql, 'text');
-		if (MDB2::isError($words))
+		if (MDB2::isError($words)) {
 			throw new NateGoSearchDBException($words);
+		}
 
 		return $words;
 	 }
