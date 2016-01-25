@@ -6,7 +6,7 @@
  * Base exception class for NateGoSearch
  *
  * @package   NateGoSearch
- * @copyright 2007 silverorange
+ * @copyright 2007-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchException extends Exception

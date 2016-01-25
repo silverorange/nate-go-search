@@ -9,7 +9,7 @@ require_once 'PEAR.php';
  * Thrown when a database error occurs
  *
  * @package   NateGoSearch
- * @copyright 2007 silverorange
+ * @copyright 2007-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchDBException extends NateGoSearchException

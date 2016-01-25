@@ -22,7 +22,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
  * only need to be created once when setting up a new website.
  *
  * @package   NateGoSearch
- * @copyright 2007 silverorange
+ * @copyright 2007-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearch

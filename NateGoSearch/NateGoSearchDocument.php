@@ -11,7 +11,7 @@ require_once 'NateGoSearch/NateGoSearchField.php';
  * extremely custom document objects, this class may be extended.
  *
  * @package   NateGoSearch
- * @copyright 2006-2009 silverorange
+ * @copyright 2006-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchDocument

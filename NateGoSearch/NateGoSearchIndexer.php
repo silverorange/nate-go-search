@@ -25,7 +25,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * distributable with the LGPL licensed NateGoSearch.
  *
  * @package   NateGoSearch
- * @copyright 2006-2009 silverorange
+ * @copyright 2006-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchIndexer
