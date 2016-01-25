@@ -11,7 +11,7 @@ require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
  * {@link NateGoSearchQuery::query()} and is not designed to be used on its own.
  *
  * @package   NateGoSearch
- * @copyright 2006 silverorange
+ * @copyright 2006-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchResult

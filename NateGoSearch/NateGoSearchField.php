@@ -6,7 +6,7 @@
  * A field in a document to index
  *
  * @package   NateGoSearch
- * @copyright 2009 silverorange
+ * @copyright 2009-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  * @see       NateGoSearchDocument
  */

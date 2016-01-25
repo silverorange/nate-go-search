@@ -9,7 +9,7 @@ require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
  * words
  *
  * @package   NateGoSearch
- * @copyright 2007 silverorange
+ * @copyright 2007-2016 silverorange
  * @license   http://www.gnu.org/copyleft/lesser.html LGPL License 2.1
  */
 class NateGoSearchFileSpellChecker extends NateGoSearchSpellChecker
