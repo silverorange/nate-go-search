@@ -17,6 +17,7 @@
 	],
 	"require": {
 		"php": ">=5.2.1",
+		"ext-pspell": "*",
 		"silverorange/mdb2": "^2.4.1",
 		"silverorange/silverorange_autoloader": "*"
 	},
