@@ -18,11 +18,10 @@
 	"require": {
 		"php": ">=5.2.1",
 		"ext-pspell": "*",
-		"silverorange/mdb2": "^2.4.1",
-		"silverorange/silverorange_autoloader": "*"
+		"silverorange/mdb2": "^2.4.1"
 	},
 	"autoload": {
-		"files": [ "autoload.php" ]
+		"classmap": [ "NateGoSearch/" ]
 	},
 	"include-path": [
 		"./"
