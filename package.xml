@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.5" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.10.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -19,10 +19,10 @@
   <email>mike@silverorange.com</email>
   <active>yes</active>
  </developer>
- <date>2016-02-08</date>
- <time>12:02:29</time>
+ <date>2016-05-13</date>
+ <time>12:28:59</time>
  <version>
-  <release>1.0.36</release>
+  <release>1.0.37</release>
   <api>0.0.1</api>
  </version>
  <stability>
@@ -80,7 +80,6 @@ see ChangeLog
     <file name="misspellings.txt" role="data" />
     <file name="no-suggest-words.txt" role="data" />
    </dir> <!-- /system -->
-   <file name="autoload.php" role="data" />
    <file name="ChangeLog" role="data" />
    <file name="composer.json" role="data" />
   </dir> <!-- / -->
@@ -104,14 +103,14 @@ see ChangeLog
  <changelog>
   <release>
    <version>
-    <release>1.0.36</release>
+    <release>1.0.37</release>
     <api>0.0.1</api>
    </version>
    <stability>
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2016-02-08</date>
+   <date>2016-05-13</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
 see ChangeLog
