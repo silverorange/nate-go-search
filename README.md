@@ -16,7 +16,7 @@ Before use, the search function and tables must be added to the PostgreSQL
 database.
 
 ### Indexing
-```
+```php
 <?php
 
 $indexer = new NateGoSearchIndexer($document_type, $db);
@@ -37,7 +37,7 @@ $indexer->commit();
 ```
 
 ### Searching
-```
+```php
 <?php
 
 $query = new NateGoSearchQuery($db);
