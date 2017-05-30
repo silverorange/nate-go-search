@@ -32,6 +32,7 @@ foreach ($records as $record) {
 }
 
 $indexer->commit();
+
 ?>
 ```
 
