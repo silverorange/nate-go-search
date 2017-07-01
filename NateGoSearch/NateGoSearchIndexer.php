@@ -2,15 +2,6 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
-require_once 'MDB2.php';
-require_once 'NateGoSearch.php';
-require_once 'NateGoSearch/NateGoSearchTerm.php';
-require_once 'NateGoSearch/NateGoSearchDocument.php';
-require_once 'NateGoSearch/NateGoSearchKeyword.php';
-require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
-require_once 'NateGoSearch/exceptions/NateGoSearchDBException.php';
-require_once 'NateGoSearch/exceptions/NateGoSearchDocumentTypeException.php';
-
 /**
  * Indexes documents using the NateGo search algorithm
  *

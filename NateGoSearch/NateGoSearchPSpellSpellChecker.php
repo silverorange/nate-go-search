@@ -2,9 +2,6 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
-require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
-require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
-
 /**
  * A spell checker to correct commonly misspelled words and phrases using
  * the <kbd>pspell</kbd> extension for PHP.

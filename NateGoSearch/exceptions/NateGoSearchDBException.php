@@ -2,9 +2,6 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
-require_once 'NateGoSearch/exceptions/NateGoSearchException.php';
-require_once 'PEAR.php';
-
 /**
  * Thrown when a database error occurs
  *
