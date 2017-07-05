@@ -234,7 +234,11 @@ class NateGoSearchQuery
 		$misspellings = $this->getPopularReplacements($keywords, $misspellings);
 
 		$keywords = $this->normalizeKeywordsForSearching($keywords);
-		$unique_hash = sha1($keywords.serialize($this->document_types));
+
+		$document_type_ids = array_values($this->document_types);
+		sort($document_type_ids);
+
+		$unique_hash = sha1($keywords.':'.implode('-', $document_type_ids));
 
 		$results = new NateGoSearchResult(
 			$this->db,
