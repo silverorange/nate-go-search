@@ -4,7 +4,6 @@ pipeline {
         stage('Install Composer Dependencies') {
             steps {
                 sh 'composer install'
-                sh 'composer update'
             }
         }
 
