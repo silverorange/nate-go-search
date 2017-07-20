@@ -592,7 +592,7 @@ class NateGoSearchIndexer
 	 * @param string  $text           the string to be normalized.
 	 * @param integer $end_weight     the word proximity weighting relative to
 	 *                                a single space to use for end-of-sentence
-	                                  punctuation.
+	 *                                punctuation.
 	 * @param integer $tab_weight     the word proximity weighting relative to
 	 *                                a single space to use or tabs.
 	 * @param integer $newline_weight the word proximity weighting relative to
@@ -633,7 +633,7 @@ class NateGoSearchIndexer
 		$text = preg_replace('/\'s\b/u', '', $text);
 
 		// remove punctuation at the beginning and end of the string
-	 	$text = preg_replace('/^\W+/u', '', $text);
+		$text = preg_replace('/^\W+/u', '', $text);
 		$text = preg_replace('/\W+$/u', '', $text);
 
 		// remove any odd (non-recognized punctuation) characters from the
@@ -655,9 +655,11 @@ class NateGoSearchIndexer
 
 		// mid sentence punctuation (;:,-). Note: this should not remove
 		// hyphens from hyphenated words.
-		$text = preg_replace('/(\s+[;:,-]+\s+|[;:,-]+\s+|\s+[;:,-]+)/u',
-			                 $mid_weight,
-						     $text);
+		$text = preg_replace(
+			'/(\s+[;:,-]+\s+|[;:,-]+\s+|\s+[;:,-]+)/u',
+			$mid_weight,
+			$text
+		);
 
 		// replace multiple dashes with a single dash
 		$text = preg_replace('/-+/u', '-', $text);

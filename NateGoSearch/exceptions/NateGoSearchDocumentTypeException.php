@@ -20,7 +20,7 @@ class NateGoSearchDocumentTypeException extends NateGoSearchException
 	 *
 	 * @var string
 	 */
-	protected $shortname= null;
+	protected $shortname = null;
 
 	// }}}
 	// {{{ public function __construct()
