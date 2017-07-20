@@ -395,7 +395,7 @@ class NateGoSearchQuery
 		}
 
 		return $words;
-	 }
+	}
 
 	 // }}}
 	// {{{ protected function normalizeKeywordsForSpelling()
