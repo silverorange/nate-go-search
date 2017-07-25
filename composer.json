@@ -18,7 +18,7 @@
 	"require": {
 		"php": ">=5.2.1",
 		"ext-pspell": "*",
-		"silverorange/mdb2": "^2.4.1"
+		"silverorange/mdb2": "^3.0.0"
 	},
 	"require-dev": {
 		"silverorange/coding-standard": "^0.4.0"
@@ -30,8 +30,5 @@
 	},
 	"autoload": {
 		"classmap": [ "NateGoSearch/" ]
-	},
-	"include-path": [
-		"./"
-	]
+	}
 }

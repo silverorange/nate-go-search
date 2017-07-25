@@ -2,8 +2,6 @@
 
 /* vim: set noexpandtab tabstop=4 shiftwidth=4 foldmethod=marker: */
 
-require_once 'NateGoSearch/NateGoSearchSpellChecker.php';
-
 /**
  * A light-weight, file-based spell checker to correct commonly misspelled
  * words
