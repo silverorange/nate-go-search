@@ -181,9 +181,12 @@ class NateGoSearchIndexer
 	 * @throws NateGoSearchDocumentTypeException if the document type shortname
 	 *                                           does not exist.
 	 */
-	public function __construct($document_type, MDB2_Driver_Common $db,
-		$new = false, $append = false)
-	{
+	public function __construct(
+		$document_type,
+		MDB2_Driver_Common $db,
+		$new = false,
+		$append = false
+	) {
 		// cache mb_string overloading status
 		if (self::$use_mb_string === null) {
 			self::$use_mb_string = (extension_loaded('mbstring') &&
@@ -595,12 +598,13 @@ class NateGoSearchIndexer
 	 * @return array an array in the form ('word'      => $word,
 	 *                                     'proximity' => $proximity)
 	 */
-	protected function normalizeKeywords($text,
-										 $end_weight = 5,
-										 $tab_weight = 5,
-										 $newline_weight = 5,
-										 $mid_weight = 2)
-	{
+	protected function normalizeKeywords(
+		$text,
+		$end_weight = 5,
+		$tab_weight = 5,
+		$newline_weight = 5,
+		$mid_weight = 2
+	) {
 		// get proximity weight strings
 		$end_weight     = str_repeat(' ', max(intval($end_weight), 1));
 		$tab_weight     = str_repeat(' ', max(intval($tab_weight), 1));

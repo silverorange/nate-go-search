@@ -41,9 +41,12 @@ class NateGoSearchResult
 	 *
 	 * @see NateGoSearchResult::getUniqueId()
 	 */
-	public function __construct(MDB2_Driver_Common $db, $unique_id,
-		$query_string, array $document_types)
-	{
+	public function __construct(
+		MDB2_Driver_Common $db,
+		$unique_id,
+		$query_string,
+		array $document_types
+	) {
 		$this->unique_id = $unique_id;
 		$this->query_string = $query_string;
 		$this->document_types = $document_types;

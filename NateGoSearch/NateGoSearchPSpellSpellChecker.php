@@ -66,9 +66,12 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 * @throws NateGoSearchtException if a dictionary in the specified language
 	 *                                could not be loaded.
 	 */
-	public function __construct($language, $path_to_data = '', $repl_pairs = '',
-		$personal_wordlist = '')
-	{
+	public function __construct(
+		$language,
+		$path_to_data = '',
+		$repl_pairs = '',
+		$personal_wordlist = ''
+	) {
 		if (!extension_loaded('pspell')) {
 			throw new NateGoSearchException('The Pspell PHP extension is '.
 				'required for NateGoSearchPSpellSpellChecker.');
