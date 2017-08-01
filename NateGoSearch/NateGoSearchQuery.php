@@ -311,8 +311,8 @@ class NateGoSearchQuery
 	 *        null, no spell checking is performed.
 	 */
 	public function setSpellChecker(
-		NateGoSearchSpellChecker $spell_checker = null)
-	{
+		NateGoSearchSpellChecker $spell_checker = null
+	) {
 		$this->spell_checker = $spell_checker;
 	}
 
@@ -370,8 +370,9 @@ class NateGoSearchQuery
 	 */
 	public static function getSearchHistoryPopularWords(
 		MDB2_Driver_Common $db,
-		$document_threshold = 150, $date_threshold = '6 months ago')
-	{
+		$document_threshold = 150,
+		$date_threshold = '6 months ago'
+	) {
 		$date = strtotime($date_threshold);
 		$date = date('c', $date);
 

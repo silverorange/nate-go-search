@@ -44,9 +44,10 @@ class NateGoSearch
 	 *
 	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
-	public static function createDocumentType(MDB2_Driver_Common $db,
-		$type_shortname)
-	{
+	public static function createDocumentType(
+		MDB2_Driver_Common $db,
+		$type_shortname
+	) {
 		$type = self::getDocumentType($db, $type_shortname);
 
 		if ($type === null) {
@@ -82,9 +83,10 @@ class NateGoSearch
 	 *
 	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
-	public static function getDocumentType(MDB2_Driver_Common $db,
-		$type_shortname)
-	{
+	public static function getDocumentType(
+		MDB2_Driver_Common $db,
+		$type_shortname
+	) {
 		$type_shortname = (string)$type_shortname;
 
 		$sql = sprintf('select id from NateGoSearchType
@@ -115,9 +117,10 @@ class NateGoSearch
 	 *
 	 * @throws NateGoSearchDBException if a database error occurs.
 	 */
-	public static function removeDocumentType(MDB2_Driver_Common $db,
-		$type_shortname)
-	{
+	public static function removeDocumentType(
+		MDB2_Driver_Common $db,
+		$type_shortname
+	) {
 		$type_shortname = (string)$type_shortname;
 
 		$sql = sprintf('delete from NateGoSearchType where shortname = %s',

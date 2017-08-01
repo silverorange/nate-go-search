@@ -30,9 +30,11 @@ class NateGoSearchDocumentTypeException extends NateGoSearchException
 	 * @param integer $code the code of the exception.
 	 * @param string $shortname the shortname of the invalid document type.
 	 */
-	public function __construct($message = null, $code = 0,
-		$shortname = null)
-	{
+	public function __construct(
+		$message = null,
+		$code = 0,
+		$shortname = null
+	) {
 		parent::__construct($message, $code);
 		$this->shortname = $shortname;
 	}

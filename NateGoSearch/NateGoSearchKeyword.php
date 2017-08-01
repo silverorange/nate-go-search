@@ -41,9 +41,14 @@ class NateGoSearchKeyword
 	 * @parma integer $term_id the term in the document to which this keyword
 	 *                          belongs.
 	 */
-	public function __construct($word, $document_id, $weight, $location,
-		$document_type, $term_id)
-	{
+	public function __construct(
+		$word,
+		$document_id,
+		$weight,
+		$location,
+		$document_type,
+		$term_id
+	) {
 		$this->word          = $word;
 		$this->document_id   = $document_id;
 		$this->weight        = $weight;
