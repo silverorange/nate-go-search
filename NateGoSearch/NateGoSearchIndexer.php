@@ -615,8 +615,8 @@ class NateGoSearchIndexer
 		$text = strtolower($text);
 
 		// replace windows and mac style newlines with unix style newlines
-		$text = preg_replace('/\r\n/u', '\n', $text);
-		$text = preg_replace('/\r/u', '\n', $text);
+		$text = preg_replace('/\r\n/u', "\n", $text);
+		$text = preg_replace('/\r/u', "\n", $text);
 
 		// replace html/xhtml/xml tags with spaces
 		$text = preg_replace('/<\/?[^>]*>*/u', ' ', $text);
