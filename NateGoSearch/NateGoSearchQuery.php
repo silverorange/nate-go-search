@@ -331,13 +331,10 @@ class NateGoSearchQuery
 	{
 		static $words = array();
 
-		if (count($words) == 0) {
-			if (substr('@DATA-DIR@', 0, 1) === '@')
-				$filename = dirname(__FILE__).'/../system/blocked-words.txt';
-			else
-				$filename = '@DATA-DIR@/NateGoSearch/system/blocked-words.txt';
-
+		if (count($words) === 0) {
+			$filename = __DIR__.'/../system/blocked-words.txt';
 			$words = file($filename, true);
+
 			// remove line breaks
 			$words = array_map('rtrim', $words);
 		}
@@ -454,7 +451,7 @@ class NateGoSearchQuery
 	protected function normalizeKeywordsForSearching($text)
 	{
 		// lowercase
-		$text = strtolower($text);
+		$text = mb_strtolower($text);
 
 		// replace apostrophe s's
 		$text = preg_replace('/\'s\b/u', '', $text);
@@ -485,7 +482,7 @@ class NateGoSearchQuery
 		$words = explode(' ', $keywords);
 
 		foreach ($words as $word) {
-			$word = strtolower($word);
+			$word = mb_strtolower($word);
 			if (!in_array($word, $this->blocked_words)
 				&& !in_array($word, $this->popular_words)
 				&& !is_numeric($word)) {
