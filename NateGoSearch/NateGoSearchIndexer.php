@@ -190,7 +190,7 @@ class NateGoSearchIndexer
 		// cache mb_string overloading status
 		if (self::$use_mb_string === null) {
 			self::$use_mb_string = (
-				ini_get('mbstring.func_overload') & 2) === 2
+				(ini_get('mbstring.func_overload') & 2) === 2
 			);
 		}
 
