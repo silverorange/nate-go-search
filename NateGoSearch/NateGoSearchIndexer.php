@@ -142,22 +142,6 @@ class NateGoSearchIndexer
 	protected $personal_wordlist = array();
 
 	// }}}
-	// {{{ private static properties
-
-	/**
-	 * Whether or not mb_string overloading is turned on for the strlen
-	 * function
-	 *
-	 * This value is calculated and cached when the first indexer object is
-	 * created.
-	 *
-	 * @var boolean
-	 *
-	 * @see NateGoSearchIndexer::getByteLength()
-	 */
-	private static $use_mb_string = null;
-
-	// }}}
 	// {{{ public function __construct()
 
 	/**
@@ -187,12 +171,6 @@ class NateGoSearchIndexer
 		$new = false,
 		$append = false
 	) {
-		// cache mb_string overloading status
-		if (self::$use_mb_string === null) {
-			self::$use_mb_string = (extension_loaded('mbstring') &&
-				(ini_get('mbstring.func_overload') & 2) === 2);
-		}
-
 		$type = NateGoSearch::getDocumentType($db, $document_type);
 
 		if ($type === null) {
@@ -299,8 +277,12 @@ class NateGoSearchIndexer
 					$location += $word['proximity'];
 
 					if ($this->max_word_length !== null &&
-						strlen($keyword) > $this->max_word_length) {
-						$keyword = substr($keyword, 0, $this->max_word_length);
+						mb_strlen($keyword) > $this->max_word_length) {
+						$keyword = mb_substr(
+							$keyword,
+							0,
+							$this->max_word_length
+						);
 					}
 
 					$this->keywords[] = new NateGoSearchKeyword(
@@ -536,13 +518,10 @@ class NateGoSearchIndexer
 	{
 		static $words = array();
 
-		if (count($words) == 0) {
-			if (substr('@DATA-DIR@', 0, 1) === '@')
-				$filename = dirname(__FILE__).'/../system/blocked-words.txt';
-			else
-				$filename = '@DATA-DIR@/NateGoSearch/system/blocked-words.txt';
-
+		if (count($words) === 0) {
+			$filename = __DIR__.'/../system/blocked-words.txt';
 			$words = file($filename, true);
+
 			// remove line breaks
 			$words = array_map('rtrim', $words);
 		}
@@ -612,7 +591,7 @@ class NateGoSearchIndexer
 		$mid_weight     = str_repeat(' ', max(intval($mid_weight), 1));
 
 		// lowercase
-		$text = strtolower($text);
+		$text = mb_strtolower($text);
 
 		// replace windows and mac style newlines with unix style newlines
 		$text = preg_replace('/\r\n/u', "\n", $text);
@@ -720,11 +699,7 @@ class NateGoSearchIndexer
 
 	protected static function getByteLength($string)
 	{
-		if (self::$use_mb_string) {
-			return mb_strlen($string, '8bit');
-		}
-
-		return strlen($string);
+		return mb_strlen($string, '8bit');
 	}
 
 	// }}}

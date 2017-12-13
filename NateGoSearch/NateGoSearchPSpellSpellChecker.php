@@ -236,7 +236,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 				// if there are no spelling suggestions then we should stop
 				// checking
 				$suggestion = null;
-			} elseif (strtolower($suggestions[0]) === strtolower($word)) {
+			} elseif (mb_strtolower($suggestions[0]) === mb_strtolower($word)) {
 				// if pspell is only correcting the capitalization, stop
 				// checking
 				$suggestion = null;
@@ -334,7 +334,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 
 		// filter out potentially offensive words we never want to suggest
 		foreach ($suggestions as $suggestion) {
-			$lower_suggestion = strtolower($suggestion);
+			$lower_suggestion = mb_strtolower($suggestion);
 			if (!in_array($lower_suggestion, $this->blacklisted_suggestions)) {
 				$clean_suggestions[] = $suggestion;
 			}
@@ -358,12 +358,7 @@ class NateGoSearchPSpellSpellChecker extends NateGoSearchSpellChecker
 	 */
 	private function loadBlacklistedSuggestions()
 	{
-		if (substr('@DATA-DIR@', 0, 1) === '@') {
-			$filename = dirname(__FILE__).'/../system/no-suggest-words.txt';
-		} else {
-			$filename = '@DATA-DIR@/NateGoSearch/system/no-suggest-words.txt';
-		}
-
+		$filename = __DIR__.'/../system/no-suggest-words.txt';
 		$words = file($filename, FILE_IGNORE_NEW_LINES);
 
 		if ($words !== false) {
