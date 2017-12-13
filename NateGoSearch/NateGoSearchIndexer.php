@@ -142,22 +142,6 @@ class NateGoSearchIndexer
 	protected $personal_wordlist = array();
 
 	// }}}
-	// {{{ private static properties
-
-	/**
-	 * Whether or not mb_string overloading is turned on for the strlen
-	 * function
-	 *
-	 * This value is calculated and cached when the first indexer object is
-	 * created.
-	 *
-	 * @var boolean
-	 *
-	 * @see NateGoSearchIndexer::getByteLength()
-	 */
-	private static $use_mb_string = null;
-
-	// }}}
 	// {{{ public function __construct()
 
 	/**
@@ -187,13 +171,6 @@ class NateGoSearchIndexer
 		$new = false,
 		$append = false
 	) {
-		// cache mb_string overloading status
-		if (self::$use_mb_string === null) {
-			self::$use_mb_string = (
-				(ini_get('mbstring.func_overload') & 2) === 2
-			);
-		}
-
 		$type = NateGoSearch::getDocumentType($db, $document_type);
 
 		if ($type === null) {
@@ -722,11 +699,7 @@ class NateGoSearchIndexer
 
 	protected static function getByteLength($string)
 	{
-		if (self::$use_mb_string) {
-			return mb_strlen($string, '8bit');
-		}
-
-		return strlen($string);
+		return mb_strlen($string, '8bit');
 	}
 
 	// }}}
